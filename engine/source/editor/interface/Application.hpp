@@ -10,8 +10,8 @@
 #ifndef DEMON_ENGINE_APPLICATION_H
 #define DEMON_ENGINE_APPLICATION_H
 
-#include "Interface.h"
-#include "RuntimeModule.h"
+#include "Interface.hpp"
+#include "RuntimeModule.hpp"
 
 namespace runtime
 {

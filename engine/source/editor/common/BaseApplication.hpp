@@ -7,10 +7,10 @@
  * @author  Demon
  * @date    2023/5/19
  */
-#ifndef DEMONENGINE_BASEAPPLICATION_H
-#define DEMONENGINE_BASEAPPLICATION_H
+#ifndef DEMONENGINE_BASEAPPLICATION_HPP
+#define DEMONENGINE_BASEAPPLICATION_HPP
 
-#include "../interface/Application.h"
+#include "../interface/Application.hpp"
 
 namespace runtime
 {
@@ -32,4 +32,4 @@ namespace runtime
     };
 }
 
-#endif //DEMONENGINE_BASEAPPLICATION_H
+#endif //DEMONENGINE_BASEAPPLICATION_HPP

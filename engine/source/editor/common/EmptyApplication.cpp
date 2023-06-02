@@ -7,10 +7,10 @@
  * @author  Demon
  * @date    2023/5/19
  */
-#include "BaseApplication.h"
+#include "BaseApplication.hpp"
 
 namespace runtime
 {
     BaseApplication platformApp;
-    Application *app;
+    Application *app = &platformApp;
 }
