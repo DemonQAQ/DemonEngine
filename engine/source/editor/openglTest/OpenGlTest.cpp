@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Shader.hpp"
+#include "base/Shader.hpp"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -156,7 +156,7 @@ int main()
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
     // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    unsigned char *data = stbi_load("D:\\Document\\program\\DemonEngine\\engine\\source\\editor\\openglTest\\wall.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("D:\\Document\\program\\DemonEngine\\engine\\source\\editor\\openglTest\\texture\\wall.jpg", &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -178,7 +178,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // load image, create texture and generate mipmaps
     // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    data = stbi_load("D:\\Document\\program\\DemonEngine\\engine\\source\\editor\\openglTest\\demon.jpg", &width, &height, &nrChannels, 0);
+    data = stbi_load("D:\\Document\\program\\DemonEngine\\engine\\source\\editor\\openglTest\\texture\\demon.jpg", &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
