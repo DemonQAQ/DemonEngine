@@ -1,0 +1,1 @@
+static char const * logRoot = LOG_ROOT_PATH;

@@ -5,8 +5,8 @@
     <sourceRoots>
       <file path="$PROJECT_DIR$" />
       <file path="$PROJECT_DIR$/engine" />
-      <file path="$PROJECT_DIR$/engine/source/editor/common" />
       <file path="$PROJECT_DIR$/engine/source/editor/interface" />
+      <file path="$PROJECT_DIR$/outdated/common" />
     </sourceRoots>
     <libraryRoots>
       <file path="$PROJECT_DIR$/include" />

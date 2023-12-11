@@ -7,8 +7,7 @@
 #ifndef DEMON_ENGINE_H
 #define DEMON_ENGINE_H
 
-#define Interface struct
+#define interface struct
 #define implements public
-
 #endif
 
