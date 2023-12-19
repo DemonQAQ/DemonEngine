@@ -8,9 +8,12 @@ set(ROOT_PATH "D:/Document/program/DemonEngine")
 # 设置包含目录
 include_directories(${ROOT_PATH}/include)
 include_directories(${ROOT_PATH}/engine/source)
+set(CMAKE_PREFIX_PATH D:/developLib/boost)
 
 # 设置链接目录
 link_directories(${ROOT_PATH}/lib)
+
+#find_package(Boost REQUIRED COMPONENTS filesystem)
 
 # 自动将源代码文件（包括.cpp、.hpp、.c和.h文件）添加到项目中
 file(GLOB_RECURSE SOURCE_FILES
@@ -21,7 +24,7 @@ file(GLOB_RECURSE SOURCE_FILES
         )
 
 # 添加可执行文件
-add_executable(DemonEngine ${SOURCE_FILES} engine/source/core/render/graphApi/GraphApi.hpp engine/source/core/render/graphApi/OpenglApi.hpp engine/source/core/render/pipeline/RenderPipeline.hpp engine/source/core/assets/AssetsManager.hpp engine/source/core/assets/ShaderManager.hpp)
+add_executable(DemonEngine ${SOURCE_FILES} engine/source/core/render/graphApi/GraphApi.hpp engine/source/core/render/graphApi/OpenglApi.hpp engine/source/core/render/pipeline/RenderPipeline.hpp engine/source/core/assets/AssetsManager.hpp engine/source/core/assets/ShaderManager.hpp engine/source/core/render/pipeline/DrawCall.cpp engine/source/core/render/pipeline/DrawCall.hpp engine/source/core/base/render/Mesh.hpp engine/source/core/base/render/Model.hpp engine/source/core/base/render/Texture.hpp engine/source/core/base/render/Material.hpp engine/source/core/base/render/Vertex.hpp engine/source/core/base/render/RenderableObject.hpp engine/source/core/base/utils/UUIDUtil.hpp engine/source/core/base/common/UUID.hpp engine/source/core/base/common/Object.hpp)
 
 # 添加编译选项
 if (MSVC)
@@ -36,6 +39,8 @@ target_link_libraries(DemonEngine ${ROOT_PATH}/lib/glfw3.lib)
 target_link_libraries(DemonEngine opengl32)
 target_link_libraries(DemonEngine ${ROOT_PATH}/lib/zlibstaticd.lib)
 target_link_libraries(DemonEngine ${ROOT_PATH}/lib/assimp-vc143-mtd.lib)
+target_link_libraries(${PROJECT_NAME} Boost::filesystem)
+target_link_libraries(${PROJECT_NAME} Boost::uuid)
 
 # 将DLL复制到可执行文件目录
 add_custom_command(TARGET DemonEngine POST_BUILD

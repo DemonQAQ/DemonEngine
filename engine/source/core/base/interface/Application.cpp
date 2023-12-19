@@ -4,7 +4,8 @@
 #include <exception>
 #include <iostream>
 #include "Application.hpp"
-#include "core/render/OpenGLInitializer.hpp"
+#include "GLFW/glfw3.h"
+#include "core/render/manager/OpenGLInitializer.hpp"
 
 int base::BaseApplication::start()
 {
@@ -59,7 +60,7 @@ int base::BaseApplication::initialize()
     }
 
     // 初始化OpenGL
-    if (!base::render::OpenGLInitializer::initializeOpenGL(mainWindow))
+    if (!render::OpenGLInitializer::initializeOpenGL(mainWindow))
     {
         return -1;
     }
@@ -74,7 +75,6 @@ void base::BaseApplication::finalize()
     if (mainWindow)
     {
         glfwDestroyWindow(mainWindow);
-        mainWindow = nullptr;
     }
     glfwTerminate();
 }

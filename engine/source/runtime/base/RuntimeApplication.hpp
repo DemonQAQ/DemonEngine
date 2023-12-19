@@ -5,8 +5,6 @@
 
 #include "../../core/base/interface/Interface.hpp"
 #include "GLFW/glfw3.h"
-#include "../../core/render/WindowFactory.hpp"
-#include "../../core/render/OpenGLInitializer.hpp"
 #include "../../core/base/interface/Application.hpp"
 
 using namespace base;

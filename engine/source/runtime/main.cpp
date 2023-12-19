@@ -10,10 +10,6 @@ using namespace std;
 int main()
 {
     runtime::RuntimeApplication app;
-    if (!app.start())
-    {
-        std::cerr << "Application failed to start." << std::endl;
-        return -1;
-    }
+    app.start();
     return 0;
 }

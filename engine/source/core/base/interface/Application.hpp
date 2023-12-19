@@ -6,7 +6,7 @@
 #define DEMONENGINE_APPLICATION_HPP
 
 #include "Interface.hpp"
-#include "core/render/WindowFactory.hpp"
+#include "core/render/manager/WindowFactory.hpp"
 
 namespace base
 {
