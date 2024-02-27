@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 
 namespace base
 {
@@ -20,17 +21,19 @@ namespace base
     public:
         std::vector<Mesh> meshes;
         std::string directory;
+        std::unordered_map<std::string, std::shared_ptr<Texture>> textures_loaded;
 
-        Model(const std::string& path)
+        Model(const std::string &path)
         {
             loadModel(path);
         }
 
     private:
-        void loadModel(const std::string& path)
+        void loadModel(const std::string &path)
         {
             Assimp::Importer importer;
-            const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+            const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs |
+                                                           aiProcess_CalcTangentSpace);
 
             if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
             {
@@ -42,11 +45,11 @@ namespace base
             processNode(scene->mRootNode, scene);
         }
 
-        void processNode(aiNode* node, const aiScene* scene)
+        void processNode(aiNode *node, const aiScene *scene)
         {
             for (unsigned int i = 0; i < node->mNumMeshes; i++)
             {
-                aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+                aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
                 meshes.push_back(processMesh(mesh, scene));
             }
 
@@ -56,11 +59,12 @@ namespace base
             }
         }
 
-        Mesh processMesh(aiMesh* mesh, const aiScene* scene)
+        Mesh processMesh(aiMesh *mesh, const aiScene *scene)
         {
             std::vector<Vertex> vertices;
             std::vector<unsigned int> indices;
             std::vector<Texture> textures;
+            aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
             for (unsigned int i = 0; i < mesh->mNumVertices; i++)
             {
@@ -86,8 +90,7 @@ namespace base
                     vec.x = mesh->mTextureCoords[0][i].x;
                     vec.y = mesh->mTextureCoords[0][i].y;
                     vertex.texCoords = vec;
-                }
-                else
+                } else
                 {
                     vertex.texCoords = glm::vec2(0.0f, 0.0f);
                 }
@@ -104,10 +107,30 @@ namespace base
                 }
             }
 
-            // 纹理加载逻辑可以根据需要添加
-            // ...
+            for (aiTextureType aiType: supportedAiTextureTypes)
+            {
+                TextureType type = aiTextureTypeToTextureType(aiType);
+                if (type == TextureType::Unknown)continue;
+                loadMaterialTextures(material, aiType, toString(type));
+            }
 
             return Mesh(vertices, indices, textures);
+        }
+
+        void loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string &typeName)
+        {
+            for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+            {
+                aiString str;
+                mat->GetTexture(type, i, &str);
+                // 检查纹理是否已加载，如果已加载，则继续使用已加载的纹理
+                if (textures_loaded.find(str.C_Str()) == textures_loaded.end())
+                {
+                    auto texture = std::make_shared<Texture>(
+                            Texture::loadTextureType(str.C_Str(), directory, fromStringToTextureType(typeName)));
+                    textures_loaded[str.C_Str()] = texture;
+                }
+            }
         }
     };
 }
