@@ -5,8 +5,7 @@
 #ifndef DEMONENGINE_VERTEX_HPP
 #define DEMONENGINE_VERTEX_HPP
 
-#include "glm/vec3.hpp"
-#include "glm/vec2.hpp"
+#include <glm/glm.hpp>
 
 namespace base
 {

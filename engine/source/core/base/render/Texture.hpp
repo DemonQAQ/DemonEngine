@@ -91,8 +91,8 @@ namespace base
     struct Texture
     {
         unsigned int id;       // 贴图的 OpenGL ID
-        std::string type;      // 贴图类型（如 "diffuse" 或 "specular"）
-        std::string path;      // 贴图文件的路径
+        std::string type;
+        std::string path;
 
         Texture(unsigned int id, std::string type, std::string path)
                 : id(id), type(std::move(type)), path(std::move(path))
@@ -148,8 +148,6 @@ namespace base
         {
             std::string filename = std::string(path);
             filename = directory + '/' + filename;
-
-            // 使用枚举值确定纹理类型后缀
             std::string typeName = toString(type);
 
             unsigned int textureID = loadTextureFromFile(filename.c_str());

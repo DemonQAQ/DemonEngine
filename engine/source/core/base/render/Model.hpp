@@ -6,26 +6,74 @@
 #define DEMONENGINE_MODEL_HPP
 
 #include "Mesh.hpp"
+#include "Bone.hpp"
+#include "core/base/interface/Interface.hpp"
+#include "core/base/common/ITransformable.hpp"
+#include "core/base/common/Transform.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <string>
+#include <utility>
 #include <vector>
 #include <iostream>
 #include <unordered_map>
 
 namespace base
 {
-    class Model
+    class Model : implements ITransformable
     {
     public:
-        std::vector<Mesh> meshes;
+        struct Node
+        {
+            std::string name;
+            std::vector<Mesh> meshes;
+            std::vector<std::shared_ptr<Node>> children;
+
+            Node(std::string name) : name(std::move(name))
+            {}
+        };
+
+        Transform transform;
+        std::shared_ptr<Node> rootNode;
         std::string directory;
-        std::unordered_map<std::string, std::shared_ptr<Texture>> textures_loaded;
+        std::unordered_map<std::string, std::shared_ptr<Texture>> texturesLoaded;
+        std::unordered_map<std::string, BoneInfo> bonesInfo;
+        unsigned int boneCount = 0;
 
         Model(const std::string &path)
         {
             loadModel(path);
+        }
+
+        void setPosition(const glm::vec3 &position) override
+        {
+            transform.position = position;
+        }
+
+        glm::vec3 getPosition() const override
+        {
+            return transform.position;
+        }
+
+        void setRotation(const glm::quat &rotation) override
+        {
+            transform.rotation = rotation;
+        }
+
+        glm::quat getRotation() const override
+        {
+            return transform.rotation;
+        }
+
+        void setScale(const glm::vec3 &scale) override
+        {
+            transform.scale = scale;
+        }
+
+        glm::vec3 getScale() const override
+        {
+            return transform.scale;
         }
 
     private:
@@ -42,20 +90,23 @@ namespace base
             }
 
             directory = path.substr(0, path.find_last_of('/'));
-            processNode(scene->mRootNode, scene);
+            rootNode = std::make_shared<Node>(scene->mRootNode->mName.C_Str());
+            processNode(rootNode, scene->mRootNode, scene);
         }
 
-        void processNode(aiNode *node, const aiScene *scene)
+        void processNode(std::shared_ptr<Node> node, aiNode *aiNode, const aiScene *scene)
         {
-            for (unsigned int i = 0; i < node->mNumMeshes; i++)
+            for (unsigned int i = 0; i < aiNode->mNumMeshes; i++)
             {
-                aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-                meshes.push_back(processMesh(mesh, scene));
+                aiMesh *mesh = scene->mMeshes[aiNode->mMeshes[i]];
+                node->meshes.push_back(processMesh(mesh, scene));
             }
 
-            for (unsigned int i = 0; i < node->mNumChildren; i++)
+            for (unsigned int i = 0; i < aiNode->mNumChildren; i++)
             {
-                processNode(node->mChildren[i], scene);
+                std::shared_ptr<Node> childNode = std::make_shared<Node>(aiNode->mChildren[i]->mName.C_Str());
+                processNode(childNode, aiNode->mChildren[i], scene);
+                node->children.push_back(childNode);
             }
         }
 
@@ -123,12 +174,11 @@ namespace base
             {
                 aiString str;
                 mat->GetTexture(type, i, &str);
-                // 检查纹理是否已加载，如果已加载，则继续使用已加载的纹理
-                if (textures_loaded.find(str.C_Str()) == textures_loaded.end())
+                if (texturesLoaded.find(str.C_Str()) == texturesLoaded.end())
                 {
                     auto texture = std::make_shared<Texture>(
                             Texture::loadTextureType(str.C_Str(), directory, fromStringToTextureType(typeName)));
-                    textures_loaded[str.C_Str()] = texture;
+                    texturesLoaded[str.C_Str()] = texture;
                 }
             }
         }

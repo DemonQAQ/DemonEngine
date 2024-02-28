@@ -6,7 +6,6 @@
 #define DEMONENGINE_MESH_HPP
 
 #include <vector>
-#include <glm/glm.hpp>
 #include <string>
 #include "Texture.hpp"
 #include "Vertex.hpp"
