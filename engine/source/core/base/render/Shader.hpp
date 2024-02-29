@@ -7,7 +7,8 @@
 
 #include "glad/glad.h" // 包含glad来获取所有的必须OpenGL头文件
 #include "glm/glm.hpp"
-
+#include "core/base/interface/Interface.hpp"
+#include "core/base/common/Object.hpp"
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -15,7 +16,7 @@
 
 namespace base
 {
-    class Shader
+    class Shader : implements Object
     {
     public:
         // 程序ID

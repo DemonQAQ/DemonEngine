@@ -13,7 +13,7 @@ set(CMAKE_PREFIX_PATH D:/developLib/boost)
 # 设置链接目录
 link_directories(${ROOT_PATH}/lib)
 
-#find_package(Boost REQUIRED COMPONENTS filesystem)
+find_package(Boost REQUIRED COMPONENTS filesystem)
 
 # 自动将源代码文件（包括.cpp、.hpp、.c和.h文件）添加到项目中
 file(GLOB_RECURSE SOURCE_FILES
@@ -39,8 +39,7 @@ target_link_libraries(DemonEngine ${ROOT_PATH}/lib/glfw3.lib)
 target_link_libraries(DemonEngine opengl32)
 target_link_libraries(DemonEngine ${ROOT_PATH}/lib/zlibstaticd.lib)
 target_link_libraries(DemonEngine ${ROOT_PATH}/lib/assimp-vc143-mtd.lib)
-#target_link_libraries(${PROJECT_NAME} Boost::filesystem)
-#target_link_libraries(${PROJECT_NAME} Boost::uuid)
+target_link_libraries(${PROJECT_NAME} Boost::filesystem)
 
 # 将DLL复制到可执行文件目录
 add_custom_command(TARGET DemonEngine POST_BUILD

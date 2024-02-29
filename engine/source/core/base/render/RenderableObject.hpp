@@ -19,6 +19,9 @@ namespace base
     class RenderableObject : implements Object, implements ITransformable
     {
     public:
+        //todo 管理多个model
+        //todo 管理多个shader的uuid
+        //todo 管理map，其中key使用shader的uuid，value使用一个二级指针的vector实例，其中每个值指向一个model/mesh的实例
         std::unique_ptr<Model> model;
         std::unique_ptr<Shader> shader;
         Transform transform;
@@ -34,13 +37,12 @@ namespace base
 
         }
 
-        // 实现ITransformable接口，使用Transform结构体
         void setPosition(const glm::vec3 &position) override
         {
             transform.position = position;
         }
 
-        glm::vec3 getPosition() const override
+        [[nodiscard]] glm::vec3 getPosition() const override
         {
             return transform.position;
         }
@@ -50,7 +52,7 @@ namespace base
             transform.rotation = rotation;
         }
 
-        glm::quat getRotation() const override
+        [[nodiscard]] glm::quat getRotation() const override
         {
             return transform.rotation;
         }
@@ -60,7 +62,7 @@ namespace base
             transform.scale = scale;
         }
 
-        glm::vec3 getScale() const override
+        [[nodiscard]] glm::vec3 getScale() const override
         {
             return transform.scale;
         }

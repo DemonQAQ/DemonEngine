@@ -21,6 +21,7 @@
 
 namespace base
 {
+    //todo 考虑为model和mesh实现统一接口用于在渲染时传递所需数据
     class Model : implements ITransformable
     {
     public:
@@ -41,7 +42,7 @@ namespace base
         std::unordered_map<std::string, BoneInfo> bonesInfo;
         unsigned int boneCount = 0;
 
-        Model(const std::string &path)
+        explicit Model(const std::string &path)
         {
             loadModel(path);
         }
@@ -51,7 +52,7 @@ namespace base
             transform.position = position;
         }
 
-        glm::vec3 getPosition() const override
+        [[nodiscard]] glm::vec3 getPosition() const override
         {
             return transform.position;
         }
@@ -61,7 +62,7 @@ namespace base
             transform.rotation = rotation;
         }
 
-        glm::quat getRotation() const override
+        [[nodiscard]] glm::quat getRotation() const override
         {
             return transform.rotation;
         }
@@ -71,7 +72,7 @@ namespace base
             transform.scale = scale;
         }
 
-        glm::vec3 getScale() const override
+        [[nodiscard]] glm::vec3 getScale() const override
         {
             return transform.scale;
         }

@@ -16,13 +16,13 @@ namespace base
     {
     public:
         // 默认构造函数
-        Object() : id(boost::uuids::random_generator()())
+        Object() : uuid(boost::uuids::random_generator()())
         {}
 
         // 获取对象的UUID
-        [[nodiscard]] std::string getId() const
+        [[nodiscard]] std::string getUuid() const
         {
-            return boost::uuids::to_string(id);
+            return boost::uuids::to_string(uuid);
         }
 
         // 虚析构函数，确保子类的正确析构
@@ -30,7 +30,7 @@ namespace base
 
     private:
         // 对象的唯一标识符
-        const boost::uuids::uuid id;
+        const boost::uuids::uuid uuid;
     };
 }
 
