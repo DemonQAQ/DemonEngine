@@ -3,7 +3,7 @@
 //
 #include <exception>
 #include <iostream>
-#include "Application.hpp"
+#include "core/base/common/Application.hpp"
 #include "GLFW/glfw3.h"
 #include "core/render/manager/OpenGLInitializer.hpp"
 

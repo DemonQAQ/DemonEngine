@@ -5,7 +5,7 @@
 
 #include "../../core/base/interface/Interface.hpp"
 #include "GLFW/glfw3.h"
-#include "../../core/base/interface/Application.hpp"
+#include "core/base/common/Application.hpp"
 
 using namespace base;
 using namespace base::render;

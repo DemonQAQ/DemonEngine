@@ -8,7 +8,7 @@
 #include "Mesh.hpp"
 #include "Bone.hpp"
 #include "core/base/interface/Interface.hpp"
-#include "core/base/common/ITransformable.hpp"
+#include "core/base/interface/ITransformable.hpp"
 #include "core/base/common/Transform.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

@@ -8,19 +8,24 @@
 #include "glm/vec3.hpp"
 #include "glm/fwd.hpp"
 
-namespace base {
+namespace base
+{
 
-    class ITransformable {
+    class ITransformable
+    {
     public:
         virtual ~ITransformable() = default;
 
-        virtual void setPosition(const glm::vec3& position) = 0;
+        virtual void setPosition(const glm::vec3 &position) = 0;
+
         virtual glm::vec3 getPosition() const = 0;
 
-        virtual void setRotation(const glm::quat& rotation) = 0;
+        virtual void setRotation(const glm::quat &rotation) = 0;
+
         virtual glm::quat getRotation() const = 0;
 
-        virtual void setScale(const glm::vec3& scale) = 0;
+        virtual void setScale(const glm::vec3 &scale) = 0;
+
         virtual glm::vec3 getScale() const = 0;
     };
 

@@ -10,7 +10,7 @@
 #include <glm/glm.hpp>
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
-#include "core/base/common/ITransformable.hpp"
+#include "core/base/interface/ITransformable.hpp"
 #include "Model.hpp"
 #include "core/base/common/Transform.hpp"
 
@@ -21,7 +21,10 @@ namespace base
     public:
         //todo 管理多个model
         //todo 管理多个shader的uuid
-        //todo 管理map，其中key使用shader的uuid，value使用一个二级指针的vector实例，其中每个值指向一个model/mesh的实例
+        //todo 管理map A，其中key使用shader的uuid，value使用一个二级指针的vector实例，其中每个值指向一个model/mesh的实例
+        //todo 考虑为model和mesh实现统一接口用于在渲染时传递所需数据
+        //todo 维护一个map B，key是model的uuid，value是一个vector，vector中储存绑定了shader的mesh
+        //todo 渲染时通过A和B获得model和mesh关于shader的绑定信息
         std::unique_ptr<Model> model;
         std::unique_ptr<Shader> shader;
         Transform transform;
