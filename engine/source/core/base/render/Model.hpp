@@ -21,8 +21,7 @@
 
 namespace base
 {
-    //todo 考虑为model和mesh实现统一接口用于在渲染时传递所需数据
-    class Model : implements ITransformable
+    class Model : implements ITransformable, IRenderable, std::enable_shared_from_this<Model>
     {
     public:
         struct Node
@@ -45,6 +44,27 @@ namespace base
         explicit Model(const std::string &path)
         {
             loadModel(path);
+        }
+
+        void updateActualTransform(const std::vector<Transform> &additionalTransforms) override
+        {
+            updateSelfActualTransform(additionalTransforms);
+            //todo 更新所有mesh的transform
+        }
+
+        void updateObservedActualTransform(const std::vector<Transform> &additionalTransforms) const override
+        {
+            //todo 更新mesh的transform
+        }
+
+        RenderData getRenderData(Transform combinedTransform) override
+        {
+
+        }
+
+        [[nodiscard]] Transform getLocalTransform() const override
+        {
+            return transform;
         }
 
         void setPosition(const glm::vec3 &position) override
@@ -100,7 +120,9 @@ namespace base
             for (unsigned int i = 0; i < aiNode->mNumMeshes; i++)
             {
                 aiMesh *mesh = scene->mMeshes[aiNode->mMeshes[i]];
-                node->meshes.push_back(processMesh(mesh, scene));
+                Mesh newMesh = processMesh(mesh, scene);
+                newMesh.setFatherModel(shared_from_this());
+                node->meshes.push_back(newMesh);
             }
 
             for (unsigned int i = 0; i < aiNode->mNumChildren; i++)

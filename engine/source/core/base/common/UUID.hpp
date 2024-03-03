@@ -8,6 +8,10 @@
 #include "boost/uuid/uuid.hpp"
 #include "boost/uuid/uuid_generators.hpp"
 #include "boost/uuid/uuid_io.hpp"
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/functional/hash.hpp>
 #include <string>
 
 namespace base
@@ -62,8 +66,26 @@ namespace base
             return uuid >= other.uuid;
         }
 
+        [[nodiscard]] const boost::uuids::uuid &getBoostUuid() const
+        {
+            return uuid;
+        }
+
     private:
         boost::uuids::uuid uuid;
+    };
+}
+
+namespace std
+{
+    template<>
+    struct hash<base::UUID>
+    {
+        size_t operator()(const base::UUID &uuid) const noexcept
+        {
+            const auto &boost_uuid = uuid.getBoostUuid();
+            return boost::hash<boost::uuids::uuid>()(boost_uuid);
+        }
     };
 }
 #endif //DEMONENGINE_UUID_HPP
