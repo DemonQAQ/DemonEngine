@@ -10,6 +10,7 @@
 #include "core/base/interface/Interface.hpp"
 #include "core/base/interface/ITransformable.hpp"
 #include "core/base/common/Transform.hpp"
+#include "core/base/interface/ITransformableUpdate.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -21,40 +22,51 @@
 
 namespace base
 {
-    class Model : implements ITransformable, IRenderable, std::enable_shared_from_this<Model>
+    struct Node
     {
-    public:
-        struct Node
-        {
-            std::string name;
-            std::vector<Mesh> meshes;
-            std::vector<std::shared_ptr<Node>> children;
+        std::string name;
+        std::vector<Mesh> meshes;
+        std::vector<std::shared_ptr<Node>> children;
 
-            Node(std::string name) : name(std::move(name))
-            {}
-        };
+        Node(std::string name) : name(std::move(name))
+        {}
+    };
 
-        Transform transform;
+    class Model : implements IRenderable, std::enable_shared_from_this<Model>, ITransformableUpdate
+    {
+    private:
         std::shared_ptr<Node> rootNode;
         std::string directory;
         std::unordered_map<std::string, std::shared_ptr<Texture>> texturesLoaded;
         std::unordered_map<std::string, BoneInfo> bonesInfo;
         unsigned int boneCount = 0;
-
-        explicit Model(const std::string &path)
+    public:
+        explicit Model(const std::string &path, const base::Transform &initialTransform = base::Transform())
         {
             loadModel(path);
+            setTransform(initialTransform);
         }
 
-        void updateActualTransform(const std::vector<Transform> &additionalTransforms) override
+        void updateTransformsBeforeRendering() override
+        {
+
+        }
+
+        void updateActualTransform(std::vector<Transform> &additionalTransforms) override
         {
             updateSelfActualTransform(additionalTransforms);
-            //todo 更新所有mesh的transform
+
+            updateObservedActualTransform(additionalTransforms);
         }
 
-        void updateObservedActualTransform(const std::vector<Transform> &additionalTransforms) const override
+        void updateObservedActualTransform(std::vector<Transform> &additionalTransforms) override
         {
-            //todo 更新mesh的transform
+            std::vector<Transform> transformsToMerge = {getLocalTransform()};
+            transformsToMerge.insert(transformsToMerge.end(), additionalTransforms.begin(), additionalTransforms.end());
+            for (auto &node: rootNode->children)
+            {
+                updateNodeTransforms(node, transformsToMerge);
+            }
         }
 
         RenderData getRenderData(Transform combinedTransform) override
@@ -64,40 +76,23 @@ namespace base
 
         [[nodiscard]] Transform getLocalTransform() const override
         {
-            return transform;
-        }
-
-        void setPosition(const glm::vec3 &position) override
-        {
-            transform.position = position;
-        }
-
-        [[nodiscard]] glm::vec3 getPosition() const override
-        {
-            return transform.position;
-        }
-
-        void setRotation(const glm::quat &rotation) override
-        {
-            transform.rotation = rotation;
-        }
-
-        [[nodiscard]] glm::quat getRotation() const override
-        {
-            return transform.rotation;
-        }
-
-        void setScale(const glm::vec3 &scale) override
-        {
-            transform.scale = scale;
-        }
-
-        [[nodiscard]] glm::vec3 getScale() const override
-        {
-            return transform.scale;
+            return getTransform();
         }
 
     private:
+        void updateNodeTransforms(const std::shared_ptr<Node> &node,
+                                  std::vector<Transform> &additionalTransforms) const
+        {
+            for (auto &mesh: node->meshes)
+            {
+                mesh.updateActualTransform(additionalTransforms); // 假设Mesh有一个适当的方法来接受额外的变换并更新它们
+            }
+            for (auto &child: node->children)
+            {
+                updateNodeTransforms(child, additionalTransforms);
+            }
+        }
+
         void loadModel(const std::string &path)
         {
             Assimp::Importer importer;

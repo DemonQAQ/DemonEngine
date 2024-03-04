@@ -28,6 +28,18 @@ namespace base
                 : position(pos), rotation(rot), scale(scl)
         {}
 
+        friend bool operator==(const Transform &lhs, const Transform &rhs)
+        {
+            return lhs.position == rhs.position &&
+                   lhs.rotation == rhs.rotation &&
+                   lhs.scale == rhs.scale;
+        }
+
+        friend bool operator!=(const Transform &lhs, const Transform &rhs)
+        {
+            return !(lhs == rhs);
+        }
+
         [[nodiscard]] glm::mat4 toMatrix() const
         {
             glm::mat4 posMatrix = glm::translate(glm::mat4(1.0f), position);

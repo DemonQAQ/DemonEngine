@@ -17,7 +17,7 @@
 
 namespace base
 {
-    class Mesh : implements ITransformable, IRenderable
+    class Mesh : implements IRenderable, ITransformableUpdate
     {
     private:
         std::vector<Vertex> vertices;
@@ -28,16 +28,23 @@ namespace base
 
     public:
         Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
-             const std::vector<Texture> &textures)
+             const std::vector<Texture> &textures, const base::Transform &initialTransform = base::Transform())
                 : vertices(vertices), indices(indices), textures(textures)
-        {}
+        {
+            setTransform(initialTransform);
+        }
 
-        void updateActualTransform(const std::vector<Transform> &additionalTransforms) override
+        void updateTransformsBeforeRendering() override
+        {
+
+        }
+
+        void updateActualTransform(std::vector<Transform> &additionalTransforms) override
         {
             updateSelfActualTransform(additionalTransforms);
         }
 
-        void updateObservedActualTransform(const std::vector<Transform> &additionalTransforms) const override
+        void updateObservedActualTransform(std::vector<Transform> &additionalTransforms) override
         {}
 
         RenderData getRenderData(Transform combinedTransform) override
@@ -45,44 +52,14 @@ namespace base
 
         }
 
-        void setFatherModel(const std::shared_ptr<Model>& model)
+        void setFatherModel(const std::shared_ptr<Model> &model)
         {
             fatherModel = model;
         }
 
         [[nodiscard]] Transform getLocalTransform() const override
         {
-            return transform;
-        }
-
-        void setPosition(const glm::vec3 &position) override
-        {
-            transform.position = position;
-        }
-
-        [[nodiscard]] glm::vec3 getPosition() const override
-        {
-            return transform.position;
-        }
-
-        void setRotation(const glm::quat &rotation) override
-        {
-            transform.rotation = rotation;
-        }
-
-        [[nodiscard]] glm::quat getRotation() const override
-        {
-            return transform.rotation;
-        }
-
-        void setScale(const glm::vec3 &scale) override
-        {
-            transform.scale = scale;
-        }
-
-        [[nodiscard]] glm::vec3 getScale() const override
-        {
-            return transform.scale;
+            return getTransform();
         }
     };
 }

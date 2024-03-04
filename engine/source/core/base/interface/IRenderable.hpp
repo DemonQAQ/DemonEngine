@@ -19,7 +19,7 @@ namespace base
     public:
         virtual RenderData getRenderData(Transform transform) = 0;
 
-        virtual void updateActualTransform(const std::vector<Transform> &additionalTransforms) = 0;
+        virtual void updateActualTransform(std::vector<Transform> &additionalTransforms) = 0;
 
         [[nodiscard]] virtual Transform getLocalTransform() const = 0;
 
@@ -36,7 +36,7 @@ namespace base
             actualTransform = Transform::merge(transformsToMerge);
         }
 
-        virtual void updateObservedActualTransform(const std::vector<Transform> &additionalTransforms) const = 0;
+        virtual void updateObservedActualTransform(std::vector<Transform> &additionalTransforms) = 0;
 
     private:
         Transform actualTransform;
