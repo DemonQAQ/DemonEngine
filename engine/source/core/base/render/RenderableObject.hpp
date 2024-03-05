@@ -19,9 +19,10 @@
 
 namespace base
 {
-    class RenderableObject : implements Object, IRenderable, ITransformableUpdate
+    class RenderableObject : implements Object, IRenderable, ITransformableUpdate, INameable
     {
     private:
+        std::string name;
         std::vector<Model> models;
         std::vector<base::UUID> useShader;
         std::unordered_map<base::UUID, std::vector<IRenderable **>> shaderBindObjects;
@@ -35,14 +36,9 @@ namespace base
         }
 
     public:
-        //todo 管理多个model
-        //todo 管理多个shader的uuid
-        //todo 管理map A，其中key使用shader的uuid，value使用一个二级指针的vector实例，其中每个值指向一个model/mesh的实例
-        //todo 维护一个map B，key是model的uuid，value是一个vector，vector中储存绑定了shader的mesh
-        //todo 渲染时通过A和B获得model和mesh关于shader的绑定信息
-
-        RenderableObject(const std::vector<Model> &models = {},
-                         const base::Transform &initialTransform = base::Transform()) : models(models)
+        RenderableObject(std::string name, const std::vector<Model> &models = {},
+                         const base::Transform &initialTransform = base::Transform()) : name(std::move(name)),
+                                                                                        models(models)
         {
             setTransform(initialTransform);
         }
@@ -55,6 +51,16 @@ namespace base
         RenderData getRenderData(Transform combinedTransform) override
         {
 
+        }
+
+        void setName(const std::string &name_) override
+        {
+            this->name = name_;
+        }
+
+        [[nodiscard]] std::string getName() const override
+        {
+            return name;
         }
 
         [[nodiscard]] Transform getLocalTransform() const override
@@ -83,25 +89,63 @@ namespace base
             for (Model &model: models)model.updateActualTransform(transformsToMerge);
         }
 
-        // Shader绑定管理方法
-        void bindShaderToMesh(const std::string &meshName, std::unique_ptr<Shader> shader)
+        void bindShaderToMesh(const std::string &modelName, const std::string &meshName, std::unique_ptr<base::UUID> shader)
         {
-
+            for (auto &model: models)
+            {
+                if (model.getName() == modelName)
+                {
+                    auto mesh = model.getMesh(meshName);
+                    if (mesh)
+                    {
+                        bindShaderMeshList[*shader].push_back(mesh);
+                        useShader.push_back(*shader);
+                        return;
+                    }
+                }
+            }
         }
 
         void unbindShaderFromMesh(const std::string &meshName)
         {
+            for (auto &entry: bindShaderMeshList)
+            {
+                auto &meshList = entry.second;
+                meshList.erase(std::remove_if(meshList.begin(), meshList.end(),
+                                              [meshName](const std::weak_ptr<Mesh> &mesh)
+                                              {
+                                                  auto sharedMesh = mesh.lock();
+                                                  if (sharedMesh && sharedMesh->getName() == meshName)return true;
+                                                  else return false;
+                                              }),
+                               meshList.end());
 
+                if (meshList.empty())
+                {
+                    useShader.erase(std::remove(useShader.begin(), useShader.end(), entry.first), useShader.end());
+                }
+            }
         }
 
-        std::unique_ptr<Shader> *getShaderForMesh(const std::string &meshName)
+        const UUID *getShaderForMesh(const std::string &meshName)
         {
-
+            for (auto &entry: bindShaderMeshList)
+            {
+                for (auto &mesh: entry.second)
+                {
+                    auto sharedMesh = mesh.lock();
+                    if (sharedMesh && sharedMesh->getName() == meshName)
+                    {
+                        return &entry.first;
+                    }
+                }
+            }
+            return nullptr;
         }
 
-        std::unique_ptr<Shader> *getCurrentShader()
+        std::vector<base::UUID> &getCurrentShader()
         {
-
+            return useShader;
         }
     };
 }

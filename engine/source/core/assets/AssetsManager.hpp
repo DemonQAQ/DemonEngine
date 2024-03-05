@@ -8,4 +8,13 @@
 //todo 处理模型，还包括纹理，材质、音频、着色器等其他资源的加载、缓存和卸载。
 //todo 提供资源的加载，卸载，引用，缓存等
 
+#include "core/base/interface/Interface.hpp"
+
+namespace assets
+{
+    class AssetsManager
+    {
+
+    };
+}
 #endif //DEMONENGINE_ASSETSMANAGER_HPP

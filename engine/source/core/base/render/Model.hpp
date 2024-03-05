@@ -28,23 +28,35 @@ namespace base
         std::vector<Mesh> meshes;
         std::vector<std::shared_ptr<Node>> children;
 
-        Node(std::string name) : name(std::move(name))
+        explicit Node(std::string nodeName = "") : name(std::move(nodeName))
         {}
     };
 
-    class Model : implements IRenderable, std::enable_shared_from_this<Model>, ITransformableUpdate
+    class Model : implements IRenderable, std::enable_shared_from_this<Model>, ITransformableUpdate, INameable
     {
     private:
+        std::string name;
         std::shared_ptr<Node> rootNode;
         std::string directory;
         std::unordered_map<std::string, std::shared_ptr<Texture>> texturesLoaded;
         std::unordered_map<std::string, BoneInfo> bonesInfo;
         unsigned int boneCount = 0;
     public:
-        explicit Model(const std::string &path, const base::Transform &initialTransform = base::Transform())
+        explicit Model(std::string name, const std::string &path,
+                       const base::Transform &initialTransform = base::Transform()) : name(std::move(name))
         {
             loadModel(path);
             setTransform(initialTransform);
+        }
+
+        void setName(const std::string &name_) override
+        {
+            this->name = name_;
+        }
+
+        [[nodiscard]] std::string getName() const override
+        {
+            return name;
         }
 
         void updateTransformsBeforeRendering() override
@@ -79,7 +91,29 @@ namespace base
             return getTransform();
         }
 
+        std::shared_ptr<Mesh> getMesh(const std::string &meshName)
+        {
+            if (!rootNode) return nullptr;
+            return findMeshInNode(rootNode, meshName);
+        }
+
     private:
+        std::shared_ptr<Mesh> findMeshInNode(const std::shared_ptr<Node> &node, const std::string &meshName)
+        {
+            for (auto &mesh: node->meshes)
+            {
+                if (mesh.getName() == meshName)return std::make_shared<Mesh>(mesh);
+            }
+
+            for (auto &child: node->children)
+            {
+                auto foundMesh = findMeshInNode(child, meshName);
+                if (foundMesh) return foundMesh;
+            }
+
+            return nullptr;
+        }
+
         void updateNodeTransforms(const std::shared_ptr<Node> &node,
                                   std::vector<Transform> &additionalTransforms) const
         {
@@ -107,15 +141,18 @@ namespace base
 
             directory = path.substr(0, path.find_last_of('/'));
             rootNode = std::make_shared<Node>(scene->mRootNode->mName.C_Str());
-            processNode(rootNode, scene->mRootNode, scene);
+            int index = 0;
+            processNode(rootNode, scene->mRootNode, scene, index);
         }
 
-        void processNode(std::shared_ptr<Node> node, aiNode *aiNode, const aiScene *scene)
+        void processNode(const std::shared_ptr<Node> &node, aiNode *aiNode, const aiScene *scene, int &meshIndex)
         {
             for (unsigned int i = 0; i < aiNode->mNumMeshes; i++)
             {
                 aiMesh *mesh = scene->mMeshes[aiNode->mMeshes[i]];
-                Mesh newMesh = processMesh(mesh, scene);
+                std::string meshName =
+                        mesh->mName.length > 0 ? mesh->mName.C_Str() : "mesh" + std::to_string(meshIndex++);
+                Mesh newMesh = processMesh(mesh, scene, meshName);
                 newMesh.setFatherModel(shared_from_this());
                 node->meshes.push_back(newMesh);
             }
@@ -123,12 +160,12 @@ namespace base
             for (unsigned int i = 0; i < aiNode->mNumChildren; i++)
             {
                 std::shared_ptr<Node> childNode = std::make_shared<Node>(aiNode->mChildren[i]->mName.C_Str());
-                processNode(childNode, aiNode->mChildren[i], scene);
+                processNode(childNode, aiNode->mChildren[i], scene, meshIndex);
                 node->children.push_back(childNode);
             }
         }
 
-        Mesh processMesh(aiMesh *mesh, const aiScene *scene)
+        Mesh processMesh(aiMesh *mesh, const aiScene *scene, const std::string &meshName)
         {
             std::vector<Vertex> vertices;
             std::vector<unsigned int> indices;
@@ -183,7 +220,7 @@ namespace base
                 loadMaterialTextures(material, aiType, toString(type));
             }
 
-            return Mesh(vertices, indices, textures);
+            return Mesh(meshName, vertices, indices, textures);
         }
 
         void loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string &typeName)

@@ -5,6 +5,7 @@
 #ifndef DEMONENGINE_MESH_HPP
 #define DEMONENGINE_MESH_HPP
 
+#include <utility>
 #include <vector>
 #include <string>
 #include "Texture.hpp"
@@ -14,12 +15,14 @@
 #include "core/base/common/Transform.hpp"
 #include "core/base/interface/IRenderable.hpp"
 #include "Model.hpp"
+#include "core/base/interface/INameable.hpp"
 
 namespace base
 {
-    class Mesh : implements IRenderable, ITransformableUpdate
+    class Mesh : implements IRenderable, ITransformableUpdate, INameable
     {
     private:
+        std::string name;
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
         std::vector<Texture> textures;
@@ -27,11 +30,21 @@ namespace base
         std::weak_ptr<Model> fatherModel;
 
     public:
-        Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
+        Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
              const std::vector<Texture> &textures, const base::Transform &initialTransform = base::Transform())
-                : vertices(vertices), indices(indices), textures(textures)
+                : name(std::move(name)), vertices(vertices), indices(indices), textures(textures)
         {
             setTransform(initialTransform);
+        }
+
+        void setName(const std::string &name_) override
+        {
+            this->name = name_;
+        }
+
+        [[nodiscard]] std::string getName() const override
+        {
+            return name;
         }
 
         void updateTransformsBeforeRendering() override

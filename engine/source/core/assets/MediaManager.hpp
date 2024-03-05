@@ -1,0 +1,8 @@
+﻿//
+// Created by Demon on 2024/3/6.
+//
+
+#ifndef DEMONENGINE_MEDIAMANAGER_HPP
+#define DEMONENGINE_MEDIAMANAGER_HPP
+
+#endif //DEMONENGINE_MEDIAMANAGER_HPP
