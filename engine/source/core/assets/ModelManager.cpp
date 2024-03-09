@@ -46,12 +46,12 @@ void ModelManager::UnloadResource(const std::vector<std::any> &params)
     // Implementation of UnloadResource
 }
 
-bool ModelManager::IsResourceLoaded(const std::string &path) const
+bool ModelManager::IsResourceLoaded(const std::vector<std::any>& params) const
 {
     // Implementation of IsResourceLoaded
 }
 
-void ModelManager::UpdateResource(const std::string &path)
+void ModelManager::UpdateResource(const std::vector<std::any>& params)
 {
     // Implementation of UpdateResource
 }

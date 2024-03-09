@@ -85,12 +85,12 @@ void TextureManager::UnloadResource(const std::vector<std::any> &params)
     }
 }
 
-[[nodiscard]] bool TextureManager::IsResourceLoaded(const std::string &path) const
+[[nodiscard]] bool TextureManager::IsResourceLoaded(const std::vector<std::any>& params) const
 {
 
 }
 
-void TextureManager::UpdateResource(const std::string &path)
+void TextureManager::UpdateResource(const std::vector<std::any>& params)
 {
 
 }

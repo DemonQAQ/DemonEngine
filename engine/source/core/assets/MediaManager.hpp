@@ -12,22 +12,22 @@ namespace assets
 {
     class MediaManager : implements IFileManager
     {
-        base::UUID LoadResource(const std::string &path) override
+        std::optional<base::UUID> LoadResource(const std::vector<std::any>& paramsh) override
         {
 
         }
 
-        void UnloadResource(const std::string &path) override
+        void UnloadResource(const std::vector<std::any>& params) override
         {
 
         }
 
-        [[nodiscard]] bool IsResourceLoaded(const std::string &path) const override
+        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override
         {
 
         }
 
-        void UpdateResource(const std::string &path) override
+        void UpdateResource(const std::vector<std::any>& params) override
         {
 
         }

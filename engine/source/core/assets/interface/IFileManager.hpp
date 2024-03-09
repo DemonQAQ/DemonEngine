@@ -21,8 +21,8 @@ namespace assets
 
         virtual std::optional<base::UUID> LoadResource(const std::vector<std::any>& params) = 0;
         virtual void UnloadResource(const std::vector<std::any>& params) = 0;
-        [[nodiscard]] virtual bool IsResourceLoaded(const std::string& path) const = 0;
-        virtual void UpdateResource(const std::string& path) = 0;
+        [[nodiscard]] virtual bool IsResourceLoaded(const std::vector<std::any>& params) const = 0;
+        virtual void UpdateResource(const std::vector<std::any>& params) = 0;
 
     protected:
         static std::vector<char> LoadFile(const std::string& path)

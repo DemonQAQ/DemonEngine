@@ -23,7 +23,7 @@ namespace base
         unsigned int ID;
 
         // 构造器读取并构建着色器
-        Shader(const char *vertexPath, const char *fragmentPath);
+        Shader(const std::string& vertexPath, const std::string& fragmentPath);
 
         // 使用/激活程序
         void use();

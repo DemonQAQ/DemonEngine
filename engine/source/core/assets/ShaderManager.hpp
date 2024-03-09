@@ -5,22 +5,25 @@
 #ifndef DEMONENGINE_SHADERMANAGER_HPP
 #define DEMONENGINE_SHADERMANAGER_HPP
 
-//todo 提供对shader的读取引用等基础操作
-
+#include <map>
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/interface/IFileManager.hpp"
+#include "core/base/render/Shader.hpp"
 
 namespace assets
 {
     class ShaderManager : implements IFileManager
     {
+    private:
+        std::map<base::UUID, std::shared_ptr<base::Shader>> shaders;
+    public:
         std::optional<base::UUID> LoadResource(const std::vector<std::any> &params) override;
 
         void UnloadResource(const std::vector<std::any> &params) override;
 
-        [[nodiscard]] bool IsResourceLoaded(const std::string &path) const override;
+        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override;
 
-        void UpdateResource(const std::string &path) override;
+        void UpdateResource(const std::vector<std::any>& params) override;
     };
 }
 

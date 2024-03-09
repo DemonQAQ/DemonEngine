@@ -69,15 +69,13 @@ namespace assets
 
         void UnloadResource(const std::vector<std::any> &params) override;
 
-        [[nodiscard]] bool IsResourceLoaded(const std::string &path) const override;
+        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override;
 
-        void UpdateResource(const std::string &path) override;
+        void UpdateResource(const std::vector<std::any>& params) override;
 
     private:
         static unsigned int loadTextureFromFile(const char *filePath);
     };
-
-    std::unordered_map<base::UUID, std::shared_ptr<base::Texture>> TextureManager::loadedTextures;
 }
 
 #endif // DEMONENGINE_TEXTUREMANAGER_HPP
