@@ -6,6 +6,7 @@
 #define DEMONENGINE_IRENDERABLE_HPP
 
 #include "core/base/common/Transform.hpp"
+#include "Interface.hpp"
 
 namespace base
 {
@@ -14,7 +15,7 @@ namespace base
         //todo 根据需要添加熟数据结构
     };
 
-    class IRenderable
+    interface IRenderable
     {
     public:
         virtual RenderData getRenderData(Transform transform) = 0;

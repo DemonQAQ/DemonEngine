@@ -11,7 +11,7 @@
 namespace base
 {
 
-    class ITransformable
+    interface ITransformable
     {
     public:
         virtual ~ITransformable() = default;

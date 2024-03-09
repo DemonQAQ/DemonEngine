@@ -9,7 +9,7 @@
 
 namespace base
 {
-    class INameable
+    interface INameable
     {
     public:
         virtual void setName(const std::string &name_) = 0;

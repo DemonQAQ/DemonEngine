@@ -1,18 +1,18 @@
 ﻿//
-// Created by Demon on 2024/3/6.
+// Created by Demon on 2024/3/7.
 //
 
-#ifndef DEMONENGINE_MEDIAMANAGER_HPP
-#define DEMONENGINE_MEDIAMANAGER_HPP
+#ifndef DEMONENGINE_CONFIGMANAGER_HPP
+#define DEMONENGINE_CONFIGMANAGER_HPP
 
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/interface/IFileManager.hpp"
 
 namespace assets
 {
-    class MediaManager : implements IFileManager
+    class ConfigManager : implements IFileManager
     {
-        base::UUID LoadResource(const std::string &path) override
+        void LoadResource(const std::string &path) override
         {
 
         }
@@ -34,4 +34,4 @@ namespace assets
     };
 }
 
-#endif //DEMONENGINE_MEDIAMANAGER_HPP
+#endif //DEMONENGINE_CONFIGMANAGER_HPP

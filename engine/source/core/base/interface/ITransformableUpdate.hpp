@@ -11,7 +11,7 @@
 
 namespace base
 {
-    class ITransformableUpdate : implements ITransformable
+    interface ITransformableUpdate : implements ITransformable
     {
     protected:
         bool transformDirty = false;

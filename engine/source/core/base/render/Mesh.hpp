@@ -8,72 +8,45 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <memory>
 #include "Texture.hpp"
 #include "Vertex.hpp"
-#include "core/base/interface/Interface.hpp"
-#include "core/base/interface/ITransformable.hpp"
-#include "core/base/common/Transform.hpp"
 #include "core/base/interface/IRenderable.hpp"
-#include "Model.hpp"
 #include "core/base/interface/INameable.hpp"
+#include "core/base/interface/ITransformableUpdate.hpp"
 
 namespace base
 {
+    class Model;
+
     class Mesh : implements IRenderable, ITransformableUpdate, INameable
     {
     private:
         std::string name;
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
-        std::vector<Texture> textures;
-        Transform transform;
+        std::vector<std::shared_ptr<Texture>> textures;
         std::weak_ptr<Model> fatherModel;
 
     public:
         Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
-             const std::vector<Texture> &textures, const base::Transform &initialTransform = base::Transform())
-                : name(std::move(name)), vertices(vertices), indices(indices), textures(textures)
-        {
-            setTransform(initialTransform);
-        }
+             const std::vector<std::shared_ptr<Texture>> &textures, const Transform &initialTransform = Transform());
 
-        void setName(const std::string &name_) override
-        {
-            this->name = name_;
-        }
+        void setName(const std::string &name_) override;
 
-        [[nodiscard]] std::string getName() const override
-        {
-            return name;
-        }
+        [[nodiscard]] std::string getName() const override;
 
-        void updateTransformsBeforeRendering() override
-        {
+        void updateTransformsBeforeRendering();
 
-        }
+        void updateActualTransform(std::vector<Transform> &additionalTransforms) override;
 
-        void updateActualTransform(std::vector<Transform> &additionalTransforms) override
-        {
-            updateSelfActualTransform(additionalTransforms);
-        }
+        void updateObservedActualTransform(std::vector<Transform> &additionalTransforms) override;
 
-        void updateObservedActualTransform(std::vector<Transform> &additionalTransforms) override
-        {}
+        RenderData getRenderData(Transform combinedTransform) override;
 
-        RenderData getRenderData(Transform combinedTransform) override
-        {
+        void setFatherModel(const std::shared_ptr<Model> &model);
 
-        }
-
-        void setFatherModel(const std::shared_ptr<Model> &model)
-        {
-            fatherModel = model;
-        }
-
-        [[nodiscard]] Transform getLocalTransform() const override
-        {
-            return getTransform();
-        }
+        [[nodiscard]] Transform getLocalTransform() const override;
     };
 }
 

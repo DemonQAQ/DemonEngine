@@ -12,9 +12,15 @@
 
 namespace assets
 {
-    class ShaderManager: implements IFileManager
+    class ShaderManager : implements IFileManager
     {
+        std::optional<base::UUID> LoadResource(const std::vector<std::any> &params) override;
 
+        void UnloadResource(const std::vector<std::any> &params) override;
+
+        [[nodiscard]] bool IsResourceLoaded(const std::string &path) const override;
+
+        void UpdateResource(const std::string &path) override;
     };
 }
 

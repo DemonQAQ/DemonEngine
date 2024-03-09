@@ -9,28 +9,33 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "core/base/interface/Interface.hpp"
+#include "UUID.hpp"
 
 namespace base
 {
     class Object
     {
     public:
-        // 默认构造函数
-        Object() : uuid(boost::uuids::random_generator()())
-        {}
+        Object() : uuid(UUID()) {}
 
-        // 获取对象的UUID
-        [[nodiscard]] std::string getUuid() const
-        {
-            return boost::uuids::to_string(uuid);
-        }
+        explicit Object(const std::string& str) : uuid(str.empty() ? UUID() : UUID(str)) {}
 
-        // 虚析构函数，确保子类的正确析构
+        explicit Object(const UUID& existingUuid) : uuid(existingUuid) {}
+
         virtual ~Object() = default;
 
+        [[nodiscard]] std::string getUuidStr() const
+        {
+            return uuid.toString();
+        }
+
+        [[nodiscard]] UUID getUuid() const
+        {
+            return uuid;
+        }
+
     private:
-        // 对象的唯一标识符
-        const boost::uuids::uuid uuid;
+        UUID uuid;
     };
 }
 
