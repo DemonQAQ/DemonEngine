@@ -12,25 +12,13 @@ namespace assets
 {
     class ConfigManager : implements IFileManager
     {
-        std::optional<base::UUID> LoadResource(const std::vector<std::any>& params) override
-        {
+        std::optional<base::UUID> LoadResource(const std::vector<std::any>& params) override;
 
-        }
+        void UnloadResource(const std::vector<std::any>& params) override;
 
-        void UnloadResource(const std::vector<std::any>& params) override
-        {
+        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override;
 
-        }
-
-        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override
-        {
-
-        }
-
-        void UpdateResource(const std::vector<std::any>& params) override
-        {
-
-        }
+        void UpdateResource(const std::vector<std::any>& params) override;
     };
 }
 

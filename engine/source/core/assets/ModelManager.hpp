@@ -33,6 +33,7 @@ namespace assets
 
         void UpdateResource(const std::vector<std::any>& params) override;
 
+        std::optional<std::shared_ptr<base::Model>> GetResourceByUuid(const base::UUID &uuid);
     private:
         std::optional<base::Model> loadModel(const std::string &path);
 

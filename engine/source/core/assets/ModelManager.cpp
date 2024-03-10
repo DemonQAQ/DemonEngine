@@ -25,8 +25,8 @@ std::optional<base::UUID> ModelManager::LoadResource(const std::vector<std::any>
         return std::nullopt;
     }
 
-
-    if (IsResourceLoaded(path))
+    std::vector<std::any> paramsForCheck = {path};
+    if (IsResourceLoaded(paramsForCheck))
     {
         std::cout << "资源已加载：" << path << std::endl;
         // You need to return the existing model's UUID here
@@ -46,12 +46,12 @@ void ModelManager::UnloadResource(const std::vector<std::any> &params)
     // Implementation of UnloadResource
 }
 
-bool ModelManager::IsResourceLoaded(const std::vector<std::any>& params) const
+bool ModelManager::IsResourceLoaded(const std::vector<std::any> &params) const
 {
     // Implementation of IsResourceLoaded
 }
 
-void ModelManager::UpdateResource(const std::vector<std::any>& params)
+void ModelManager::UpdateResource(const std::vector<std::any> &params)
 {
     // Implementation of UpdateResource
 }
@@ -92,7 +92,7 @@ void ModelManager::processNode(const std::shared_ptr<base::Node> &node, aiNode *
                 mesh->mName.length > 0 ? mesh->mName.C_Str() : "mesh" + std::to_string(meshIndex++);
 
         auto newMesh = processMesh(mesh, scene, meshName, directory, texturesLoaded);
-        node->meshes.push_back(newMesh); // 现在正确地添加了 std::shared_ptr<Mesh>
+        node->meshes.push_back(newMesh);
     }
 
     for (unsigned int i = 0; i < aiNode->mNumChildren; i++)
@@ -190,4 +190,9 @@ ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string 
     }
 
     return std::make_shared<base::Mesh>(meshName, vertices, indices, textures);
+}
+
+std::optional<std::shared_ptr<base::Model>> ModelManager::GetResourceByUuid(const base::UUID &uuid)
+{
+
 }

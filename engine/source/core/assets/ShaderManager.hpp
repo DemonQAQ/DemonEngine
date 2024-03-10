@@ -24,6 +24,8 @@ namespace assets
         [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override;
 
         void UpdateResource(const std::vector<std::any>& params) override;
+
+        std::optional<std::shared_ptr<base::Shader>> GetResourceByUuid(const base::UUID &uuid);
     };
 }
 

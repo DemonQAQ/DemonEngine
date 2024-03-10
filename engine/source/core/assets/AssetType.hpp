@@ -45,6 +45,7 @@ namespace assets
                     {".glsl",  AssetType::SHADER},
                     {".hlsl",  AssetType::SHADER},
                     {".json",  AssetType::CONFIG},
+                    {".yml",  AssetType::CONFIG},
                     {".xml",   AssetType::CONFIG}
             };
 
