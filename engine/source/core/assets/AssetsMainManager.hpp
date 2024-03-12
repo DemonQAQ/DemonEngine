@@ -23,7 +23,7 @@ namespace assets
     public:
         static void initialize()
         {
-
+            initializeManager();
         }
 
         static void finalize()
@@ -49,5 +49,7 @@ namespace assets
 
         }
     };
+
+    std::unordered_map<AssetType, std::shared_ptr<IFileManager>> AssetsMainManager::MANAGERS;
 }
 #endif //DEMONENGINE_ASSETSMAINMANAGER_HPP

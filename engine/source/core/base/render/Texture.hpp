@@ -9,6 +9,7 @@
 
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
+#include "stb_image.h"
 
 namespace base
 {

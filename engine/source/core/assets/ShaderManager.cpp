@@ -84,7 +84,7 @@ void ShaderManager::UpdateResource(const std::vector<std::any> &params)
 
 std::optional<std::shared_ptr<base::Shader>> ShaderManager::GetResourceByUuid(const base::UUID &uuid)
 {
-
+    return std::nullopt;
 }
 
 

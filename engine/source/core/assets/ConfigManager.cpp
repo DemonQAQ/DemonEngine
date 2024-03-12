@@ -8,7 +8,7 @@ using namespace assets;
 
 std::optional<base::UUID> assets::ConfigManager::LoadResource(const std::vector<std::any> &params)
 {
-
+    return std::nullopt;
 }
 
 void ConfigManager::UnloadResource(const std::vector<std::any> &params)

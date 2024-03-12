@@ -7,7 +7,7 @@ using namespace assets;
 
 std::optional<base::UUID> assets::MaterialsManager::LoadResource(const std::vector<std::any> &params)
 {
-
+    return std::nullopt;
 }
 
 void MaterialsManager::UnloadResource(const std::vector<std::any> &params)

@@ -5,6 +5,8 @@
 
 using namespace assets;
 
+std::unordered_map<base::UUID, std::shared_ptr<base::Texture>> TextureManager::loadedTextures;
+
 //params1 = path(string), params2 = textureType(base::TextureType)
 std::optional<base::UUID> TextureManager::LoadResource(const std::vector<std::any> &params)
 {
@@ -87,7 +89,7 @@ void TextureManager::UnloadResource(const std::vector<std::any> &params)
 
 [[nodiscard]] bool TextureManager::IsResourceLoaded(const std::vector<std::any>& params) const
 {
-
+    return false;
 }
 
 void TextureManager::UpdateResource(const std::vector<std::any>& params)

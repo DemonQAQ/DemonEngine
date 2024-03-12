@@ -49,6 +49,7 @@ void ModelManager::UnloadResource(const std::vector<std::any> &params)
 bool ModelManager::IsResourceLoaded(const std::vector<std::any> &params) const
 {
     // Implementation of IsResourceLoaded
+    return false;
 }
 
 void ModelManager::UpdateResource(const std::vector<std::any> &params)
@@ -194,5 +195,5 @@ ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string 
 
 std::optional<std::shared_ptr<base::Model>> ModelManager::GetResourceByUuid(const base::UUID &uuid)
 {
-
+    return std::nullopt;
 }
