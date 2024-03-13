@@ -64,7 +64,7 @@ namespace io
 
     bool JsonConfiguration::contains(const std::string &path) const
     {
-        return false;
+        return tree.get_optional<std::string>(path).has_value();
     }
 
     std::shared_ptr<IConfigurationSection> JsonConfiguration::createSection(const std::string &path)
@@ -74,78 +74,202 @@ namespace io
 
     bool JsonConfiguration::getBoolean(const std::string &path, bool def) const
     {
-        return false;
+        return tree.get(path, def);
+    }
+
+    bool JsonConfiguration::getBoolean(const std::string &path) const
+    {
+        return getBoolean(path, false);
     }
 
     int JsonConfiguration::getInt(const std::string &path, int def) const
     {
-        return 0;
+        return tree.get(path, def);
+    }
+
+    int JsonConfiguration::getInt(const std::string &path) const
+    {
+        return getInt(path, 0);
     }
 
     double JsonConfiguration::getDouble(const std::string &path, double def) const
     {
-        return 0;
+        return tree.get(path, def);
+    }
+
+    double JsonConfiguration::getDouble(const std::string &path) const
+    {
+        return getDouble(path, 0.0);
+    }
+
+    float JsonConfiguration::getFloat(const std::string &path, float def) const
+    {
+        return tree.get(path, def);
+    }
+
+    float JsonConfiguration::getFloat(const std::string &path) const
+    {
+        return getFloat(path,0.0);
     }
 
     std::string JsonConfiguration::getString(const std::string &path, const std::string &def) const
     {
-        return std::string();
+        return tree.get(path, def);
+    }
+
+    std::string JsonConfiguration::getString(const std::string &path) const
+    {
+        return getString(path, "");
     }
 
     std::map<std::string, std::any> JsonConfiguration::getValues(bool deep) const
     {
-        return std::map<std::string, std::any>();
+        std::map<std::string, std::any> values;
+
+        std::function<void(const boost::property_tree::ptree &, const std::string &)> parseNode =
+                [&](const boost::property_tree::ptree &node, const std::string &base_path)
+                {
+                    for (const auto &it: node)
+                    {
+                        std::string path = base_path.empty() ? it.first : base_path + "." + it.first;
+
+                        if (it.second.empty())
+                        {
+                            values[path] = it.second.data();
+                        } else if (it.second.front().first.empty())
+                        {
+                            std::vector<std::any> list;
+                            for (const auto &list_it: it.second)
+                            {
+                                if (list_it.second.empty())list.emplace_back(list_it.second.data());
+                                else{}
+                            }
+                            values[path] = list;
+                        } else
+                        {
+                            if (deep)
+                            {
+                                std::map<std::string, std::any> sub_values = getValues(true);
+                                values[path] = sub_values;
+                            }
+                        }
+                    }
+                };
+
+        parseNode(tree, "");
+        return values;
+    }
+
+    std::map<std::string, std::any> JsonConfiguration::getValues() const
+    {
+        return getValues(false);
     }
 
     std::vector<std::string> JsonConfiguration::getStringList(const std::string &path) const
     {
-        return std::vector<std::string>();
+        std::vector<std::string> list;
+        for (const auto &it: tree.get_child(path))
+        {
+            list.push_back(it.second.data());
+        }
+        return list;
     }
 
     std::vector<int> JsonConfiguration::getIntList(const std::string &path) const
     {
-        return std::vector<int>();
+        std::vector<int> list;
+        try
+        {
+            for (auto &it: tree.get_child(path))
+            {
+                list.push_back(it.second.get_value<int>());
+            }
+        } catch (const boost::property_tree::ptree_error &e)
+        {
+            std::cerr << "Error accessing or converting to int list: " << e.what() << std::endl;
+        }
+        return list;
     }
 
     std::vector<float> JsonConfiguration::getFloatList(const std::string &path) const
     {
-        return std::vector<float>();
+        std::vector<float> list;
+        try
+        {
+            for (auto &it: tree.get_child(path))
+            {
+                list.push_back(it.second.get_value<float>());
+            }
+        } catch (const boost::property_tree::ptree_error &e)
+        {
+            std::cerr << "Error accessing or converting to int list: " << e.what() << std::endl;
+        }
+        return list;
     }
 
     std::vector<double> JsonConfiguration::getDoubleList(const std::string &path) const
     {
-        return std::vector<double>();
+        std::vector<double> list;
+        try
+        {
+            for (auto &it: tree.get_child(path))
+            {
+                list.push_back(it.second.get_value<double>());
+            }
+        } catch (const boost::property_tree::ptree_error &e)
+        {
+            std::cerr << "Error accessing or converting to int list: " << e.what() << std::endl;
+        }
+        return list;
     }
 
     std::vector<bool> JsonConfiguration::getBooleanList(const std::string &path) const
     {
-        return std::vector<bool>();
+        std::vector<bool> list;
+        try
+        {
+            for (auto &it: tree.get_child(path))
+            {
+                list.push_back(it.second.get_value<bool>());
+            }
+        } catch (const boost::property_tree::ptree_error &e)
+        {
+            std::cerr << "Error accessing or converting to int list: " << e.what() << std::endl;
+        }
+        return list;
     }
 
     bool JsonConfiguration::isInt(const std::string &path) const
     {
-        return false;
+        auto opt = tree.get_optional<int>(path);
+        return opt.has_value();
     }
 
     bool JsonConfiguration::isFloat(const std::string &path) const
     {
-        return false;
+        auto opt = tree.get_optional<float>(path);
+        return opt.has_value();
     }
 
     bool JsonConfiguration::isDouble(const std::string &path) const
     {
-        return false;
+        auto opt = tree.get_optional<double>(path);
+        return opt.has_value();
     }
 
     bool JsonConfiguration::isBool(const std::string &path) const
     {
-        return false;
+        auto opt = tree.get_optional<bool>(path);
+        return opt.has_value();
     }
 
     bool JsonConfiguration::isString(const std::string &path) const
     {
-        return false;
+        auto opt = tree.get_optional<std::string>(path);
+        return opt.has_value();
     }
+
+
 }
 
 

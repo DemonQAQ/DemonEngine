@@ -34,6 +34,8 @@ namespace io
 
         [[nodiscard]] virtual double getDouble(const std::string &path, double def = 0.0) const = 0;
 
+        [[nodiscard]] virtual float getFloat(const std::string &path, float def = 0.0) const = 0;
+
         [[nodiscard]] virtual std::string getString(const std::string &path, const std::string &def = "") const = 0;
 
         [[nodiscard]] virtual std::map<std::string, std::any> getValues(bool deep = false) const = 0;

@@ -13,7 +13,7 @@
 
 namespace io
 {
-    class JsonConfiguration: implements IConfigurable, IConfigurationSection
+    class JsonConfiguration : implements IConfigurable, IConfigurationSection
     {
     private:
         boost::property_tree::ptree tree;
@@ -32,15 +32,29 @@ namespace io
 
         [[nodiscard]] std::shared_ptr<IConfigurationSection> createSection(const std::string &path) override;
 
-        [[nodiscard]] bool getBoolean(const std::string &path, bool def = false) const override;
+        [[nodiscard]] bool getBoolean(const std::string &path, bool def) const override;
 
-        [[nodiscard]] int getInt(const std::string &path, int def = 0) const override;
+        [[nodiscard]] bool getBoolean(const std::string &path) const;
 
-        [[nodiscard]] double getDouble(const std::string &path, double def = 0.0) const override;
+        [[nodiscard]] int getInt(const std::string &path, int def) const override;
 
-        [[nodiscard]] std::string getString(const std::string &path, const std::string &def = "") const override;
+        [[nodiscard]] int getInt(const std::string &path) const;
 
-        [[nodiscard]] std::map<std::string, std::any> getValues(bool deep = false) const override;
+        [[nodiscard]] float getFloat(const std::string &path, float def) const override;
+
+        [[nodiscard]] float getFloat(const std::string &path) const;
+
+        [[nodiscard]] double getDouble(const std::string &path, double def) const override;
+
+        [[nodiscard]] double getDouble(const std::string &path) const;
+
+        [[nodiscard]] std::string getString(const std::string &path, const std::string &def) const override;
+
+        [[nodiscard]] std::string getString(const std::string &path) const;
+
+        [[nodiscard]] std::map<std::string, std::any> getValues(bool deep) const override;
+
+        [[nodiscard]] std::map<std::string, std::any> getValues() const;
 
         [[nodiscard]] std::vector<std::string> getStringList(const std::string &path) const override;
 

@@ -11,7 +11,7 @@
 
 namespace base
 {
-    class Material
+    class Material : implements Object
     {
     public:
         glm::vec3 diffuse;                 // 漫反射颜色
