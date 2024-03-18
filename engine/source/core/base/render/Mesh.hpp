@@ -14,6 +14,7 @@
 #include "core/base/interface/IRenderable.hpp"
 #include "core/base/interface/INameable.hpp"
 #include "core/base/interface/ITransformableUpdate.hpp"
+#include "Material.hpp"
 
 namespace base
 {
@@ -25,12 +26,12 @@ namespace base
         std::string name;
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
-        std::vector<std::shared_ptr<Texture>> textures;
+        std::shared_ptr<Material> material;
         std::weak_ptr<Model> fatherModel;
 
     public:
         Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
-             const std::vector<std::shared_ptr<Texture>> &textures, const Transform &initialTransform = Transform());
+             const std::shared_ptr<Material> &material, const Transform &initialTransform = Transform());
 
         void setName(const std::string &name_) override;
 

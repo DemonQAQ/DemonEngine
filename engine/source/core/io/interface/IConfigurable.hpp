@@ -8,19 +8,19 @@
 #include <string>
 #include <optional>
 #include <any>
-#include "../../base/interface/Interface.hpp"
-#include "../../base/common/Object.hpp"
+#include "core/base/common/Object.hpp"
 
 namespace io
 {
-    class IConfigurable : implements Object
+    class IConfigurable : implements base::Object
     {
     public:
         virtual void load(const std::string &path) = 0;
 
         virtual void save(const std::string &path) const = 0;
 
-        explicit IConfigurable(const std::string &path) : Object(path){}
+        explicit IConfigurable(const std::string &path) : Object(path)
+        {}
 
     };
 }

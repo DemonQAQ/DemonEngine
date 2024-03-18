@@ -35,7 +35,7 @@ int base::BaseApplication::start()
         std::cerr << "Exception caught: " << e.what() << std::endl;
     } catch (...)
     {
-        std::cerr << "Unknown exception caught" << std::endl;
+        std::cerr << "UNKNOWN exception caught" << std::endl;
     }
     return 0;
 }

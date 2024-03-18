@@ -29,7 +29,10 @@ add_executable(DemonEngine ${SOURCE_FILES} engine/source/core/render/graphApi/Gr
         engine/source/core/io/config/JsonConfiguration.hpp
         engine/source/core/io/config/XmlConfiguration.cpp
         engine/source/core/io/config/XmlConfiguration.hpp
-        engine/source/core/io/interface/IConfigurationSection.hpp)
+        engine/source/core/io/interface/IConfigurationSection.hpp
+        engine/source/core/assets/AssetsMainManager.cpp
+        engine/source/core/io/FileType.hpp
+        engine/source/core/render/graphApi/OpenglApi.cpp)
 
 # 添加编译选项
 if (MSVC)

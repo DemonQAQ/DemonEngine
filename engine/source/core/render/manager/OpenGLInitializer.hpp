@@ -7,7 +7,7 @@
 
 #include "GLFW/glfw3.h"
 
-namespace base::render
+namespace render
 {
     class OpenGLInitializer
     {

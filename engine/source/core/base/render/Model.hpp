@@ -14,6 +14,7 @@
 #include "Texture.hpp"
 #include "Bone.hpp"
 #include "core/base/interface/INameable.hpp"
+#include "Material.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -44,13 +45,13 @@ namespace base
         std::string name;
         std::shared_ptr<Node> rootNode;
         std::string directory;
-        std::unordered_map<std::string, std::shared_ptr<Texture>> texturesLoaded;
+        std::unordered_map<std::string, std::shared_ptr<Material>> materialsLoaded;
         std::unordered_map<std::string, BoneInfo> bonesInfo;
         unsigned int boneCount = 0;
 
     public:
         explicit Model(const std::string &modelPath, const std::string &modelName,
-                       const std::unordered_map<std::string, std::shared_ptr<Texture>> &textures,
+                       const std::unordered_map<std::string, std::shared_ptr<Material>> &materials,
                        const std::shared_ptr<Node> &root, const Transform &initialTransform = Transform());
 
         void setName(const std::string &name_) override;

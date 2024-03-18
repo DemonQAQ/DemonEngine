@@ -7,19 +7,36 @@
 
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/interface/IFileManager.hpp"
+#include "core/base/render/Material.hpp"
+#include "assimp/material.h"
+#include "TextureManager.hpp"
+#include "core/io/config/JsonConfiguration.hpp"
 
 namespace assets
 {
     class MaterialsManager : implements IFileManager
     {
+    private:
+        static std::unordered_map<base::UUID, std::shared_ptr<base::Material>> loadedMaterial;
     public:
-        std::optional<base::UUID> LoadResource(const std::vector<std::any>& params) override;
+        /**
+         * 参数传入aiMaterial* aiMat/io::JsonConfiguration& jsonConfig加载单个Material实例并返回UUID
+         * */
+        std::optional<base::UUID> LoadResource(const std::vector<std::any> &params) override;
 
-        void UnloadResource(const std::vector<std::any>& params) override;
+        void UnloadResource(const std::vector<std::any> &params) override;
 
-        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override;
+        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any> &params) const override;
 
-        void UpdateResource(const std::vector<std::any>& params) override;
+        void UpdateResource(const std::vector<std::any> &params) override;
+
+        std::optional<std::shared_ptr<base::Material>> GetResourceByUuid(const base::UUID &uuid);
+
+        static std::string GenerateUniqueMaterialName(const aiMaterial *aiMat);
+    private:
+        std::shared_ptr<base::Material> LoadMaterialFromAssimp(const aiMaterial* aiMat);
+
+        std::shared_ptr<base::Material> LoadMaterialFromJson(const io::JsonConfiguration& jsonConfig);
     };
 }
 

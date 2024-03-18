@@ -2,6 +2,7 @@
 // Created by Demon on 2024/3/9.
 //
 #include "ModelManager.hpp"
+#include "MaterialsManager.hpp"
 #include <assimp/Importer.hpp>
 #include <iostream>
 
@@ -73,18 +74,18 @@ std::optional<base::Model> ModelManager::loadModel(const std::string &path)
     std::string modelName = directory.substr(directory.find_last_of('/') + 1);
     auto rootNode = std::make_shared<base::Node>(scene->mRootNode->mName.C_Str());
     int index = 0;
-    std::unordered_map<std::string, std::shared_ptr<base::Texture>> texturesLoaded;
+    std::unordered_map<std::string, std::shared_ptr<base::Material>> materialsLoaded;
 
     // 假设processNode函数现在接受texturesLoaded和directory参数，以正确处理纹理
-    processNode(rootNode, scene->mRootNode, scene, index, directory, texturesLoaded);
+    processNode(rootNode, scene->mRootNode, scene, index, directory, materialsLoaded);
 
-    auto model = std::make_shared<base::Model>(path, modelName, texturesLoaded, rootNode, base::Transform());
+    auto model = std::make_shared<base::Model>(path, modelName, materialsLoaded, rootNode, base::Transform());
     return model ? std::optional<base::Model>(*model) : std::nullopt;
 }
 
 void ModelManager::processNode(const std::shared_ptr<base::Node> &node, aiNode *aiNode, const aiScene *scene,
                                int &meshIndex, const std::string &directory,
-                               std::unordered_map<std::string, std::shared_ptr<base::Texture>> &texturesLoaded)
+                               std::unordered_map<std::string, std::shared_ptr<base::Material>> &materialsLoaded)
 {
     for (unsigned int i = 0; i < aiNode->mNumMeshes; i++)
     {
@@ -92,7 +93,7 @@ void ModelManager::processNode(const std::shared_ptr<base::Node> &node, aiNode *
         std::string meshName =
                 mesh->mName.length > 0 ? mesh->mName.C_Str() : "mesh" + std::to_string(meshIndex++);
 
-        auto newMesh = processMesh(mesh, scene, meshName, directory, texturesLoaded);
+        auto newMesh = processMesh(mesh, scene, meshName, directory, materialsLoaded);
         node->meshes.push_back(newMesh);
     }
 
@@ -100,33 +101,32 @@ void ModelManager::processNode(const std::shared_ptr<base::Node> &node, aiNode *
     {
         std::shared_ptr<base::Node> childNode = std::make_shared<base::Node>(
                 aiNode->mChildren[i]->mName.C_Str());
-        processNode(childNode, aiNode->mChildren[i], scene, meshIndex, directory, texturesLoaded);
+        processNode(childNode, aiNode->mChildren[i], scene, meshIndex, directory, materialsLoaded);
         node->children.push_back(childNode);
     }
 }
 
 std::shared_ptr<base::Mesh>
 ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string &meshName, const std::string &directory,
-                          std::unordered_map<std::string, std::shared_ptr<base::Texture>> &texturesLoaded)
+                          std::unordered_map<std::string, std::shared_ptr<base::Material>> &materialsLoaded)
 {
     std::vector<base::Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<std::shared_ptr<base::Texture>> textures;
-    aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+    std::shared_ptr<base::Material> material = nullptr; // Initialize material pointer
 
-    // 处理顶点数据
+    // Process vertex data
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         base::Vertex vertex;
         glm::vec3 vector;
 
-        // 处理位置
+        // Position
         vector.x = mesh->mVertices[i].x;
         vector.y = mesh->mVertices[i].y;
         vector.z = mesh->mVertices[i].z;
         vertex.position = vector;
 
-        // 处理法线
+        // Normals
         if (mesh->HasNormals())
         {
             vector.x = mesh->mNormals[i].x;
@@ -135,7 +135,7 @@ ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string 
             vertex.normal = vector;
         }
 
-        // 处理纹理坐标
+        // Texture Coordinates
         if (mesh->mTextureCoords[0])
         {
             glm::vec2 vec;
@@ -150,7 +150,7 @@ ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string 
         vertices.push_back(vertex);
     }
 
-    // 处理索引
+    // Process indices
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
         aiFace face = mesh->mFaces[i];
@@ -160,37 +160,35 @@ ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string 
         }
     }
 
-    // 处理纹理
-    auto managerOpt = assets::AssetsMainManager::getManager(assets::AssetType::TEXTURE);
-    if (managerOpt)
+    // Material processing
+    if (mesh->mMaterialIndex >= 0)
     {
-        auto textureManagerPtr = std::dynamic_pointer_cast<assets::TextureManager>(managerOpt.value());
-        if (textureManagerPtr)
+        aiMaterial *aiMat = scene->mMaterials[mesh->mMaterialIndex];
+        std::string materialName = MaterialsManager::GenerateUniqueMaterialName(aiMat);
+
+        if (materialsLoaded.find(materialName) == materialsLoaded.end())
         {
-            for (aiTextureType aiType: supportedAiTextureTypes)
+            std::vector<std::any> params = {aiMat};
+            auto materialsManagerOpt = AssetsMainManager::getManager(AssetType::MATERIALS);
+            if (materialsManagerOpt)
             {
-                base::TextureType type = aiTextureTypeToTextureType(aiType);
-                if (type == base::TextureType::Unknown) continue;
-
-                for (unsigned int i = 0; i < material->GetTextureCount(aiType); i++)
+                auto materialsManagerPtr = std::dynamic_pointer_cast<assets::MaterialsManager>(
+                        materialsManagerOpt.value());
+                auto materialUuid = materialsManagerPtr->LoadResource(params);
+                if (materialUuid.has_value())
                 {
-                    aiString path;
-                    material->GetTexture(aiType, i, &path);
-                    std::string texturePath = directory + "/" + path.C_Str();
-                    std::vector<std::any> params = {texturePath, type};
-                    auto textureUuid = textureManagerPtr->LoadResource(params);
-
-                    if (textureUuid.has_value())
+                    auto mat = materialsManagerPtr->GetResourceByUuid(materialUuid.value());
+                    if (mat.has_value())
                     {
-                        auto texture = textureManagerPtr->GetResourceByUuid(textureUuid.value());
-                        if (texture.has_value())textures.push_back(texture.value());
+                        materialsLoaded[materialName] = mat.value();
+                        material = mat.value();
                     }
                 }
             }
-        }
+        } else material = materialsLoaded[materialName];
     }
 
-    return std::make_shared<base::Mesh>(meshName, vertices, indices, textures);
+    return std::make_shared<base::Mesh>(meshName, vertices, indices, material);
 }
 
 std::optional<std::shared_ptr<base::Model>> ModelManager::GetResourceByUuid(const base::UUID &uuid)

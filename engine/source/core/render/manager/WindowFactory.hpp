@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <functional>
 
-namespace base::render
+namespace render
 {
 
     void framebuffer_size_callback(GLFWwindow *window, int width, int height);

@@ -6,7 +6,7 @@
 #include <iostream>
 
 using namespace base;
-using namespace base::render;
+using namespace render;
 
 namespace runtime
 {

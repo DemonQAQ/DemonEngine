@@ -20,19 +20,19 @@ namespace assets
         switch (aiType)
         {
             case aiTextureType_DIFFUSE:
-                return base::TextureType::Diffuse;
+                return base::TextureType::DIFFUSE;
             case aiTextureType_SPECULAR:
-                return base::TextureType::Specular;
+                return base::TextureType::SPECULAR;
             case aiTextureType_HEIGHT:
-                return base::TextureType::Height;
+                return base::TextureType::HEIGHT;
             case aiTextureType_AMBIENT:
-                return base::TextureType::AmbientOcclusion;
+                return base::TextureType::AMBIENT_OCCLUSION;
             case aiTextureType_EMISSIVE:
-                return base::TextureType::Emissive;
+                return base::TextureType::EMISSIVE;
             case aiTextureType_NORMALS:
-                return base::TextureType::Normal;
+                return base::TextureType::NORMAL;
             default:
-                return base::TextureType::Unknown;
+                return base::TextureType::UNKNOWN;
         }
     }
 
@@ -44,17 +44,6 @@ namespace assets
             aiTextureType_EMISSIVE,
             aiTextureType_NORMALS,
     };
-
-    static base::TextureType fromStringToTextureType(const std::string &typeName)
-    {
-        if (typeName == "_diffuse") return base::TextureType::Diffuse;
-        else if (typeName == "_specular") return base::TextureType::Specular;
-        else if (typeName == "_normal") return base::TextureType::Normal;
-        else if (typeName == "_height") return base::TextureType::Height;
-        else if (typeName == "_ambientOcclusion") return base::TextureType::AmbientOcclusion;
-        else if (typeName == "_emissive") return base::TextureType::Emissive;
-        else return base::TextureType::Unknown;
-    }
 
     class TextureManager : implements IFileManager
     {

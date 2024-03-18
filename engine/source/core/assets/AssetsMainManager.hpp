@@ -12,7 +12,6 @@
 #include "core/base/interface/Interface.hpp"
 #include "AssetType.hpp"
 #include "core/assets/interface/IFileManager.hpp"
-#include "TextureManager.hpp"
 
 namespace assets
 {
@@ -28,7 +27,7 @@ namespace assets
 
         static void finalize()
         {
-
+            finalizeManager();
         }
 
         static std::optional<std::shared_ptr<IFileManager>> getManager(AssetType assetType)
@@ -39,17 +38,12 @@ namespace assets
         }
 
     private:
-        static void initializeManager()
-        {
-            MANAGERS.insert({AssetType::TEXTURE, std::make_shared<TextureManager>()});
-        }
+        static void initializeManager();
 
         static void finalizeManager()
         {
 
         }
     };
-
-    std::unordered_map<AssetType, std::shared_ptr<IFileManager>> AssetsMainManager::MANAGERS;
 }
 #endif //DEMONENGINE_ASSETSMAINMANAGER_HPP

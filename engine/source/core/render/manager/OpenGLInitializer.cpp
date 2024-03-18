@@ -7,7 +7,7 @@
 #include "OpenGLInitializer.hpp"
 
 
-namespace base::render
+namespace render
 {
     bool OpenGLInitializer::initializeOpenGL(GLFWwindow *window)
     {

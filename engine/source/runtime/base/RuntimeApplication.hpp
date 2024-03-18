@@ -8,7 +8,7 @@
 #include "core/base/common/Application.hpp"
 
 using namespace base;
-using namespace base::render;
+using namespace render;
 
 namespace runtime
 {

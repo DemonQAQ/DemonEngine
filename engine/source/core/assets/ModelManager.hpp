@@ -29,21 +29,22 @@ namespace assets
 
         void UnloadResource(const std::vector<std::any> &params) override;
 
-        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override;
+        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any> &params) const override;
 
-        void UpdateResource(const std::vector<std::any>& params) override;
+        void UpdateResource(const std::vector<std::any> &params) override;
 
         std::optional<std::shared_ptr<base::Model>> GetResourceByUuid(const base::UUID &uuid);
+
     private:
         std::optional<base::Model> loadModel(const std::string &path);
 
         void processNode(const std::shared_ptr<base::Node> &node, aiNode *aiNode, const aiScene *scene, int &meshIndex,
                          const std::string &directory,
-                         std::unordered_map<std::string, std::shared_ptr<base::Texture>> &texturesLoaded);
+                         std::unordered_map<std::string, std::shared_ptr<base::Material>> &materialsLoaded);
 
         std::shared_ptr<base::Mesh>
         processMesh(aiMesh *mesh, const aiScene *scene, const std::string &meshName, const std::string &directory,
-                    std::unordered_map<std::string, std::shared_ptr<base::Texture>> &texturesLoaded);
+                    std::unordered_map<std::string, std::shared_ptr<base::Material>> &materialsLoaded);
     };
 }
 

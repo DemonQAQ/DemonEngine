@@ -4,8 +4,8 @@
 using namespace base;
 
 Mesh::Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
-           const std::vector<std::shared_ptr<Texture>> &textures, const Transform &initialTransform)
-        : name(std::move(name)), vertices(vertices), indices(indices), textures(textures)
+           const std::shared_ptr<Material> &material, const Transform &initialTransform)
+        : name(std::move(name)), vertices(vertices), indices(indices), material(material)
 {
     setTransform(initialTransform);
 }

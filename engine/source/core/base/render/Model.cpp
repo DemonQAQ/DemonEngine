@@ -8,9 +8,9 @@
 using namespace base;
 
 Model::Model(const std::string &modelPath, const std::string &modelName,
-             const std::unordered_map<std::string, std::shared_ptr<Texture>> &textures,
+             const std::unordered_map<std::string, std::shared_ptr<Material>> &materials,
              const std::shared_ptr<Node> &root, const Transform &initialTransform)
-        : Object(modelPath + modelName), name(modelName), rootNode(root), directory(modelPath), texturesLoaded(textures)
+        : Object(modelPath + modelName), name(modelName), rootNode(root), directory(modelPath), materialsLoaded(materials)
 {
     setTransform(initialTransform);
     // Initialize bonesInfo, boneCount, etc. here if necessary

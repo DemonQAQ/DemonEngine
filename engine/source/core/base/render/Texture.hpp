@@ -10,39 +10,51 @@
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
 #include "stb_image.h"
+#include "glad/glad.h"
 
 namespace base
 {
     enum class TextureType
     {
-        Diffuse,
-        Specular,
-        Normal,
-        Height,
-        AmbientOcclusion,
-        Emissive,
-        Unknown
+        DIFFUSE,
+        SPECULAR,
+        NORMAL,
+        HEIGHT,
+        AMBIENT_OCCLUSION,
+        EMISSIVE,
+        UNKNOWN
     };
 
     inline const char *toString(base::TextureType type)
     {
         switch (type)
         {
-            case TextureType::Diffuse:
+            case TextureType::DIFFUSE:
                 return "_diffuse";
-            case TextureType::Specular:
+            case TextureType::SPECULAR:
                 return "_specular";
-            case TextureType::Normal:
+            case TextureType::NORMAL:
                 return "_normal";
-            case TextureType::Height:
+            case TextureType::HEIGHT:
                 return "_height";
-            case TextureType::AmbientOcclusion:
+            case TextureType::AMBIENT_OCCLUSION:
                 return "_ambientOcclusion";
-            case TextureType::Emissive:
+            case TextureType::EMISSIVE:
                 return "_emissive";
             default:
                 return "";
         }
+    }
+
+    static base::TextureType fromStringToTextureType(const std::string &typeName)
+    {
+        if (typeName == "_diffuse") return base::TextureType::DIFFUSE;
+        else if (typeName == "_specular") return base::TextureType::SPECULAR;
+        else if (typeName == "_normal") return base::TextureType::NORMAL;
+        else if (typeName == "_height") return base::TextureType::HEIGHT;
+        else if (typeName == "_ambientOcclusion") return base::TextureType::AMBIENT_OCCLUSION;
+        else if (typeName == "_emissive") return base::TextureType::EMISSIVE;
+        else return base::TextureType::UNKNOWN;
     }
 
     class Texture : implements Object
@@ -59,6 +71,11 @@ namespace base
         Texture(unsigned int id, TextureType type, std::string path, const UUID &uuid)
                 : Object(uuid), id(id), type(type), texturePath(std::move(path))
         {}
+
+        [[nodiscard]] std::string getTypeName() const
+        {
+            return toString(type);
+        }
     };
 };
 

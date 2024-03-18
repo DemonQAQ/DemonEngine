@@ -8,7 +8,7 @@
 #include <functional>
 #include "WindowFactory.hpp"
 
-namespace base::render
+namespace render
 {
 
     void framebuffer_size_callback(GLFWwindow *window, int width, int height)

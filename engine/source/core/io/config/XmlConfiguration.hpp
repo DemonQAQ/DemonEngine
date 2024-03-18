@@ -50,7 +50,7 @@ namespace io
 
         [[nodiscard]] std::string getString(const std::string &path, const std::string &def) const override;
 
-        [[nodiscard]] std::string getString(const std::string &path) const override;
+        [[nodiscard]] std::string getString(const std::string &path) const;
 
         [[nodiscard]] std::map<std::string, std::any> getValues(bool deep) const override;
 
