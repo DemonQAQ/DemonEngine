@@ -5,7 +5,10 @@
 #ifndef DEMONENGINE_GRAPHAPI_HPP
 #define DEMONENGINE_GRAPHAPI_HPP
 
+#define M_PI 3.14159265358979323846
+
 #include <memory>
+#include <any>
 #include "core/base/interface/Interface.hpp"
 #include "core/base/render/Mesh.hpp"
 #include "core/base/render/Shader.hpp"
@@ -43,24 +46,28 @@ namespace render
     interface GraphApi
     {
     public:
+        virtual void init(const std::vector<std::any>& params) = 0;
+
         virtual void bindContext(GLFWwindow* window) = 0;
         virtual void unbindContext() = 0;
 
         // 基础绘制操作
-        virtual void drawLine(float x1, float y1, float x2, float y2) = 0;
-        virtual void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3) = 0;
-        virtual void drawRectangle(float x, float y, float width, float height) = 0;
-        virtual void drawCircle(float centerX, float centerY, float radius) = 0;
+        virtual void drawLine(float x1, float y1, float x2, float y2, const glm::vec4& color) = 0;
+        virtual void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, const glm::vec4& color) = 0;
+        virtual void drawRectangle(float x, float y, float width, float height, const glm::vec4& color) = 0;
+        virtual void drawCircle(float centerX, float centerY, float radius, const glm::vec4& color) = 0;
 
+        virtual void drawImage(const std::shared_ptr<base::Texture>& texture, float x, float y, float width, float height, const glm::vec4& color = glm::vec4(1.0f)) = 0;
         virtual void drawMesh(std::shared_ptr<base::Mesh> mesh) = 0;
         virtual void drawModel(std::shared_ptr<base::Model> model) = 0;
         virtual void executeDrawCall(const DrawCall& drawCall) = 0;
 
         virtual void useShader(std::shared_ptr<base::Shader> shader) = 0;
-        virtual void releaseShader(std::shared_ptr<base::Shader> shader) = 0;
+        virtual std::shared_ptr<base::Shader> getUsingShader()=0;
+        virtual void releaseShader() = 0;
 
         virtual void bindTexture(std::shared_ptr<base::Texture> texture) = 0;
-        virtual void unbindTexture(std::shared_ptr<base::Texture> texture) = 0;
+        virtual void unbindTexture(const std::vector<std::any>& params) = 0;
 
         // 渲染状态管理
         virtual void setBlendMode(BlendMode mode) = 0;

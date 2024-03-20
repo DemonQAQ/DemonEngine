@@ -52,3 +52,33 @@ Transform Mesh::getLocalTransform() const
 {
     return transform;
 }
+
+const std::vector<Vertex> &Mesh::getVertices() const
+{
+    return vertices;
+}
+
+void Mesh::setVertices(const std::vector<Vertex> &vertices_)
+{
+    Mesh::vertices = vertices_;
+}
+
+const std::vector<unsigned int> &Mesh::getIndices() const
+{
+    return indices;
+}
+
+void Mesh::setIndices(const std::vector<unsigned int> &indices_)
+{
+    Mesh::indices = indices_;
+}
+
+const std::shared_ptr<Material> &Mesh::getMaterial() const
+{
+    return material;
+}
+
+void Mesh::setMaterial(const std::shared_ptr<Material> &material_)
+{
+    Mesh::material = material_;
+}

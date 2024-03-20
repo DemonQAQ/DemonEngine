@@ -33,6 +33,18 @@ namespace base
         Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
              const std::shared_ptr<Material> &material, const Transform &initialTransform = Transform());
 
+        [[nodiscard]] const std::vector<Vertex> &getVertices() const;
+
+        void setVertices(const std::vector<Vertex> &vertices_);
+
+        [[nodiscard]] const std::vector<unsigned int> &getIndices() const;
+
+        void setIndices(const std::vector<unsigned int> &indices_);
+
+        [[nodiscard]] const std::shared_ptr<Material> &getMaterial() const;
+
+        void setMaterial(const std::shared_ptr<Material> &material_);
+
         void setName(const std::string &name_) override;
 
         [[nodiscard]] std::string getName() const override;
