@@ -6,6 +6,8 @@
 #define DEMONENGINE_ITRANSFORMABLEUPDATE_HPP
 
 #include "Interface.hpp"
+#include <vector>
+#include <any>
 #include "ITransformable.hpp"
 #include "core/base/common/Transform.hpp"
 
@@ -15,12 +17,14 @@ namespace base
     {
     protected:
         bool transformDirty = false;
+        bool updated = false;
     public:
         Transform transform;
 
         ~ITransformableUpdate() override = default;
 
-        virtual void updateTransformsBeforeRendering() = 0;
+        virtual void beforeRendering(const std::vector<std::any>& params) = 0;
+        virtual void afterRendering(const std::vector<std::any>& params) = 0;
 
         [[nodiscard]] bool isTransformDirty() const
         {

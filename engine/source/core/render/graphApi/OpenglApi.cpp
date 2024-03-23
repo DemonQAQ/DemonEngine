@@ -2,6 +2,8 @@
 // Created by Demon on 2024/3/19.
 //
 #include "OpenglApi.hpp"
+#include "core/assets/MaterialsManager.hpp"
+#include "core/assets/AssetsMainManager.hpp"
 
 using namespace render;
 
@@ -265,13 +267,18 @@ void OpenglApi::drawImage(const std::shared_ptr<base::Texture> &texture, float x
 
 void OpenglApi::drawMesh(std::shared_ptr<base::Mesh> mesh)
 {
-    //todo 实现getRenderData
     if (!mesh) return;
 
     auto &vertices = mesh->getVertices();
     auto &indices = mesh->getIndices();
-    auto material = mesh->getMaterial();
-
+    base::UUID* materialUUID = mesh->getMaterial();
+    std::optional<std::shared_ptr<base::Material>> material;
+    auto materialsManagerOpt = assets::AssetsMainManager::getManager(assets::AssetType::MATERIALS);
+    if (materialsManagerOpt)
+    {
+        auto materialsManagerPtr = std::dynamic_pointer_cast<assets::MaterialsManager>(materialsManagerOpt.value());
+        if (materialUUID)material = materialsManagerPtr->GetResourceByUuid(*materialUUID);
+    }
     if (!usingShader)useShader(normalShader);
 
     GLuint VAO, VBO, EBO;
@@ -303,13 +310,15 @@ void OpenglApi::drawMesh(std::shared_ptr<base::Mesh> mesh)
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(base::Vertex), (void *) offsetof(base::Vertex, bitangent));
     glEnableVertexAttribArray(4);
 
-    // Bind appropriate textures
-    for (const auto &texPair: material->getTextures())
+    if (material.has_value())
     {
-        for (const auto &uuidTexPair: texPair.second)
+        for (const auto &texPair: material.value()->getTextures())
         {
-            auto texture = uuidTexPair.second;
-            bindTexture(texture);
+            for (const auto &uuidTexPair: texPair.second)
+            {
+                auto texture = uuidTexPair.second;
+                bindTexture(texture);
+            }
         }
     }
 

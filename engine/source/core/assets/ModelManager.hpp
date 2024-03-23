@@ -38,13 +38,13 @@ namespace assets
     private:
         std::optional<base::Model> loadModel(const std::string &path);
 
-        void processNode(const std::shared_ptr<base::Node> &node, aiNode *aiNode, const aiScene *scene, int &meshIndex,
-                         const std::string &directory,
-                         std::unordered_map<std::string, std::shared_ptr<base::Material>> &materialsLoaded);
+        void processNode(const std::shared_ptr<base::Node> &node, aiNode *aiNode, const aiScene *scene,
+                         int &meshIndex, const std::string &directory, const base::Transform &parentTransform);
 
-        std::shared_ptr<base::Mesh>
-        processMesh(aiMesh *mesh, const aiScene *scene, const std::string &meshName, const std::string &directory,
-                    std::unordered_map<std::string, std::shared_ptr<base::Material>> &materialsLoaded);
+        std::shared_ptr<base::Mesh> processMesh(aiMesh *mesh, const aiScene *scene, const std::string &meshName,
+                                                const base::Transform &nodeTransform);
+
+        static base::Transform convertAiMatrixToTransform(const aiMatrix4x4 &aiMatrix);
     };
 }
 

@@ -4,9 +4,13 @@
 using namespace base;
 
 Mesh::Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
-           const std::shared_ptr<Material> &material, const Transform &initialTransform)
-        : name(std::move(name)), vertices(vertices), indices(indices), material(material)
+           const Transform &initialTransform, UUID *shaderUUID,UUID *materialUUID) : name(std::move(name)), vertices(vertices), indices(indices)
 {
+    if (shaderUUID)bindShader(shaderUUID);
+    else bindShader(getDefaultShader());
+
+    if (materialUUID)bindMaterial(materialUUID);
+    else bindMaterial(getDefaultMaterial());
     setTransform(initialTransform);
 }
 
@@ -20,27 +24,46 @@ std::string Mesh::getName() const
     return name;
 }
 
-void Mesh::updateTransformsBeforeRendering()
+void Mesh::beforeRendering(const std::vector<std::any> &params)
 {
-// Implement logic as needed
+    if (updated)return;
+    std::vector<Transform> additionalTransforms;
+    if (!params.empty())
+    {
+        if (params[0].type() == typeid(const std::vector<Transform>))
+            additionalTransforms = std::any_cast<std::vector<Transform>>(params[0]);
+        updateGlobalTransform(additionalTransforms);
+    }
+
+    updated = true;
 }
 
-void Mesh::updateActualTransform(std::vector<Transform> &additionalTransforms)
+void Mesh::afterRendering(const std::vector<std::any> &params)
 {
-// Implement logic for updating the actual transform
-// This could involve combining additionalTransforms with the current transform
+    updated = false;
 }
 
-void Mesh::updateObservedActualTransform(std::vector<Transform> &additionalTransforms)
+void Mesh::updateGlobalTransform(std::vector<Transform> &additionalTransforms)
 {
-// Implement any additional logic as needed for observed transforms
+    if (!isTransformDirty() || additionalTransforms.empty())return;
+    setTransformDirty(false);
+    updateSelfGlobalTransform(additionalTransforms);
 }
 
-RenderData Mesh::getRenderData(Transform combinedTransform)
+void Mesh::updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms)
 {
-// Implement logic for rendering, potentially using combinedTransform
-// This function should return RenderData, which might include mesh data and other rendering parameters
-    return RenderData{}; // Placeholder return, adapt as necessary
+    return;
+}
+
+void Mesh::getRenderData(std::vector<RenderData> renderDataList)
+{
+    RenderData renderData;
+    renderData.vertices = this->vertices;
+    renderData.indices = this->indices;
+    renderData.globalTransform = getGlobalTransform();
+    renderData.useShader = this->getShader();
+    renderData.material = this->getMaterial();
+    renderDataList.push_back(renderData);
 }
 
 void Mesh::setFatherModel(const std::shared_ptr<Model> &model)
@@ -71,14 +94,4 @@ const std::vector<unsigned int> &Mesh::getIndices() const
 void Mesh::setIndices(const std::vector<unsigned int> &indices_)
 {
     Mesh::indices = indices_;
-}
-
-const std::shared_ptr<Material> &Mesh::getMaterial() const
-{
-    return material;
-}
-
-void Mesh::setMaterial(const std::shared_ptr<Material> &material_)
-{
-    Mesh::material = material_;
 }

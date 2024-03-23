@@ -9,32 +9,35 @@
 #include "core/base/render/Shader.hpp"
 #include "core/base/render/Mesh.hpp"
 #include "core/render/graphApi/GraphApi.hpp"
+#include "core/base/render/Light.hpp"
 
 namespace render
 {
-    class DrawCall
+    struct normalData
+    {
+        glm::mat4 globalTransform;
+        std::vector<base::Vertex> vertices;
+        std::vector<unsigned int> indices;
+    };
+
+    interface DrawCall
     {
     public:
-        std::shared_ptr<base::Shader> shader; // 使用的着色器
-        std::vector<std::shared_ptr<base::Mesh>> meshes; // 要绘制的网格集合
-        std::shared_ptr<base::Material> material; // 使用的材质
+        std::shared_ptr<base::Shader> shader;
+        std::shared_ptr<base::Material> material;
 
-        // 渲染参数
+        std::vector<normalData> data;
+
         glm::mat4 modelMatrix = glm::mat4(1.0f); // 模型变换矩阵
         glm::mat4 viewMatrix = glm::mat4(1.0f); // 视图矩阵
         glm::mat4 projectionMatrix = glm::mat4(1.0f); // 投影矩阵
 
-        // 渲染状态
-        BlendMode blendMode = BlendMode::ALPHA; // 混合模式
-        bool depthTestEnabled = true; // 深度测试是否启用
+        std::vector<base::Light> lights;
+        glm::vec3 ambientLight = glm::vec3(0.2f, 0.2f, 0.2f);
 
-        DrawCall(std::shared_ptr<base::Shader> shader,
-                 const std::vector<std::shared_ptr<base::Mesh>> &meshes,
-                 std::shared_ptr<base::Material> material)
-                : shader(shader), meshes(meshes), material(material)
-        {}
-
-        // 其他方法...
+        BlendMode blendMode = BlendMode::NONE;
+        DepthFunction depthFunction = DepthFunction::LESS;
+        CullFace cullFace = CullFace::BACK;
     };
 
 }

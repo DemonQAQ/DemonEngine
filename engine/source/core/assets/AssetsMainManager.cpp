@@ -21,7 +21,7 @@ namespace assets
         MANAGERS.insert({AssetType::MATERIALS, std::make_shared<MaterialsManager>()});
         MANAGERS.insert({AssetType::CONFIG, std::make_shared<ConfigManager>()});
         MANAGERS.insert({AssetType::SHADER, std::make_shared<ShaderManager>()});
-        MANAGERS.insert({AssetType::MEDIA, std::make_shared<MediaManager>()});
+        //MANAGERS.insert({AssetType::MEDIA, std::make_shared<MediaManager>()});
     }
 }
 

@@ -9,12 +9,10 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "Texture.hpp"
 #include "Vertex.hpp"
 #include "core/base/interface/IRenderable.hpp"
 #include "core/base/interface/INameable.hpp"
 #include "core/base/interface/ITransformableUpdate.hpp"
-#include "Material.hpp"
 
 namespace base
 {
@@ -26,12 +24,12 @@ namespace base
         std::string name;
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
-        std::shared_ptr<Material> material;
         std::weak_ptr<Model> fatherModel;
 
     public:
         Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
-             const std::shared_ptr<Material> &material, const Transform &initialTransform = Transform());
+             const Transform &initialTransform = Transform(),
+             UUID *shaderUUID = nullptr, UUID *materialUUID = nullptr);
 
         [[nodiscard]] const std::vector<Vertex> &getVertices() const;
 
@@ -41,21 +39,19 @@ namespace base
 
         void setIndices(const std::vector<unsigned int> &indices_);
 
-        [[nodiscard]] const std::shared_ptr<Material> &getMaterial() const;
-
-        void setMaterial(const std::shared_ptr<Material> &material_);
-
         void setName(const std::string &name_) override;
 
         [[nodiscard]] std::string getName() const override;
 
-        void updateTransformsBeforeRendering();
+        void beforeRendering(const std::vector<std::any> &params) override;
 
-        void updateActualTransform(std::vector<Transform> &additionalTransforms) override;
+        void afterRendering(const std::vector<std::any> &params) override;
 
-        void updateObservedActualTransform(std::vector<Transform> &additionalTransforms) override;
+        void updateGlobalTransform(std::vector<Transform> &additionalTransforms) override;
 
-        RenderData getRenderData(Transform combinedTransform) override;
+        void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) override;
+
+        void getRenderData(std::vector<RenderData> renderDataList) override;
 
         void setFatherModel(const std::shared_ptr<Model> &model);
 

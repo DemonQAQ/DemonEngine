@@ -7,40 +7,107 @@
 
 #include "core/base/common/Transform.hpp"
 #include "Interface.hpp"
+#include "core/base/render/Vertex.hpp"
+#include "core/base/render/Material.hpp"
 
 namespace base
 {
     struct RenderData
     {
-        //todo 根据需要添加熟数据结构
+        Transform globalTransform;
+        std::vector<Vertex> vertices;
+        std::vector<unsigned int> indices;
+        base::UUID *material;
+        base::UUID *useShader;
+
+        RenderData() : globalTransform(Transform()), material(nullptr), useShader(nullptr)
+        {}
     };
 
     interface IRenderable
     {
-    public:
-        virtual RenderData getRenderData(Transform transform) = 0;
+    private:
+        Transform actualTransform;
+        base::UUID *useShader;
+        base::UUID *material;
 
-        virtual void updateActualTransform(std::vector<Transform> &additionalTransforms) = 0;
+    public:
+        IRenderable() : useShader(nullptr), material(nullptr)
+        {}
+
+        virtual void getRenderData(std::vector<RenderData> renderDataList) = 0;
+
+        void bindMaterial(base::UUID *uuid)
+        {
+            this->material = uuid;
+        }
+
+        void unbindMaterial()
+        {
+            this->material = nullptr;
+        }
+
+        bool usingMaterial()
+        {
+            return this->material != nullptr;
+        }
+
+        base::UUID *getMaterial()
+        {
+            return this->material;
+        }
+
+        void bindShader(base::UUID *uuid)
+        {
+            this->useShader = uuid;
+        }
+
+        void unbindShader()
+        {
+            this->useShader = nullptr;
+        }
+
+        bool usingShader()
+        {
+            return this->useShader != nullptr;
+        }
+
+        base::UUID *getShader()
+        {
+            return this->useShader;
+        }
+
+        /**
+         * 调用此方法更新自身和相关的实例的状态
+         * */
+        virtual void updateGlobalTransform(std::vector<Transform> &additionalTransforms) = 0;
 
         [[nodiscard]] virtual Transform getLocalTransform() const = 0;
 
-        [[nodiscard]] const Transform &getActualTransform() const
+        [[nodiscard]] const Transform &getGlobalTransform() const
         {
             return actualTransform;
         }
 
     protected:
-        void updateSelfActualTransform(const std::vector<Transform> &additionalTransforms)
+        static UUID *getDefaultShader()
+        {
+            return nullptr;
+        }
+
+        static UUID *getDefaultMaterial()
+        {
+            return nullptr;
+        }
+
+        void updateSelfGlobalTransform(const std::vector<Transform> &additionalTransforms)
         {
             std::vector<Transform> transformsToMerge = {getLocalTransform()};
             transformsToMerge.insert(transformsToMerge.end(), additionalTransforms.begin(), additionalTransforms.end());
             actualTransform = Transform::merge(transformsToMerge);
         }
 
-        virtual void updateObservedActualTransform(std::vector<Transform> &additionalTransforms) = 0;
-
-    private:
-        Transform actualTransform;
+        virtual void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) = 0;
     };
 
 }

@@ -43,34 +43,38 @@ namespace base
     {
     private:
         std::string name;
-        std::shared_ptr<Node> rootNode;
         std::string directory;
-        std::unordered_map<std::string, std::shared_ptr<Material>> materialsLoaded;
+        std::shared_ptr<Node> rootNode;
         std::unordered_map<std::string, BoneInfo> bonesInfo;
         unsigned int boneCount = 0;
 
     public:
         explicit Model(const std::string &modelPath, const std::string &modelName,
-                       const std::unordered_map<std::string, std::shared_ptr<Material>> &materials,
-                       const std::shared_ptr<Node> &root, const Transform &initialTransform = Transform());
+                       const std::shared_ptr<Node> &root, const Transform &initialTransform = Transform(),
+                       UUID *shaderUUID = nullptr, UUID *materialUUID = nullptr);
 
         void setName(const std::string &name_) override;
 
         [[nodiscard]] std::string getName() const override;
 
-        void updateTransformsBeforeRendering() override;
+        void beforeRendering(const std::vector<std::any> &params) override;
 
-        void updateActualTransform(std::vector<Transform> &additionalTransforms) override;
+        void afterRendering(const std::vector<std::any> &params) override;
 
-        void updateObservedActualTransform(std::vector<Transform> &additionalTransforms) override;
+        void updateGlobalTransform(std::vector<Transform> &additionalTransforms) override;
 
-        RenderData getRenderData(Transform combinedTransform) override;
+        void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) override;
+
+        void getRenderData(std::vector<RenderData> renderDataList) override;
 
         [[nodiscard]] Transform getLocalTransform() const override;
 
         std::shared_ptr<Mesh> getMesh(const std::string &meshName);
 
         void bindMeshesToModel(const std::shared_ptr<Node> &node);
+
+    private:
+        void processNode(const std::shared_ptr<Node>& node, std::vector<RenderData>& renderDataList);
     };
 }
 

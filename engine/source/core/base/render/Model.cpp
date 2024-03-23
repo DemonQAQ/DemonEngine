@@ -8,10 +8,16 @@
 using namespace base;
 
 Model::Model(const std::string &modelPath, const std::string &modelName,
-             const std::unordered_map<std::string, std::shared_ptr<Material>> &materials,
-             const std::shared_ptr<Node> &root, const Transform &initialTransform)
-        : Object(modelPath + modelName), name(modelName), rootNode(root), directory(modelPath), materialsLoaded(materials)
+             const std::shared_ptr<Node> &root, const Transform &initialTransform,
+             UUID *shaderUUID, UUID *materialUUID)
+        : Object(modelPath + modelName), name(modelName), rootNode(root), directory(modelPath)
 {
+    if (shaderUUID)bindShader(shaderUUID);
+    else bindShader(getDefaultShader());
+
+    if (materialUUID)bindMaterial(materialUUID);
+    else bindMaterial(getDefaultMaterial());
+
     setTransform(initialTransform);
     // Initialize bonesInfo, boneCount, etc. here if necessary
     bindMeshesToModel(rootNode);
@@ -27,26 +33,52 @@ std::string Model::getName() const
     return name;
 }
 
-void Model::updateTransformsBeforeRendering()
+void Model::beforeRendering(const std::vector<std::any> &params)
 {
-    // Implementation as needed
+    if (updated)return;
+    std::vector<Transform> additionalTransforms;
+    if (!params.empty())
+    {
+        if (params[0].type() == typeid(const std::vector<Transform>))
+            additionalTransforms = std::any_cast<std::vector<Transform>>(params[0]);
+        updateGlobalTransform(additionalTransforms);
+    }
+
+    updated = true;
 }
 
-void Model::updateActualTransform(std::vector<Transform> &additionalTransforms)
+void Model::afterRendering(const std::vector<std::any> &params)
 {
-    updateSelfActualTransform(additionalTransforms);
-    updateObservedActualTransform(additionalTransforms);
+    updated = false;
 }
 
-void Model::updateObservedActualTransform(std::vector<Transform> &additionalTransforms)
+void Model::updateGlobalTransform(std::vector<Transform> &additionalTransforms)
 {
-    // Combine transforms and update child nodes as necessary
+    if (!isTransformDirty() || additionalTransforms.empty())return;
+    setTransformDirty(false);
+    updateSelfGlobalTransform(additionalTransforms);
+    updateObservedGlobalTransform(additionalTransforms);
 }
 
-RenderData Model::getRenderData(Transform combinedTransform)
+void Model::updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms)
 {
-    // Return rendering data for the model
-    return RenderData{};
+    std::vector<Transform> transformsToMerge = {getLocalTransform()};
+    transformsToMerge.insert(transformsToMerge.end(), additionalTransforms.begin(), additionalTransforms.end());
+
+    std::function<void(const std::shared_ptr<Node> &, const std::vector<Transform> &)> updateNodeTransforms;
+    updateNodeTransforms = [&](const std::shared_ptr<Node> &node, const std::vector<Transform> &parentTransforms)
+    {
+        for (const auto &mesh: node->meshes)mesh->updateGlobalTransform(transformsToMerge);
+        for (const auto &child: node->children)updateNodeTransforms(child, transformsToMerge);
+    };
+
+    if (rootNode)updateNodeTransforms(rootNode, transformsToMerge);
+}
+
+void Model::getRenderData(std::vector<RenderData> renderDataList)
+{
+    if (!rootNode)return;
+    processNode(rootNode, renderDataList);
 }
 
 Transform Model::getLocalTransform() const
@@ -63,4 +95,17 @@ std::shared_ptr<Mesh> Model::getMesh(const std::string &meshName)
 void Model::bindMeshesToModel(const std::shared_ptr<Node> &node)
 {
     // Bind meshes to model, setting fatherModel for each mesh
+}
+
+void Model::processNode(const std::shared_ptr<Node> &node, std::vector<RenderData> &renderDataList)
+{
+    for (auto &mesh: node->meshes)
+    {
+        mesh->getRenderData(renderDataList);
+    }
+
+    for (auto &child: node->children)
+    {
+        processNode(child, renderDataList);
+    }
 }
