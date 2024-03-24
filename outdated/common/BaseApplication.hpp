@@ -2,7 +2,7 @@
 // Created by Demon on 2023/5/19.
 //
 /**
- * @file    BaseApplication.h
+ * @file    OpenglApplication.h
  * @brief   none
  * @author  Demon
  * @date    2023/5/19

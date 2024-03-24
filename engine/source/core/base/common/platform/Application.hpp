@@ -6,12 +6,14 @@
 #define DEMONENGINE_APPLICATION_HPP
 
 #include "core/base/interface/Interface.hpp"
-#include "core/render/manager/WindowFactory.hpp"
+#include "core/render/pipeline/RenderManager.hpp"
 
 namespace base
 {
     interface Application
     {
+    protected:
+        std::shared_ptr<render::RenderManager> renderManager;
     public:
         virtual ~Application() = default;
 
@@ -49,48 +51,6 @@ namespace base
 
         virtual void onPostRender() = 0;    // 渲染后的操作
 
-    };
-
-    class BaseApplication : implements Application
-    {
-    private:
-        render::WindowFactory windowFactory;
-        GLFWwindow *mainWindow{};
-    public:
-        int start() override;
-
-        bool stop() override;
-
-    protected:
-        int initialize() override;
-
-        void finalize() override;
-
-        int loadAssets() override;
-
-        void unloadAssets() override;
-
-        void tick() override;
-
-        bool isQuit() override;
-
-        void onStart() override;
-
-        void onStop() override;
-
-        void onRender() override;
-
-        void onInput() override;
-
-        void onUpdate() override;
-
-        void onPhysicsUpdate() override;
-
-        void onPreRender() override;
-
-        void onPostProcess() override;
-
-        void onPostRender() override;
     };
 }
 

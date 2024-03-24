@@ -5,14 +5,14 @@
 
 #include "../../core/base/interface/Interface.hpp"
 #include "GLFW/glfw3.h"
-#include "core/base/common/Application.hpp"
+#include "core/base/common/platform/Application.hpp"
 
 using namespace base;
 using namespace render;
 
 namespace runtime
 {
-    class RuntimeApplication : implements BaseApplication
+    class RuntimeApplication : implements OpenglApplication
     {
 
     public:

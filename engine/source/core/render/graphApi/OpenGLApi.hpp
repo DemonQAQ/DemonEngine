@@ -11,7 +11,7 @@
 namespace render
 {
     //todo 池化管理VAO/VBO
-    class OpenglApi : implements GraphApi
+    class OpenGLApi : implements GraphApi
     {
     private:
         GLFWwindow *currentWindow;

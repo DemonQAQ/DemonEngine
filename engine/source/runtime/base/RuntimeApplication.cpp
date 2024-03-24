@@ -17,56 +17,56 @@ namespace runtime
 
     int RuntimeApplication::loadAssets()
     {
-        return BaseApplication::loadAssets();
+        return OpenglApplication::loadAssets();
     }
 
     void RuntimeApplication::unloadAssets()
     {
-        BaseApplication::unloadAssets();
+        OpenglApplication::unloadAssets();
     }
 
     void RuntimeApplication::onStart()
     {
-        BaseApplication::onStart();
+        OpenglApplication::onStart();
     }
 
     void RuntimeApplication::onStop()
     {
-        BaseApplication::onStop();
+        OpenglApplication::onStop();
     }
 
     void RuntimeApplication::onRender()
     {
-        BaseApplication::onRender();
+        OpenglApplication::onRender();
     }
 
     void RuntimeApplication::onInput()
     {
-        BaseApplication::onInput();
+        OpenglApplication::onInput();
     }
 
     void RuntimeApplication::onUpdate()
     {
-        BaseApplication::onUpdate();
+        OpenglApplication::onUpdate();
     }
 
     void RuntimeApplication::onPhysicsUpdate()
     {
-        BaseApplication::onPhysicsUpdate();
+        OpenglApplication::onPhysicsUpdate();
     }
 
     void RuntimeApplication::onPreRender()
     {
-        BaseApplication::onPreRender();
+        OpenglApplication::onPreRender();
     }
 
     void RuntimeApplication::onPostProcess()
     {
-        BaseApplication::onPostProcess();
+        OpenglApplication::onPostProcess();
     }
 
     void RuntimeApplication::onPostRender()
     {
-        BaseApplication::onPostRender();
+        OpenglApplication::onPostRender();
     }
 }

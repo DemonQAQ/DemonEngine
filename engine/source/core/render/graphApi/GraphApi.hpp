@@ -23,7 +23,7 @@ namespace render
 
     enum class BlendMode
     {
-        NONE,
+        BLEND,
         ALPHA,
         ADDITIVE
     };

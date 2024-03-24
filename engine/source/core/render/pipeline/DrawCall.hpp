@@ -13,8 +13,9 @@
 
 namespace render
 {
-    struct normalData
+    struct RenderData
     {
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
         glm::mat4 globalTransform;
         std::vector<base::Vertex> vertices;
         std::vector<unsigned int> indices;
@@ -26,18 +27,17 @@ namespace render
         std::shared_ptr<base::Shader> shader;
         std::shared_ptr<base::Material> material;
 
-        std::vector<normalData> data;
-
-        glm::mat4 modelMatrix = glm::mat4(1.0f); // 模型变换矩阵
-        glm::mat4 viewMatrix = glm::mat4(1.0f); // 视图矩阵
-        glm::mat4 projectionMatrix = glm::mat4(1.0f); // 投影矩阵
+        std::vector<RenderData> data;
 
         std::vector<base::Light> lights;
         glm::vec3 ambientLight = glm::vec3(0.2f, 0.2f, 0.2f);
 
-        BlendMode blendMode = BlendMode::NONE;
+        BlendMode blendMode = BlendMode::BLEND;
         DepthFunction depthFunction = DepthFunction::LESS;
         CullFace cullFace = CullFace::BACK;
+
+        virtual void preExecute() = 0;
+        virtual void afterExecute() = 0;
     };
 
 }

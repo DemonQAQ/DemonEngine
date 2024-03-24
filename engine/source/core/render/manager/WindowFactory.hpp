@@ -33,7 +33,7 @@ namespace render
 
     struct WindowCallbacks
     {
-        ::std::function<void(GLFWwindow *, int, int)> framebufferSizeCallback = framebuffer_size_callback;
+        std::function<void(GLFWwindow *, int, int)> framebufferSizeCallback = framebuffer_size_callback;
         std::function<void(GLFWwindow *, double, double)> cursorPosCallback = mouse_callback;
         std::function<void(GLFWwindow *, double, double)> scrollCallback = scroll_callback;
     };

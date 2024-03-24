@@ -3,11 +3,11 @@
 //
 #include <exception>
 #include <iostream>
-#include "core/base/common/Application.hpp"
 #include "GLFW/glfw3.h"
 #include "core/render/manager/OpenGLInitializer.hpp"
+#include "OpenglApplication.hpp"
 
-int base::BaseApplication::start()
+int base::OpenglApplication::start()
 {
     try
     {
@@ -40,7 +40,7 @@ int base::BaseApplication::start()
     return 0;
 }
 
-bool base::BaseApplication::stop()
+bool base::OpenglApplication::stop()
 {
     onStop();
     unloadAssets();
@@ -48,7 +48,7 @@ bool base::BaseApplication::stop()
     return false;
 }
 
-int base::BaseApplication::initialize()
+int base::OpenglApplication::initialize()
 {
     // 创建窗口
     mainWindow = windowFactory.createWindow(800, 600, "Demo Application");
@@ -60,7 +60,7 @@ int base::BaseApplication::initialize()
     }
 
     // 初始化OpenGL
-    if (!render::OpenGLInitializer::initializeOpenGL(mainWindow))
+    if (!renderManager->init({render::RenderApiType::OpenGL, mainWindow}))
     {
         return -1;
     }
@@ -70,7 +70,7 @@ int base::BaseApplication::initialize()
     return 0;
 }
 
-void base::BaseApplication::finalize()
+void base::OpenglApplication::finalize()
 {
     if (mainWindow)
     {
@@ -79,17 +79,17 @@ void base::BaseApplication::finalize()
     glfwTerminate();
 }
 
-int base::BaseApplication::loadAssets()
+int base::OpenglApplication::loadAssets()
 {
     return 0;
 }
 
-void base::BaseApplication::unloadAssets()
+void base::OpenglApplication::unloadAssets()
 {
 
 }
 
-void base::BaseApplication::tick()
+void base::OpenglApplication::tick()
 {
     glfwPollEvents();
     onInput();       // 处理输入
@@ -102,53 +102,53 @@ void base::BaseApplication::tick()
     glfwSwapBuffers(mainWindow);
 }
 
-bool base::BaseApplication::isQuit()
+bool base::OpenglApplication::isQuit()
 {
     return glfwWindowShouldClose(mainWindow);
 }
 
-void base::BaseApplication::onStop()
+void base::OpenglApplication::onStop()
 {
 
 }
 
-void base::BaseApplication::onStart()
+void base::OpenglApplication::onStart()
 {
 
 }
 
-void base::BaseApplication::onRender()
+void base::OpenglApplication::onRender()
 {
 
 }
 
-void base::BaseApplication::onInput()
+void base::OpenglApplication::onInput()
 {
     if (glfwGetKey(mainWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(mainWindow, true);
 }
 
-void base::BaseApplication::onUpdate()
+void base::OpenglApplication::onUpdate()
 {
 
 }
 
-void base::BaseApplication::onPhysicsUpdate()
+void base::OpenglApplication::onPhysicsUpdate()
 {
 
 }
 
-void base::BaseApplication::onPreRender()
+void base::OpenglApplication::onPreRender()
 {
 
 }
 
-void base::BaseApplication::onPostProcess()
+void base::OpenglApplication::onPostProcess()
 {
 
 }
 
-void base::BaseApplication::onPostRender()
+void base::OpenglApplication::onPostRender()
 {
 
 }

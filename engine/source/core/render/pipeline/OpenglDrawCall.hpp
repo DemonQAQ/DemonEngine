@@ -13,7 +13,13 @@ namespace render
 {
     class OpenglDrawCall : implements DrawCall
     {
+    public:
+        GLuint VAO = 0, VBO = 0, EBO = 0;
+        GLsizei vertexCount = 0, indexCount = 0;
 
+        void preExecute() override;
+
+        void afterExecute() override;
     };
 }
 

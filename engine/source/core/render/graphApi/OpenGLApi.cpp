@@ -1,13 +1,16 @@
 ﻿//
 // Created by Demon on 2024/3/19.
 //
-#include "OpenglApi.hpp"
+#include <glm/gtc/type_ptr.hpp>
+#include "OpenGLApi.hpp"
 #include "core/assets/MaterialsManager.hpp"
 #include "core/assets/AssetsMainManager.hpp"
+#include "core/render/pipeline/OpenglDrawCall.hpp"
+#include "core/render/pipeline/RenderManager.hpp"
 
 using namespace render;
 
-void OpenglApi::init(const std::vector<std::any> &params)
+void OpenGLApi::init(const std::vector<std::any> &params)
 {
     if (params.empty()) return;
 
@@ -18,17 +21,17 @@ void OpenglApi::init(const std::vector<std::any> &params)
     }
 }
 
-void OpenglApi::bindContext(GLFWwindow *window)
+void OpenGLApi::bindContext(GLFWwindow *window)
 {
     this->currentWindow = window;
 }
 
-void OpenglApi::unbindContext()
+void OpenGLApi::unbindContext()
 {
     this->currentWindow = nullptr;
 }
 
-void OpenglApi::drawLine(float x1, float y1, float x2, float y2, const glm::vec4 &color)
+void OpenGLApi::drawLine(float x1, float y1, float x2, float y2, const glm::vec4 &color)
 {
     float vertices[] = {
             x1, y1, 0.0f, // Point 1
@@ -68,7 +71,7 @@ void OpenglApi::drawLine(float x1, float y1, float x2, float y2, const glm::vec4
     glDeleteBuffers(1, &VBO);
 }
 
-void OpenglApi::drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, const glm::vec4 &color)
+void OpenGLApi::drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, const glm::vec4 &color)
 {
     float vertices[] = {
             x1, y1, 0.0f, // Point 1
@@ -105,7 +108,7 @@ void OpenglApi::drawTriangle(float x1, float y1, float x2, float y2, float x3, f
     glDeleteBuffers(1, &VBO);
 }
 
-void OpenglApi::drawRectangle(float x, float y, float width, float height, const glm::vec4 &color)
+void OpenGLApi::drawRectangle(float x, float y, float width, float height, const glm::vec4 &color)
 {
     float vertices[] = {
             x, y, 0.0f, // Left bottom
@@ -154,7 +157,7 @@ void OpenglApi::drawRectangle(float x, float y, float width, float height, const
     glDeleteBuffers(1, &EBO);
 }
 
-void OpenglApi::drawCircle(float centerX, float centerY, float radius, const glm::vec4 &color)
+void OpenGLApi::drawCircle(float centerX, float centerY, float radius, const glm::vec4 &color)
 {
     const int segments = 36;
     float vertices[(segments + 2) * 3]; // Extra for the center and to close the circle
@@ -202,7 +205,7 @@ void OpenglApi::drawCircle(float centerX, float centerY, float radius, const glm
     glDeleteBuffers(1, &VBO);
 }
 
-void OpenglApi::drawImage(const std::shared_ptr<base::Texture> &texture, float x, float y, float width, float height,
+void OpenGLApi::drawImage(const std::shared_ptr<base::Texture> &texture, float x, float y, float width, float height,
                           const glm::vec4 &color)
 {
     if (!texture)
@@ -265,13 +268,13 @@ void OpenglApi::drawImage(const std::shared_ptr<base::Texture> &texture, float x
     glDeleteBuffers(1, &EBO);
 }
 
-void OpenglApi::drawMesh(std::shared_ptr<base::Mesh> mesh)
+void OpenGLApi::drawMesh(std::shared_ptr<base::Mesh> mesh)
 {
     if (!mesh) return;
 
     auto &vertices = mesh->getVertices();
     auto &indices = mesh->getIndices();
-    base::UUID* materialUUID = mesh->getMaterial();
+    base::UUID *materialUUID = mesh->getMaterial();
     std::optional<std::shared_ptr<base::Material>> material;
     auto materialsManagerOpt = assets::AssetsMainManager::getManager(assets::AssetType::MATERIALS);
     if (materialsManagerOpt)
@@ -335,17 +338,43 @@ void OpenglApi::drawMesh(std::shared_ptr<base::Mesh> mesh)
     releaseShader();
 }
 
-void OpenglApi::drawModel(std::shared_ptr<base::Model> model)
+void OpenGLApi::drawModel(std::shared_ptr<base::Model> model)
 {
 
 }
 
-void OpenglApi::executeDrawCall(const DrawCall &drawCall)
+void OpenGLApi::executeDrawCall(const DrawCall &drawCall)
 {
+    const auto *oglDrawCall = dynamic_cast<const OpenglDrawCall *>(&drawCall);
+    if (!oglDrawCall)
+    {
+        std::cerr << "Error: drawCall provided to executeDrawCall is not of type OpenglDrawCall." << std::endl;
+        return;
+    }
 
+    setBlendMode(oglDrawCall->blendMode);
+    enableDepthTest(oglDrawCall->depthFunction != DepthFunction::ALWAYS);
+    setDepthFunction(oglDrawCall->depthFunction);
+    enableCulling(oglDrawCall->cullFace != CullFace::FRONT_AND_BACK);
+    setCullFace(oglDrawCall->cullFace);
+
+    glBindVertexArray(oglDrawCall->VAO);
+
+    for (const auto& renderData : oglDrawCall->data) {
+        glm::mat4 mvpMatrix = render::vpMatrix * renderData.modelMatrix;
+        glUniformMatrix4fv(glGetUniformLocation(oglDrawCall->shader->ID, "mvp"), 1, GL_FALSE, glm::value_ptr(mvpMatrix));
+
+        if (oglDrawCall->EBO != 0) {
+            glDrawElements(GL_TRIANGLES, oglDrawCall->indexCount, GL_UNSIGNED_INT, nullptr);
+        } else {
+            glDrawArrays(GL_TRIANGLES, 0, oglDrawCall->vertexCount);
+        }
+    }
+
+    glBindVertexArray(0);
 }
 
-void OpenglApi::useShader(std::shared_ptr<base::Shader> shader)
+void OpenGLApi::useShader(std::shared_ptr<base::Shader> shader)
 {
     if (shader)
     {
@@ -359,23 +388,23 @@ void OpenglApi::useShader(std::shared_ptr<base::Shader> shader)
     }
 }
 
-void OpenglApi::releaseShader()
+void OpenGLApi::releaseShader()
 {
     glUseProgram(normalShader->ID);
     usingShader = normalShader;
 }
 
-std::shared_ptr<base::Shader> OpenglApi::getUsingShader()
+std::shared_ptr<base::Shader> OpenGLApi::getUsingShader()
 {
     return usingShader;
 }
 
-void OpenglApi::bindTexture(std::shared_ptr<base::Texture> texture)
+void OpenGLApi::bindTexture(std::shared_ptr<base::Texture> texture)
 {
     bindTextureWithParam(texture, GL_TEXTURE0, {});
 }
 
-void OpenglApi::bindTextureWithParam(const std::shared_ptr<base::Texture> &texture, GLenum textureUnit,
+void OpenGLApi::bindTextureWithParam(const std::shared_ptr<base::Texture> &texture, GLenum textureUnit,
                                      const std::map<GLenum, GLint> &parameters)
 {
     if (!texture) return;
@@ -387,7 +416,7 @@ void OpenglApi::bindTextureWithParam(const std::shared_ptr<base::Texture> &textu
     }
 }
 
-void OpenglApi::unbindTexture(const std::vector<std::any> &params)
+void OpenGLApi::unbindTexture(const std::vector<std::any> &params)
 {
     if (params.empty()) return;
 
@@ -398,12 +427,12 @@ void OpenglApi::unbindTexture(const std::vector<std::any> &params)
     }
 }
 
-void OpenglApi::setBlendMode(BlendMode mode)
+void OpenGLApi::setBlendMode(BlendMode mode)
 {
     glEnable(GL_BLEND);
     switch (mode)
     {
-        case BlendMode::NONE:
+        case BlendMode::BLEND:
             glDisable(GL_BLEND);
             break;
         case BlendMode::ALPHA:
@@ -416,25 +445,25 @@ void OpenglApi::setBlendMode(BlendMode mode)
     }
 }
 
-void OpenglApi::setViewport(int x, int y, int width, int height)
+void OpenGLApi::setViewport(int x, int y, int width, int height)
 {
     glViewport(x, y, width, height);
 }
 
-void OpenglApi::clear(float r, float g, float b, float a)
+void OpenGLApi::clear(float r, float g, float b, float a)
 {
     glClearColor(r, g, b, a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenglApi::enableDepthTest(bool enable)
+void OpenGLApi::enableDepthTest(bool enable)
 {
     if (enable) glEnable(GL_DEPTH_TEST);
     else
         glDisable(GL_DEPTH_TEST);
 }
 
-void OpenglApi::setDepthFunction(DepthFunction func)
+void OpenGLApi::setDepthFunction(DepthFunction func)
 {
     GLenum glFunc;
     switch (func)
@@ -466,14 +495,14 @@ void OpenglApi::setDepthFunction(DepthFunction func)
     glDepthFunc(glFunc);
 }
 
-void OpenglApi::enableCulling(bool enable)
+void OpenGLApi::enableCulling(bool enable)
 {
     if (enable)glEnable(GL_CULL_FACE);
     else
         glDisable(GL_CULL_FACE);
 }
 
-void OpenglApi::setCullFace(CullFace face)
+void OpenGLApi::setCullFace(CullFace face)
 {
     GLenum glFace;
     switch (face)
