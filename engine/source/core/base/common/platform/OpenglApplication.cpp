@@ -4,7 +4,6 @@
 #include <exception>
 #include <iostream>
 #include "GLFW/glfw3.h"
-#include "core/render/manager/OpenGLInitializer.hpp"
 #include "OpenglApplication.hpp"
 
 int base::OpenglApplication::start()
@@ -119,7 +118,7 @@ void base::OpenglApplication::onStart()
 
 void base::OpenglApplication::onRender()
 {
-
+    renderManager->render();
 }
 
 void base::OpenglApplication::onInput()

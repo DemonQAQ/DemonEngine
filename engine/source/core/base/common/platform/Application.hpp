@@ -6,7 +6,7 @@
 #define DEMONENGINE_APPLICATION_HPP
 
 #include "core/base/interface/Interface.hpp"
-#include "core/render/pipeline/RenderManager.hpp"
+#include "core/render/manager/RenderManager.hpp"
 
 namespace base
 {

@@ -6,6 +6,7 @@
 #include "../../core/base/interface/Interface.hpp"
 #include "GLFW/glfw3.h"
 #include "core/base/common/platform/Application.hpp"
+#include "core/base/common/platform/OpenglApplication.hpp"
 
 using namespace base;
 using namespace render;

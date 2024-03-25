@@ -6,7 +6,7 @@
 #include "core/assets/MaterialsManager.hpp"
 #include "core/assets/AssetsMainManager.hpp"
 #include "core/render/pipeline/OpenglDrawCall.hpp"
-#include "core/render/pipeline/RenderManager.hpp"
+#include "core/render/manager/RenderManager.hpp"
 
 using namespace render;
 

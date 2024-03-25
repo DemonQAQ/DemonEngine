@@ -38,9 +38,12 @@ add_executable(DemonEngine ${SOURCE_FILES} engine/source/core/render/graphApi/Gr
         engine/source/core/base/render/Light.hpp
         engine/source/core/render/pipeline/OpenglDrawCall.cpp
         engine/source/core/render/pipeline/OpenglDrawCall.hpp
-        engine/source/core/render/pipeline/RenderManager.hpp
+        engine/source/core/render/manager/RenderManager.hpp
         engine/source/core/render/manager/Initializer.hpp
         engine/source/core/base/common/platform/OpenglApplication.hpp
+        engine/source/core/render/manager/RenderManager.cpp
+        engine/source/core/render/pipeline/ProgrammablePipeline.cpp
+        engine/source/core/render/pipeline/ProgrammablePipeline.hpp
 )
 
 # 添加编译选项

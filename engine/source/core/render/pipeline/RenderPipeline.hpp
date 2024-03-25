@@ -5,8 +5,37 @@
 #ifndef DEMONENGINE_RENDERPIPELINE_HPP
 #define DEMONENGINE_RENDERPIPELINE_HPP
 
-//todo 定义渲染管线接口，实现基础的渲染管线
-//todo 流式渲染管线内容，并提供接口供上层访问修改渲染数据
-//todo 渲染管线应该以drawcall为单元去渲染，用户可以提交drawcall或是待渲染的物体，渲染管线自动对物体打包成drawcall，最终以drawcall去渲染。
+#include "core/base/interface/IRenderable.hpp"
+#include "DrawCall.hpp"
+
+namespace render
+{
+    enum class PipelineType
+    {
+        FORWARD,
+        DEFERRED,
+        PROGRAMMABLE
+    };
+
+    enum class RenderType
+    {
+        OPAQUE,
+        TRANSPARENT
+    };
+
+    class RenderPipeline
+    {
+    public:
+        virtual void render() = 0;
+
+        virtual void submitEntity(base::IRenderable *object, RenderType renderType) = 0;
+
+        virtual void submitDrawCall(DrawCall *drawCall, RenderType renderType) = 0;
+
+        virtual void bindShader(base::Shader *shader) = 0;
+
+        virtual void unbindShader(base::Shader *shader) = 0;
+    };
+}
 
 #endif //DEMONENGINE_RENDERPIPELINE_HPP
