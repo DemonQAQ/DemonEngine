@@ -22,7 +22,7 @@ std::optional<base::UUID> ShaderManager::LoadResource(const std::vector<std::any
     }
 
     auto shader = std::make_shared<base::Shader>(vertexPath, fragmentPath);
-    base::UUID uuid = shader->getUuid();
+    base::UUID uuid = shader->getUUID();
     shaders[uuid] = shader;
     return uuid;
 }

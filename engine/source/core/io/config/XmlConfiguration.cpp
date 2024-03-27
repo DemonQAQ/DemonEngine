@@ -7,7 +7,7 @@
 
 namespace io
 {
-    XmlConfiguration::XmlConfiguration(const std::string &path) : IConfigurable(path)
+    XmlConfiguration::XmlConfiguration(const std::string &path) : IFile(path)
     {
         load(path);
     }
@@ -70,9 +70,9 @@ namespace io
         return tree.get_optional<std::string>(path).has_value();
     }
 
-    std::shared_ptr<IConfigurationSection> XmlConfiguration::createSection(const std::string &path)
+    std::shared_ptr<IConfiguration> XmlConfiguration::createSection(const std::string &path)
     {
-        return std::shared_ptr<IConfigurationSection>();
+        return std::shared_ptr<IConfiguration>();
     }
 
     bool XmlConfiguration::getBoolean(const std::string &path, bool def) const

@@ -10,7 +10,7 @@
 
 using namespace assets;
 
-std::unordered_map<base::UUID, std::shared_ptr<io::IConfigurable>> ConfigManager::loadedConfig;
+std::unordered_map<base::UUID, std::shared_ptr<io::IFile>> ConfigManager::loadedConfig;
 
 std::optional<base::UUID> assets::ConfigManager::LoadResource(const std::vector<std::any> &params)
 {
@@ -25,7 +25,7 @@ std::optional<base::UUID> assets::ConfigManager::LoadResource(const std::vector<
     std::string extension = path.substr(dotPos);
     io::FileType fileType = io::fromStringToFileType(extension);
 
-    std::shared_ptr<io::IConfigurable> configFile;
+    std::shared_ptr<io::IFile> configFile;
 
     switch (fileType)
     {
@@ -43,7 +43,7 @@ std::optional<base::UUID> assets::ConfigManager::LoadResource(const std::vector<
     }
 
     configFile->load(path);
-    base::UUID uuid = configFile->getUuid();
+    base::UUID uuid = configFile->getUUID();
     loadedConfig[uuid] = configFile;
 
     return uuid;
@@ -74,7 +74,7 @@ void ConfigManager::UpdateResource(const std::vector<std::any> &params)
 
 }
 
-std::optional<std::shared_ptr<io::IConfigurable>> ConfigManager::GetResourceByUuid(const base::UUID &uuid)
+std::optional<std::shared_ptr<io::IFile>> ConfigManager::GetResourceByUuid(const base::UUID &uuid)
 {
     auto it = loadedConfig.find(uuid);
     if(it != loadedConfig.end())return {it->second};

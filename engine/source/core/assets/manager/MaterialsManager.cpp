@@ -30,7 +30,7 @@ std::optional<base::UUID> MaterialsManager::LoadResource(const std::vector<std::
 
     if (material)
     {
-        base::UUID uuid = material->getUuid();
+        base::UUID uuid = material->getUUID();
         loadedMaterial[uuid] = material;
         return uuid;
     } else return std::nullopt;
@@ -89,7 +89,7 @@ std::shared_ptr<base::Material> MaterialsManager::LoadMaterialFromAssimp(const a
                 if (textureOpt.has_value())
                 {
                     auto texture = textureOpt.value();
-                    textures[aiTextureTypeToTextureType(aiTexType)][texture->getUuid()] = texture;
+                    textures[aiTextureTypeToTextureType(aiTexType)][texture->getUUID()] = texture;
                 }
             }
         }

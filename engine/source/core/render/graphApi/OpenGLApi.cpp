@@ -3,8 +3,8 @@
 //
 #include <glm/gtc/type_ptr.hpp>
 #include "OpenGLApi.hpp"
-#include "core/assets/MaterialsManager.hpp"
-#include "core/assets/AssetsMainManager.hpp"
+#include "core/assets/manager/MaterialsManager.hpp"
+#include "core/assets/manager/AssetsMainManager.hpp"
 #include "core/render/pipeline/OpenglDrawCall.hpp"
 #include "core/render/manager/RenderManager.hpp"
 

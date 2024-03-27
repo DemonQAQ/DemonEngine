@@ -7,7 +7,7 @@
 
 namespace io
 {
-    JsonConfiguration::JsonConfiguration(const std::string &path) : IConfigurable(path)
+    JsonConfiguration::JsonConfiguration(const std::string &path) : IFile(path)
     {
         load(path);
     }
@@ -67,9 +67,9 @@ namespace io
         return tree.get_optional<std::string>(path).has_value();
     }
 
-    std::shared_ptr<IConfigurationSection> JsonConfiguration::createSection(const std::string &path)
+    std::shared_ptr<IConfiguration> JsonConfiguration::createSection(const std::string &path)
     {
-        return std::shared_ptr<IConfigurationSection>();
+        return std::shared_ptr<IConfiguration>();
     }
 
     bool JsonConfiguration::getBoolean(const std::string &path, bool def) const

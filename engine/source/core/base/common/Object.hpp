@@ -29,7 +29,7 @@ namespace base
             return uuid.toString();
         }
 
-        [[nodiscard]] UUID getUuid() const
+        [[nodiscard]] UUID getUUID() const
         {
             return uuid;
         }

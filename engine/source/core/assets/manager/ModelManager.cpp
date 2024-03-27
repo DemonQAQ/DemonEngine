@@ -3,7 +3,7 @@
 //
 #include "ModelManager.hpp"
 #include "MaterialsManager.hpp"
-#include <assimp/Importer.hpp>
+#include "assimp/Importer.hpp"
 #include <iostream>
 
 using namespace assets;
@@ -39,7 +39,7 @@ std::optional<base::UUID> ModelManager::LoadResource(const std::vector<std::any>
         return std::nullopt;
     }
 
-    return model->getUuid();
+    return model->getUUID();
 }
 
 void ModelManager::UnloadResource(const std::vector<std::any> &params)
@@ -180,7 +180,7 @@ ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string 
         }
     }
 
-    base::UUID materialUUID = material->getUuid();
+    base::UUID materialUUID = material->getUUID();
     return std::make_shared<base::Mesh>(meshName, vertices, indices, nodeTransform, nullptr, &materialUUID);
 }
 

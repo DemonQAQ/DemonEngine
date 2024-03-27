@@ -6,13 +6,13 @@
 #define DEMONENGINE_YAMLCONFIGURATION_HPP
 
 #include "core/base/interface/Interface.hpp"
-#include "core/io/interface/IConfigurable.hpp"
-#include "core/io/interface/IConfigurationSection.hpp"
+#include "core/io/interface/IFile.hpp"
+#include "core/io/interface/IConfiguration.hpp"
 #include <yaml-cpp/yaml.h>
 
 namespace io
 {
-    class YamlConfiguration : implements IConfigurable, IConfigurationSection
+    class YamlConfiguration : implements IFile, IConfiguration
     {
     private:
         YAML::Node configRoot;
@@ -31,7 +31,7 @@ namespace io
 
         [[nodiscard]] bool contains(const std::string &path) const override;
 
-        [[nodiscard]] std::shared_ptr<IConfigurationSection> createSection(const std::string &path) override;
+        [[nodiscard]] std::shared_ptr<IConfiguration> createSection(const std::string &path) override;
 
         [[nodiscard]] bool getBoolean(const std::string &path, bool def) const override;
 

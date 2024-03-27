@@ -18,7 +18,7 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
-#include <assimp/scene.h>
+#include "assimp/scene.h"
 
 namespace assets
 {

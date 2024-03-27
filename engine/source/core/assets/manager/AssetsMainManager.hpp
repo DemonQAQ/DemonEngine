@@ -10,7 +10,7 @@
 
 #include <unordered_map>
 #include "core/base/interface/Interface.hpp"
-#include "AssetType.hpp"
+#include "core/assets/AssetType.hpp"
 #include "core/assets/interface/IFileManager.hpp"
 
 namespace assets

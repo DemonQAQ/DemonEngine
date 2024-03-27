@@ -2,8 +2,8 @@
 // Created by Demon on 2024/3/13.
 //
 
-#ifndef DEMONENGINE_ICONFIGURATIONSECTION_HPP
-#define DEMONENGINE_ICONFIGURATIONSECTION_HPP
+#ifndef DEMONENGINE_ICONFIGURATION_HPP
+#define DEMONENGINE_ICONFIGURATION_HPP
 
 #include <map>
 #include <list>
@@ -15,10 +15,10 @@
 
 namespace io
 {
-    class IConfigurationSection
+    class IConfiguration
     {
     public:
-        virtual ~IConfigurationSection() = default;
+        virtual ~IConfiguration() = default;
 
         virtual void set(const std::string &path, const std::any &value) = 0;
 
@@ -26,7 +26,7 @@ namespace io
 
         [[nodiscard]] virtual bool contains(const std::string &path) const = 0;
 
-        [[nodiscard]] virtual std::shared_ptr<IConfigurationSection> createSection(const std::string &path) = 0;
+        [[nodiscard]] virtual std::shared_ptr<IConfiguration> createSection(const std::string &path) = 0;
 
         [[nodiscard]] virtual bool getBoolean(const std::string &path, bool def = false) const = 0;
 
@@ -63,4 +63,4 @@ namespace io
 
 }
 
-#endif //DEMONENGINE_ICONFIGURATIONSECTION_HPP
+#endif //DEMONENGINE_ICONFIGURATION_HPP

@@ -8,7 +8,7 @@
 
 namespace io
 {
-    YamlConfiguration::YamlConfiguration(const std::string &path) : IConfigurable(path)
+    YamlConfiguration::YamlConfiguration(const std::string &path) : IFile(path)
     {
         load(path);
     }
@@ -93,9 +93,9 @@ namespace io
         return false;
     }
 
-    std::shared_ptr<IConfigurationSection> YamlConfiguration::createSection(const std::string &path)
+    std::shared_ptr<IConfiguration> YamlConfiguration::createSection(const std::string &path)
     {
-        return std::shared_ptr<IConfigurationSection>();
+        return std::shared_ptr<IConfiguration>();
     }
 
     bool YamlConfiguration::getBoolean(const std::string &path, bool def) const

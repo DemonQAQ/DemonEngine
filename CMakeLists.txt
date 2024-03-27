@@ -24,13 +24,13 @@ file(GLOB_RECURSE SOURCE_FILES
         )
 
 # 添加可执行文件
-add_executable(DemonEngine ${SOURCE_FILES} engine/source/core/render/graphApi/GraphApi.hpp engine/source/core/render/graphApi/OpenGLApi.hpp engine/source/core/render/pipeline/RenderPipeline.hpp engine/source/core/assets/AssetsMainManager.hpp engine/source/core/assets/ShaderManager.hpp engine/source/core/render/pipeline/DrawCall.hpp engine/source/core/base/render/Mesh.hpp engine/source/core/base/render/Model.hpp engine/source/core/base/render/Texture.hpp engine/source/core/base/render/Material.hpp engine/source/core/base/render/Vertex.hpp engine/source/core/base/render/RenderableObject.hpp engine/source/core/base/utils/UUIDUtil.hpp engine/source/core/base/common/UUID.hpp engine/source/core/base/common/Object.hpp engine/source/core/base/render/Bone.hpp engine/source/core/base/interface/ITransformable.hpp engine/source/core/base/common/Transform.hpp engine/source/core/base/interface/IRenderable.hpp engine/source/core/base/interface/ITransformableUpdate.hpp engine/source/core/base/interface/INameable.hpp engine/source/core/assets/interface/IFileManager.hpp engine/source/core/assets/MediaManager.hpp engine/source/core/assets/TextureManager.hpp engine/source/core/assets/ModelManager.hpp engine/source/core/assets/MaterialsManager.hpp engine/source/core/assets/AssetType.hpp engine/source/core/assets/ConfigManager.hpp engine/source/core/base/render/Mesh.cpp engine/source/core/base/render/Model.cpp engine/source/core/assets/ModelManager.cpp engine/source/core/assets/ModelManager.cpp engine/source/core/assets/TextureManager.cpp engine/source/core/assets/ShaderManager.cpp engine/source/core/assets/MaterialsManager.cpp engine/source/core/assets/ConfigManager.cpp engine/source/core/io/interface/IConfigurable.hpp engine/source/core/io/config/YamlConfiguration.cpp engine/source/core/io/config/YamlConfiguration.hpp engine/source/core/base/lib/stb_image.cpp
+add_executable(DemonEngine ${SOURCE_FILES} engine/source/core/render/graphApi/GraphApi.hpp engine/source/core/render/graphApi/OpenGLApi.hpp engine/source/core/render/pipeline/RenderPipeline.hpp engine/source/core/assets/manager/AssetsMainManager.hpp engine/source/core/assets/manager/ShaderManager.hpp engine/source/core/render/pipeline/DrawCall.hpp engine/source/core/base/render/Mesh.hpp engine/source/core/base/render/Model.hpp engine/source/core/base/render/Texture.hpp engine/source/core/base/render/Material.hpp engine/source/core/base/render/Vertex.hpp engine/source/core/base/render/RenderableObject.hpp engine/source/core/base/utils/UUIDUtil.hpp engine/source/core/base/common/UUID.hpp engine/source/core/base/common/Object.hpp engine/source/core/base/render/Bone.hpp engine/source/core/base/interface/ITransformable.hpp engine/source/core/base/common/Transform.hpp engine/source/core/base/interface/IRenderable.hpp engine/source/core/base/interface/ITransformableUpdate.hpp engine/source/core/base/interface/INameable.hpp engine/source/core/assets/interface/IFileManager.hpp engine/source/core/assets/manager/MediaManager.hpp engine/source/core/assets/manager/TextureManager.hpp engine/source/core/assets/manager/ModelManager.hpp engine/source/core/assets/manager/MaterialsManager.hpp engine/source/core/assets/AssetType.hpp engine/source/core/assets/manager/ConfigManager.hpp engine/source/core/base/render/Mesh.cpp engine/source/core/base/render/Model.cpp engine/source/core/assets/manager/ModelManager.cpp engine/source/core/assets/manager/ModelManager.cpp engine/source/core/assets/manager/TextureManager.cpp engine/source/core/assets/manager/ShaderManager.cpp engine/source/core/assets/manager/MaterialsManager.cpp engine/source/core/assets/manager/ConfigManager.cpp engine/source/core/io/interface/IFile.hpp engine/source/core/io/config/YamlConfiguration.cpp engine/source/core/io/config/YamlConfiguration.hpp engine/source/core/base/lib/stb_image.cpp
         engine/source/core/io/config/JsonConfiguration.cpp
         engine/source/core/io/config/JsonConfiguration.hpp
         engine/source/core/io/config/XmlConfiguration.cpp
         engine/source/core/io/config/XmlConfiguration.hpp
-        engine/source/core/io/interface/IConfigurationSection.hpp
-        engine/source/core/assets/AssetsMainManager.cpp
+        engine/source/core/io/interface/IConfiguration.hpp
+        engine/source/core/assets/manager/AssetsMainManager.cpp
         engine/source/core/io/FileType.hpp
         engine/source/core/render/graphApi/OpenGLApi.cpp
         engine/source/core/base/render/RenderableObject.cpp
@@ -44,6 +44,21 @@ add_executable(DemonEngine ${SOURCE_FILES} engine/source/core/render/graphApi/Gr
         engine/source/core/render/manager/RenderManager.cpp
         engine/source/core/render/pipeline/ProgrammablePipeline.cpp
         engine/source/core/render/pipeline/ProgrammablePipeline.hpp
+        engine/source/core/assets/scene/SceneGroup.cpp
+        engine/source/core/assets/scene/SceneGroup.hpp
+        engine/source/core/assets/scene/Entity.cpp
+        engine/source/core/assets/scene/Entity.hpp
+        engine/source/core/assets/scene/Skybox.cpp
+        engine/source/core/assets/scene/Skybox.hpp
+        engine/source/core/assets/scene/Effect.cpp
+        engine/source/core/assets/scene/Effect.hpp
+        engine/source/core/assets/scene/Scene.cpp
+        engine/source/core/assets/scene/Scene.hpp
+        engine/source/core/assets/scene/LightEntity.cpp
+        engine/source/core/assets/scene/LightEntity.hpp
+        engine/source/core/assets/scene/CameraEntity.cpp
+        engine/source/core/assets/scene/CameraEntity.hpp
+        engine/source/core/base/interface/IUpdatable.hpp
 )
 
 # 添加编译选项

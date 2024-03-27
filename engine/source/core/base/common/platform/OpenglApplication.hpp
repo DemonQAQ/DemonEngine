@@ -9,6 +9,7 @@
 #include "core/base/interface/Interface.hpp"
 #include "core/render/manager/WindowFactory.hpp"
 #include "Application.hpp"
+#include "core/assets/scene/Scene.hpp"
 
 namespace base
 {
@@ -17,6 +18,7 @@ namespace base
     private:
         render::WindowFactory windowFactory;
         GLFWwindow *mainWindow{};
+        std::shared_ptr<assets::scene::Scene> mainScene;
     public:
         OpenglApplication()
         {

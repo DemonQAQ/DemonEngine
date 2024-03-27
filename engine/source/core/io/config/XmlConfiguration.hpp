@@ -6,14 +6,14 @@
 #define DEMONENGINE_XMLCONFIGURATION_HPP
 
 #include "core/base/interface/Interface.hpp"
-#include "core/io/interface/IConfigurable.hpp"
-#include "core/io/interface/IConfigurationSection.hpp"
+#include "core/io/interface/IFile.hpp"
+#include "core/io/interface/IConfiguration.hpp"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 namespace io
 {
-    class XmlConfiguration : implements IConfigurable, IConfigurationSection
+    class XmlConfiguration : implements IFile, IConfiguration
     {
     private:
         boost::property_tree::ptree tree;
@@ -30,7 +30,7 @@ namespace io
 
         [[nodiscard]] bool contains(const std::string &path) const override;
 
-        [[nodiscard]] std::shared_ptr<IConfigurationSection> createSection(const std::string &path) override;
+        [[nodiscard]] std::shared_ptr<IConfiguration> createSection(const std::string &path) override;
 
         [[nodiscard]] bool getBoolean(const std::string &path, bool def) const override;
 

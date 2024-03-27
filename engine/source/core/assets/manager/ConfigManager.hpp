@@ -7,14 +7,14 @@
 
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/interface/IFileManager.hpp"
-#include "core/io/interface/IConfigurable.hpp"
+#include "core/io/interface/IFile.hpp"
 
 namespace assets
 {
     class ConfigManager : implements IFileManager
     {
     private:
-        static std::unordered_map<base::UUID, std::shared_ptr<io::IConfigurable>> loadedConfig;
+        static std::unordered_map<base::UUID, std::shared_ptr<io::IFile>> loadedConfig;
     public:
         std::optional<base::UUID> LoadResource(const std::vector<std::any>& params) override;
 
@@ -24,7 +24,7 @@ namespace assets
 
         void UpdateResource(const std::vector<std::any>& params) override;
 
-        std::optional<std::shared_ptr<io::IConfigurable>> GetResourceByUuid(const base::UUID &uuid);
+        std::optional<std::shared_ptr<io::IFile>> GetResourceByUuid(const base::UUID &uuid);
     };
 }
 
