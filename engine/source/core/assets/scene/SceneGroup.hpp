@@ -22,6 +22,8 @@ namespace assets::scene
         std::vector<std::shared_ptr<Object>> childrenList;
         std::unordered_map<UUID, std::shared_ptr<Object>, std::hash<UUID>> childrenMap;
     public:
+        explicit SceneGroup(std::string name = "Group");
+
         void setName(const std::string &name_) override;
 
         [[nodiscard]] std::string getName() const override;

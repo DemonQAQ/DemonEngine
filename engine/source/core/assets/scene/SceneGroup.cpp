@@ -92,4 +92,9 @@ namespace assets::scene
         return childrenList;
     }
 
+    SceneGroup::SceneGroup(std::string name) : base::Object(), name(std::move(name))
+    {
+
+    }
+
 }

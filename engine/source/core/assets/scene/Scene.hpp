@@ -21,7 +21,7 @@ using namespace base;
 namespace assets::scene
 {
 
-    class Scene : implements io::IFile, INameable, Updatable
+    class Scene : implements Object, INameable, Updatable
     {
     private:
         std::string name;
@@ -33,45 +33,47 @@ namespace assets::scene
         //todo 物理系统参数，待实现
 
     public:
+        explicit Scene(std::string name = "New Scene");
+
         void update() override;
 
         void setName(const std::string &name_) override;
 
         [[nodiscard]] std::string getName() const override;
 
-        void load(const std::string &path) override;
+        bool addChildToNode(const UUID& parentUuid, const std::shared_ptr<Object>& child);
 
-        void save(const std::string &path) const override;
+        [[nodiscard]] std::shared_ptr<Object> findNodeByUUID(const std::shared_ptr<SceneGroup>& node, const UUID& uuid) const;
 
-        //todo 为场景树下的某个节点增加子节点
+        bool updateNode(const UUID& uuid, const std::shared_ptr<Object>& newNode);
 
-        //todo 查询场景树下的某个节点
+        bool updateNodeRecursive(const std::shared_ptr<SceneGroup>& node, const UUID& uuid, const std::shared_ptr<Object>& newNode);
 
-        //todo 更新场景树下的某个节点
+        bool removeChildFromNode(const UUID& uuid);
 
-        //todo 删除场景树下的某个节点
+        bool removeChildFromNodeRecursive(const std::shared_ptr<SceneGroup>& node, const UUID& uuid);
 
         [[nodiscard]] const std::shared_ptr<Skybox> &getSkybox() const;
 
-        void setSkybox(const std::shared_ptr<Skybox> &skybox);
+        void setSkybox(const std::shared_ptr<Skybox> &skybox_);
 
         [[nodiscard]] const std::shared_ptr<SceneGroup> &getRoot() const;
 
-        void setRoot(const std::shared_ptr<SceneGroup> &root);
+        void setRoot(const std::shared_ptr<SceneGroup> &root_);
 
         [[nodiscard]] const std::shared_ptr<LightEntity> &getEnvironmentLight() const;
 
-        void setEnvironmentLight(const std::shared_ptr<LightEntity> &environmentLight);
+        void setEnvironmentLight(const std::shared_ptr<LightEntity> &environmentLight_);
 
         [[nodiscard]] const std::shared_ptr<CameraEntity> &getMainCameraEntity() const;
 
-        void setMainCameraEntity(const std::shared_ptr<CameraEntity> &mainCameraEntity);
+        void setMainCameraEntity(const std::shared_ptr<CameraEntity> &mainCameraEntity_);
 
         [[nodiscard]] const std::vector<std::shared_ptr<CameraEntity>> &getCameraEntityList() const;
 
-        void setCameraEntityList(const std::vector<std::shared_ptr<CameraEntity>> &cameraEntityList);
+        void setCameraEntityList(const std::vector<std::shared_ptr<CameraEntity>> &cameraEntityList_);
 
-        //todo 添加摄像机
+        void addCameraEntity(const std::shared_ptr<CameraEntity> &cameraEntity);
     };
 
 }

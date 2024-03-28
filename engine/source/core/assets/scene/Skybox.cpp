@@ -6,4 +6,18 @@
 
 namespace assets::scene
 {
+    void Skybox::setName(const std::string &name_)
+    {
+        name = name_;
+    }
+
+    std::string Skybox::getName() const
+    {
+        return name;
+    }
+
+    Skybox::Skybox(std::string name) : base::Object(), name(std::move(name))
+    {
+
+    }
 }

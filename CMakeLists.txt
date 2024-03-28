@@ -59,6 +59,8 @@ add_executable(DemonEngine ${SOURCE_FILES} engine/source/core/render/graphApi/Gr
         engine/source/core/assets/scene/CameraEntity.cpp
         engine/source/core/assets/scene/CameraEntity.hpp
         engine/source/core/base/interface/IUpdatable.hpp
+        engine/source/core/assets/manager/SceneManager.cpp
+        engine/source/core/assets/manager/SceneManager.hpp
 )
 
 # 添加编译选项
