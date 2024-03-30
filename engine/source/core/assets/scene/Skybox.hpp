@@ -8,12 +8,13 @@
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
 #include "core/base/interface/INameable.hpp"
+#include "core/io/interface/ISerializable.hpp"
 
 using namespace base;
 
 namespace assets::scene
 {
-    class Skybox : implements Object, INameable
+    class Skybox : implements Object, INameable, io::ISerializable
     {
     private:
         std::string name;
@@ -23,6 +24,10 @@ namespace assets::scene
         void setName(const std::string &name_) override;
 
         [[nodiscard]] std::string getName() const override;
+
+        [[nodiscard]] std::string Serialize() const override;
+
+        void Deserialize(const std::string &data) override;
     };
 }
 

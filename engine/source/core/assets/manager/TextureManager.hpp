@@ -5,12 +5,12 @@
 #ifndef DEMONENGINE_TEXTUREMANAGER_HPP
 #define DEMONENGINE_TEXTUREMANAGER_HPP
 
+#include "core/base/lib/pch.hpp"
 #include <unordered_map>
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/interface/IFileManager.hpp"
 #include "core/base/render/Texture.hpp"
 #include "assimp/material.h"
-#include "glad/glad.h"
 #include "stb_image.h"
 
 namespace assets

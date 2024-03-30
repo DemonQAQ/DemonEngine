@@ -20,4 +20,14 @@ namespace assets::scene
     {
 
     }
+
+    std::string Skybox::Serialize() const
+    {
+        return std::string();
+    }
+
+    void Skybox::Deserialize(const std::string &data)
+    {
+
+    }
 }

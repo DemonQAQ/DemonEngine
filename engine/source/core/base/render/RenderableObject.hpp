@@ -5,13 +5,14 @@
 #ifndef DEMONENGINE_RENDERABLEOBJECT_HPP
 #define DEMONENGINE_RENDERABLEOBJECT_HPP
 
-#include "Shader.hpp"
 #include <glm/glm.hpp>
+#include "Shader.hpp"
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
 #include "core/base/common/Transform.hpp"
 #include "core/base/common/UUID.hpp"
 #include "core/base/interface/ITransformableUpdate.hpp"
+#include "core/base/interface/IRenderable.hpp"
 
 namespace base
 {

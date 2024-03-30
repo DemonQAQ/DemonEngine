@@ -97,4 +97,14 @@ namespace assets::scene
 
     }
 
+    std::string SceneGroup::Serialize() const
+    {
+        return std::string();
+    }
+
+    void SceneGroup::Deserialize(const std::string &data)
+    {
+
+    }
+
 }

@@ -5,12 +5,11 @@
 #ifndef DEMONENGINE_TEXTURE_HPP
 #define DEMONENGINE_TEXTURE_HPP
 
+#include "core/base/lib/pch.hpp"
+#include "stb_image.h"
 #include <utility>
-
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
-#include "stb_image.h"
-#include "glad/glad.h"
 
 namespace base
 {

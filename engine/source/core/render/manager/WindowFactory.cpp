@@ -1,7 +1,7 @@
 ﻿//
 // Created by Demon on 2023/11/7.
 //
-#include <glad/glad.h>
+#include "core/base/lib/pch.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <glm/glm.hpp>

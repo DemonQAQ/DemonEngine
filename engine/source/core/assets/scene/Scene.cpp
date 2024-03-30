@@ -169,4 +169,14 @@ namespace assets::scene
         skybox = std::make_shared<Skybox>();
     }
 
+    std::string Scene::Serialize() const
+    {
+        return std::string();
+    }
+
+    void Scene::Deserialize(const std::string &data)
+    {
+
+    }
+
 } // assets

@@ -5,7 +5,7 @@
 #ifndef DEMON_ENGINE_SHADER_HPP
 #define DEMON_ENGINE_SHADER_HPP
 
-#include "glad/glad.h" // 包含glad来获取所有的必须OpenGL头文件
+#include "core/base/lib/pch.hpp"
 #include "glm/glm.hpp"
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"

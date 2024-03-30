@@ -8,6 +8,7 @@
 #include <string>
 #include <cstdlib>
 static char const * logRoot = LOG_ROOT_PATH;
+static char const * sourceRootPath = SOURCE_ROOT_PATH;
 
 class FileSystem
 {
@@ -24,7 +25,7 @@ public:
 private:
     static std::string const & getRoot()
     {
-        static char const * envRoot = getenv("LOGL_ROOT_PATH");
+        static char const * envRoot = getenv("LOG_ROOT_PATH");
         static char const * givenRoot = (envRoot != nullptr ? envRoot : logRoot);
         static std::string root = (givenRoot != nullptr ? givenRoot : "");
         return root;

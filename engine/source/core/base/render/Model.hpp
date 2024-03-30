@@ -5,6 +5,14 @@
 #ifndef DEMONENGINE_MODEL_HPP
 #define DEMONENGINE_MODEL_HPP
 
+#include "core/base/lib/pch.hpp"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <string>
+#include <memory>
+#include <vector>
+#include <unordered_map>
 #include "core/base/interface/Interface.hpp"
 #include "core/base/interface/ITransformable.hpp"
 #include "core/base/common/Transform.hpp"
@@ -15,13 +23,6 @@
 #include "Bone.hpp"
 #include "core/base/interface/INameable.hpp"
 #include "Material.hpp"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include <string>
-#include <memory>
-#include <vector>
-#include <unordered_map>
 
 namespace base
 {

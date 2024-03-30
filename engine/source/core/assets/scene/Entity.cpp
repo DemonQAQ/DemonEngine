@@ -26,4 +26,14 @@ namespace assets::scene
     {
 
     }
+
+    std::string Entity::Serialize() const
+    {
+        return std::string();
+    }
+
+    void Entity::Deserialize(const std::string &data)
+    {
+
+    }
 }

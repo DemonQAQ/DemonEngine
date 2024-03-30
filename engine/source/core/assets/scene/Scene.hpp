@@ -21,7 +21,7 @@ using namespace base;
 namespace assets::scene
 {
 
-    class Scene : implements Object, INameable, Updatable
+    class Scene : implements Object, INameable, Updatable, io::ISerializable
     {
     private:
         std::string name;
@@ -38,6 +38,10 @@ namespace assets::scene
         void update() override;
 
         void setName(const std::string &name_) override;
+
+        [[nodiscard]] std::string Serialize() const override;
+
+        void Deserialize(const std::string &data) override;
 
         [[nodiscard]] std::string getName() const override;
 

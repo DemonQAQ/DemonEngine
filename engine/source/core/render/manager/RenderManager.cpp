@@ -6,6 +6,9 @@
 
 namespace render
 {
+    glm::mat4 vpMatrix;
+    glm::mat4 viewMatrix = glm::mat4(1.0f); // 视图矩阵
+    glm::mat4 projectionMatrix = glm::mat4(1.0f); // 投影矩阵
 
     /**
      * params: RenderApiType,GLFWwindow*,PipelineType

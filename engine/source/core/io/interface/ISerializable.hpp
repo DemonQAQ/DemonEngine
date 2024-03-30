@@ -1,0 +1,26 @@
+﻿//
+// Created by Demon on 2024/3/29.
+//
+
+#ifndef DEMONENGINE_ISERIALIZABLE_HPP
+#define DEMONENGINE_ISERIALIZABLE_HPP
+
+#include <string>
+#include "core/base/interface/Interface.hpp"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+
+namespace io
+{
+    class ISerializable
+    {
+    public:
+        virtual ~ISerializable() = default;
+
+        [[nodiscard]] virtual std::string Serialize() const = 0;
+
+        virtual void Deserialize(const std::string &data) = 0;
+    };
+}
+
+#endif //DEMONENGINE_ISERIALIZABLE_HPP

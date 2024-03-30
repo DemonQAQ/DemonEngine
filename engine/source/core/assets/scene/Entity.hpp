@@ -10,6 +10,7 @@
 #include "core/base/interface/INameable.hpp"
 #include "core/base/interface/ITransformableUpdate.hpp"
 #include "core/base/render/RenderableObject.hpp"
+#include "core/io/interface/ISerializable.hpp"
 
 using namespace base;
 
@@ -19,7 +20,7 @@ namespace assets::scene
     //todo 网络同步系统接口
     //todo 可序列化接口
     //todo 物理系统接口
-    class Entity : implements Object, INameable, ITransformableUpdate
+    class Entity : implements Object, INameable, ITransformableUpdate, io::ISerializable
     {
     private:
         std::string name;
@@ -29,6 +30,10 @@ namespace assets::scene
         void setName(const std::string &name_) override;
 
         [[nodiscard]] std::string getName() const override;
+
+        [[nodiscard]] std::string Serialize() const override;
+
+        void Deserialize(const std::string &data) override;
 
         void beforeRendering(const std::vector<std::any> &params) override;
 

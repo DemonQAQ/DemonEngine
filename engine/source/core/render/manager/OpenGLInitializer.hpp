@@ -5,8 +5,8 @@
 #ifndef DEMONENGINE_OPENGLINITIALIZER_HPP
 #define DEMONENGINE_OPENGLINITIALIZER_HPP
 
+#include "core/base/lib/pch.hpp"
 #include "GLFW/glfw3.h"
-#include "glad/glad.h"
 #include "Initializer.hpp"
 #include "iostream"
 

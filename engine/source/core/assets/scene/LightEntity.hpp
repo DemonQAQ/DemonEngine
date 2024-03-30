@@ -10,12 +10,14 @@
 #include "core/base/interface/INameable.hpp"
 #include "core/base/interface/ITransformableUpdate.hpp"
 #include "core/base/render/Light.hpp"
+#include "core/io/interface/ISerializable.hpp"
+
 
 using namespace base;
 
 namespace assets::scene
 {
-    class LightEntity : implements Object, INameable, ITransformableUpdate
+    class LightEntity : implements Object, INameable, ITransformableUpdate, io::ISerializable
     {
     private:
         std::string name;
@@ -32,6 +34,10 @@ namespace assets::scene
         void beforeRendering(const std::vector<std::any> &params) override;
 
         void afterRendering(const std::vector<std::any> &params) override;
+
+        [[nodiscard]]  std::string Serialize() const override;
+
+        void Deserialize(const std::string &data) override;
 
         void setLightType(base::LightType type);
 

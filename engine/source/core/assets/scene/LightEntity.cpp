@@ -3,7 +3,7 @@
 //
 
 #include "LightEntity.hpp"
-
+#include <sstream>
 #include <utility>
 
 namespace assets::scene
@@ -131,5 +131,64 @@ namespace assets::scene
         return glm::degrees(glm::acos(light.outerCutOff));
     }
 
+    std::string LightEntity::Serialize() const
+    {
+        boost::property_tree::ptree pt;
+
+        // 基本属性
+        pt.put("name", name);
+        pt.put("light.type", static_cast<int>(light.type));
+        pt.put("light.position", std::to_string(light.position.x) + " " +
+                                 std::to_string(light.position.y) + " " +
+                                 std::to_string(light.position.z));
+        pt.put("light.color", std::to_string(light.color.x) + " " +
+                              std::to_string(light.color.y) + " " +
+                              std::to_string(light.color.z));
+        pt.put("light.intensity", light.intensity);
+
+        // 衰减属性
+        pt.put("light.constant", light.constant);
+        pt.put("light.linear", light.linear);
+        pt.put("light.quadratic", light.quadratic);
+
+        // 聚光灯属性
+        pt.put("light.direction", std::to_string(light.direction.x) + " " +
+                                  std::to_string(light.direction.y) + " " +
+                                  std::to_string(light.direction.z));
+        pt.put("light.cutOff", light.cutOff);
+        pt.put("light.outerCutOff", light.outerCutOff);
+
+        std::ostringstream buf;
+        boost::property_tree::write_json(buf, pt, true);
+        return buf.str();
+    }
+
+    void LightEntity::Deserialize(const std::string &data)
+    {
+        std::istringstream is(data);
+        boost::property_tree::ptree pt;
+        boost::property_tree::read_json(is, pt);
+
+        name = pt.get<std::string>("name");
+        light.type = static_cast<LightType>(pt.get<int>("light.type"));
+
+        std::istringstream positionStream(pt.get<std::string>("light.position"));
+        positionStream >> light.position.x >> light.position.y >> light.position.z;
+
+        std::istringstream colorStream(pt.get<std::string>("light.color"));
+        colorStream >> light.color.x >> light.color.y >> light.color.z;
+
+        light.intensity = pt.get<float>("light.intensity");
+
+        light.constant = pt.get<float>("light.constant");
+        light.linear = pt.get<float>("light.linear");
+        light.quadratic = pt.get<float>("light.quadratic");
+
+        std::istringstream directionStream(pt.get<std::string>("light.direction"));
+        directionStream >> light.direction.x >> light.direction.y >> light.direction.z;
+
+        light.cutOff = pt.get<float>("light.cutOff");
+        light.outerCutOff = pt.get<float>("light.outerCutOff");
+    }
 
 }

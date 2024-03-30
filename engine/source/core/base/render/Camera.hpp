@@ -5,7 +5,7 @@
 #ifndef DEMONENGINE_CAMERA_HPP
 #define DEMONENGINE_CAMERA_HPP
 
-#include <glad/glad.h>
+#include "core/base/lib/pch.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
@@ -86,7 +86,6 @@ namespace base
                 zoom = 45.0f;
         }
 
-    private:
         void updateCameraVectors()
         {
             glm::vec3 euler = glm::eulerAngles(transform.rotation);

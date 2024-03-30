@@ -30,4 +30,14 @@ namespace assets::scene
     {
 
     }
+
+    std::string Effect::Serialize() const
+    {
+        return std::string();
+    }
+
+    void Effect::Deserialize(const std::string &data)
+    {
+
+    }
 } // assets

@@ -87,4 +87,53 @@ namespace assets::scene
         return camera.zoom;
     }
 
+    std::string CameraEntity::Serialize() const
+    {
+        boost::property_tree::ptree pt;
+
+        // 基本属性
+        pt.put("name", name);
+
+        // 相机属性
+        pt.put("camera.position", std::to_string(camera.transform.position.x) + " " +
+                                  std::to_string(camera.transform.position.y) + " " +
+                                  std::to_string(camera.transform.position.z));
+
+        auto quat = camera.transform.rotation;
+        pt.put("camera.rotation", std::to_string(quat.w) + " " +
+                                  std::to_string(quat.x) + " " +
+                                  std::to_string(quat.y) + " " +
+                                  std::to_string(quat.z));
+
+        pt.put("camera.movementSpeed", camera.movementSpeed);
+        pt.put("camera.mouseSensitivity", camera.mouseSensitivity);
+        pt.put("camera.zoom", camera.zoom);
+
+        std::ostringstream buf;
+        boost::property_tree::write_json(buf, pt, true);
+        return buf.str();
+    }
+
+    void CameraEntity::Deserialize(const std::string &data)
+    {
+        std::istringstream is(data);
+        boost::property_tree::ptree pt;
+        boost::property_tree::read_json(is, pt);
+
+        name = pt.get<std::string>("name");
+
+        std::istringstream positionStream(pt.get<std::string>("camera.position"));
+        positionStream >> camera.transform.position.x >> camera.transform.position.y >> camera.transform.position.z;
+
+        std::istringstream rotationStream(pt.get<std::string>("camera.rotation"));
+        rotationStream >> camera.transform.rotation.w >> camera.transform.rotation.x
+                       >> camera.transform.rotation.y >> camera.transform.rotation.z;
+
+        camera.movementSpeed = pt.get<float>("camera.movementSpeed");
+        camera.mouseSensitivity = pt.get<float>("camera.mouseSensitivity");
+        camera.zoom = pt.get<float>("camera.zoom");
+
+        camera.updateCameraVectors();
+    }
+
 }
