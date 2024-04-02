@@ -17,26 +17,26 @@ namespace assets
     class MaterialsManager : implements IFileManager
     {
     private:
-        static std::unordered_map<base::UUID, std::shared_ptr<base::Material>> loadedMaterial;
+        static std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Material>> loadedMaterial;
     public:
         /**
          * 参数传入aiMaterial* aiMat/io::JsonConfiguration& jsonConfig加载单个Material实例并返回UUID
          * */
-        std::optional<base::UUID> LoadResource(const std::vector<std::any> &params) override;
+        std::optional<std::shared_ptr<base::UUID>> loadResource(const std::vector<std::any> &params) override;
 
-        void UnloadResource(const std::vector<std::any> &params) override;
+        void unloadResource(const std::vector<std::any> &params) override;
 
-        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any> &params) const override;
+        [[nodiscard]] bool isResourceLoaded(const std::vector<std::any> &params) const override;
 
-        void UpdateResource(const std::vector<std::any> &params) override;
+        void updateResource(const std::vector<std::any> &params) override;
 
-        std::optional<std::shared_ptr<base::Material>> GetResourceByUuid(const base::UUID &uuid);
+        std::optional<std::shared_ptr<base::Material>> getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr);
 
-        static std::string GenerateUniqueMaterialName(const aiMaterial *aiMat);
+        static std::string generateUniqueMaterialName(const aiMaterial *aiMat);
     private:
-        std::shared_ptr<base::Material> LoadMaterialFromAssimp(const aiMaterial* aiMat);
+        std::shared_ptr<base::Material> loadMaterialFromAssimp(const aiMaterial* aiMat);
 
-        std::shared_ptr<base::Material> LoadMaterialFromJson(const io::JsonConfiguration& jsonConfig);
+        std::shared_ptr<base::Material> loadMaterialFromJson(const io::JsonConfiguration& jsonConfig);
     };
 }
 

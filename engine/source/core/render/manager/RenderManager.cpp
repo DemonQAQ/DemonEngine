@@ -39,7 +39,6 @@ namespace render
             std::cerr << "Initialization failed: " << e.what() << std::endl;
             return false;
         }
-        initGraphApi(renderApi, params);
         initRenderPipeline(settingPipelineType, params);
         bool flag = renderPipeline != nullptr;
         setInit(flag);
@@ -87,7 +86,7 @@ namespace render
             case PipelineType::DEFERRED:
                 break;
             case PipelineType::PROGRAMMABLE:
-                renderPipeline = std::make_shared<ProgrammablePipeline>();
+                renderPipeline = std::make_shared<ProgrammablePipeline>(graphApi);
                 break;
         }
     }
@@ -123,12 +122,12 @@ namespace render
         renderPipeline->render();
     }
 
-    void RenderManager::submitEntity(base::IRenderable *object, RenderType renderType)
+    void RenderManager::submitEntity(std::shared_ptr<base::IRenderable> object, RenderType renderType)
     {
         renderPipeline->submitEntity(object, renderType);
     }
 
-    void RenderManager::submitDrawCall(DrawCall *drawCall, RenderType renderType)
+    void RenderManager::submitDrawCall(std::shared_ptr<DrawCall> drawCall, RenderType renderType)
     {
         renderPipeline->submitDrawCall(drawCall, renderType);
     }

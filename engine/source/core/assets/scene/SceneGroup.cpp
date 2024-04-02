@@ -50,7 +50,7 @@ namespace assets::scene
         return false;
     }
 
-    bool SceneGroup::removeChildByUUID(const UUID &uuid)
+    bool SceneGroup::removeChildByUUID(const std::shared_ptr<base::UUID> &uuid)
     {
         if (childrenMap.erase(uuid))
         {
@@ -66,7 +66,7 @@ namespace assets::scene
         return false;
     }
 
-    bool SceneGroup::updateChildByUUID(const UUID &uuid, const std::shared_ptr<base::Object> &newChild)
+    bool SceneGroup::updateChildByUUID(const std::shared_ptr<base::UUID> &uuid, const std::shared_ptr<base::Object> &newChild)
     {
         auto it = childrenMap.find(uuid);
         if (it != childrenMap.end())
@@ -77,7 +77,7 @@ namespace assets::scene
         return false;
     }
 
-    std::shared_ptr<base::Object> SceneGroup::findChildByUUID(const UUID &uuid)
+    std::shared_ptr<base::Object> SceneGroup::findChildByUUID(const std::shared_ptr<base::UUID> &uuid)
     {
         auto it = childrenMap.find(uuid);
         if (it != childrenMap.end())

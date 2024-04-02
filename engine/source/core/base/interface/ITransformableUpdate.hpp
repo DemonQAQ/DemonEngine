@@ -6,14 +6,14 @@
 #define DEMONENGINE_ITRANSFORMABLEUPDATE_HPP
 
 #include "Interface.hpp"
-#include <vector>
-#include <any>
+
 #include "ITransformable.hpp"
+#include "IRenderUpadtable.hpp"
 #include "core/base/common/Transform.hpp"
 
 namespace base
 {
-    interface ITransformableUpdate : implements ITransformable
+    interface ITransformableUpdate : implements ITransformable, IRenderUpdatable
     {
     protected:
         bool transformDirty = false;
@@ -23,8 +23,9 @@ namespace base
 
         ~ITransformableUpdate() override = default;
 
-        virtual void beforeRendering(const std::vector<std::any>& params) = 0;
-        virtual void afterRendering(const std::vector<std::any>& params) = 0;
+        virtual void beforeRendering(const std::vector<std::any> &params) = 0;
+
+        virtual void afterRendering(const std::vector<std::any> &params) = 0;
 
         [[nodiscard]] bool isTransformDirty() const
         {

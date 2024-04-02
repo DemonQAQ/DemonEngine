@@ -27,7 +27,7 @@ namespace base
         float roughness;                   // 粗糙度
         float metallic;                    // 金属度
         float reflectivity;                // 反射率
-        std::map<TextureType, std::map<UUID, std::shared_ptr<Texture>>> textures;
+        std::map<TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>> textures;
     public:
         explicit Material(std::string name_ = "Unnamed Material",
                           const glm::vec3 &diffuse_ = glm::vec3(0.8f, 0.8f, 0.8f),
@@ -39,18 +39,18 @@ namespace base
                           float roughness_ = 0.5f,
                           float metallic_ = 0.0f,
                           float reflectivity_ = 0.5f,
-                          const std::map<TextureType, std::map<UUID, std::shared_ptr<Texture>>>& textures_ = {})
+                          const std::map<TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>>& textures_ = {})
                 : name(std::move(name_)), diffuse(diffuse_), specular(specular_), ambient(ambient_),
                   emissive(emissive_), shininess(shininess_), opacity(opacity_), roughness(roughness_),
                   metallic(metallic_), reflectivity(reflectivity_), textures(textures_)
         {}
 
-        void addTexture(const TextureType type, const UUID &uuid, std::shared_ptr<Texture> &texture)
+        void addTexture(const TextureType type, const std::shared_ptr<base::UUID> &uuid, std::shared_ptr<Texture> &texture)
         {
             textures[type][uuid] = texture;
         }
 
-        std::shared_ptr<Texture> getTexture(const TextureType type, const UUID &uuid)
+        std::shared_ptr<Texture> getTexture(const TextureType type, const std::shared_ptr<base::UUID> &uuid)
         {
             auto typeIt = textures.find(type);
             if (typeIt != textures.end())
@@ -61,7 +61,7 @@ namespace base
             return nullptr;
         }
 
-        [[nodiscard]] const std::map<TextureType, std::map<UUID, std::shared_ptr<Texture>>> &getTextures() const
+        [[nodiscard]] const std::map<TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>> &getTextures() const
         {
             return textures;
         }

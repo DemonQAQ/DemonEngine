@@ -14,17 +14,17 @@ namespace assets
     class ConfigManager : implements IFileManager
     {
     private:
-        static std::unordered_map<base::UUID, std::shared_ptr<io::IFile>> loadedConfig;
+        static std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<io::IFile>> loadedConfig;
     public:
-        std::optional<base::UUID> LoadResource(const std::vector<std::any>& params) override;
+        std::optional<std::shared_ptr<base::UUID>> loadResource(const std::vector<std::any>& params) override;
 
-        void UnloadResource(const std::vector<std::any>& params) override;
+        void unloadResource(const std::vector<std::any>& params) override;
 
-        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override;
+        [[nodiscard]] bool isResourceLoaded(const std::vector<std::any>& params) const override;
 
-        void UpdateResource(const std::vector<std::any>& params) override;
+        void updateResource(const std::vector<std::any>& params) override;
 
-        std::optional<std::shared_ptr<io::IFile>> GetResourceByUuid(const base::UUID &uuid);
+        std::optional<std::shared_ptr<io::IFile>> getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr);
     };
 }
 

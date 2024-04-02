@@ -10,9 +10,9 @@
 
 using namespace assets;
 
-std::unordered_map<base::UUID, std::shared_ptr<base::Material>> MaterialsManager::loadedMaterial;
+std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Material>> MaterialsManager::loadedMaterial;
 
-std::optional<base::UUID> MaterialsManager::LoadResource(const std::vector<std::any> &params)
+std::optional<std::shared_ptr<base::UUID>> MaterialsManager::loadResource(const std::vector<std::any> &params)
 {
     if (params.empty()) return std::nullopt;
 
@@ -21,22 +21,22 @@ std::optional<base::UUID> MaterialsManager::LoadResource(const std::vector<std::
     if (params[0].type() == typeid(const aiMaterial *))
     {
         const aiMaterial *aiMat = std::any_cast<const aiMaterial *>(params[0]);
-        material = LoadMaterialFromAssimp(aiMat);
+        material = loadMaterialFromAssimp(aiMat);
     } else if (params[0].type() == typeid(io::JsonConfiguration))
     {
         const io::JsonConfiguration &jsonConfig = std::any_cast<io::JsonConfiguration>(params[0]);
-        material = LoadMaterialFromJson(jsonConfig);
+        material = loadMaterialFromJson(jsonConfig);
     } else return std::nullopt;
 
     if (material)
     {
-        base::UUID uuid = material->getUUID();
+        auto uuid = material->getUUID();
         loadedMaterial[uuid] = material;
         return uuid;
     } else return std::nullopt;
 }
 
-std::shared_ptr<base::Material> MaterialsManager::LoadMaterialFromAssimp(const aiMaterial *aiMat)
+std::shared_ptr<base::Material> MaterialsManager::loadMaterialFromAssimp(const aiMaterial *aiMat)
 {
     glm::vec3 diffuse(0.8f), specular(1.0f), ambient(0.2f), emissive(0.0f);
     float shininess = 32.0f, opacity = 1.0f, roughness = 0.5f, metallic = 0.0f, reflectivity = 0.5f;
@@ -74,7 +74,7 @@ std::shared_ptr<base::Material> MaterialsManager::LoadMaterialFromAssimp(const a
     auto textureManager = std::dynamic_pointer_cast<TextureManager>(textureManagerOpt.value());
     if (!textureManager) return nullptr;
 
-    std::map<base::TextureType, std::map<base::UUID, std::shared_ptr<base::Texture>>> textures;
+    std::map<base::TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Texture>>> textures;
 
     for (auto aiTexType: supportedAiTextureTypes)
     {
@@ -82,10 +82,10 @@ std::shared_ptr<base::Material> MaterialsManager::LoadMaterialFromAssimp(const a
         if (AI_SUCCESS == aiMat->GetTexture(aiTexType, 0, &texPath))
         {
             std::vector<std::any> textureParams = {std::string(texPath.C_Str()), aiTextureTypeToTextureType(aiTexType)};
-            auto textureUuid = textureManager->LoadResource(textureParams);
+            auto textureUuid = textureManager->loadResource(textureParams);
             if (textureUuid.has_value())
             {
-                auto textureOpt = textureManager->GetResourceByUuid(textureUuid.value());
+                auto textureOpt = textureManager->getResourceByUuid(textureUuid.value());
                 if (textureOpt.has_value())
                 {
                     auto texture = textureOpt.value();
@@ -95,41 +95,43 @@ std::shared_ptr<base::Material> MaterialsManager::LoadMaterialFromAssimp(const a
         }
     }
 
-    auto material = std::make_shared<base::Material>(GenerateUniqueMaterialName(aiMat), diffuse, specular, ambient, emissive,
+    auto material = std::make_shared<base::Material>(generateUniqueMaterialName(aiMat), diffuse, specular, ambient, emissive,
                                                      shininess, opacity, roughness, metallic, reflectivity, textures);
     return material;
 }
 
-std::shared_ptr<base::Material> MaterialsManager::LoadMaterialFromJson(const io::JsonConfiguration &jsonConfig)
+std::shared_ptr<base::Material> MaterialsManager::loadMaterialFromJson(const io::JsonConfiguration &jsonConfig)
 {
     return std::shared_ptr<base::Material>();
 }
 
 
-void MaterialsManager::UnloadResource(const std::vector<std::any> &params)
+void MaterialsManager::unloadResource(const std::vector<std::any> &params)
 {
 
 }
 
-bool MaterialsManager::IsResourceLoaded(const std::vector<std::any> &params) const
+bool MaterialsManager::isResourceLoaded(const std::vector<std::any> &params) const
 {
     return false;
 }
 
-void MaterialsManager::UpdateResource(const std::vector<std::any> &params)
+void MaterialsManager::updateResource(const std::vector<std::any> &params)
 {
 
 }
 
-std::string MaterialsManager::GenerateUniqueMaterialName(const aiMaterial *aiMat)
+std::string MaterialsManager::generateUniqueMaterialName(const aiMaterial *aiMat)
 {
     aiString name;
     aiMat->Get(AI_MATKEY_NAME, name);
     return name.C_Str();
 }
 
-std::optional<std::shared_ptr<base::Material>> MaterialsManager::GetResourceByUuid(const base::UUID &uuid)
+std::optional<std::shared_ptr<base::Material>> MaterialsManager::getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr)
 {
-    return std::optional<std::shared_ptr<base::Material>>();
+    auto it = loadedMaterial.find(uuid_ptr);
+    if (it != loadedMaterial.end())return it->second;
+    else return std::nullopt;
 }
 

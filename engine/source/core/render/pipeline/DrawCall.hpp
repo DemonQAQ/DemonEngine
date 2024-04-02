@@ -13,10 +13,9 @@
 
 namespace render
 {
-    struct RenderData
+    struct DrawCallRenderData
     {
         glm::mat4 modelMatrix = glm::mat4(1.0f);
-        glm::mat4 globalTransform;
         std::vector<base::Vertex> vertices;
         std::vector<unsigned int> indices;
     };
@@ -27,7 +26,7 @@ namespace render
         std::shared_ptr<base::Shader> shader;
         std::shared_ptr<base::Material> material;
 
-        std::vector<RenderData> data;
+        std::vector<DrawCallRenderData> data;
 
         std::vector<base::Light> lights;
         glm::vec3 ambientLight = glm::vec3(0.2f, 0.2f, 0.2f);

@@ -27,6 +27,10 @@ namespace assets::scene
         std::shared_ptr<RenderableObject> renderableObject;
         //todo 组件数据，包括碰撞箱、脚本、触发器、音效、特效
     public:
+        explicit Entity(std::string name = "Entity");
+
+        void addModel(const std::shared_ptr<Model> &model);
+
         void setName(const std::string &name_) override;
 
         [[nodiscard]] std::string getName() const override;

@@ -54,9 +54,9 @@ namespace render
 
         void render();
 
-        void submitEntity(base::IRenderable *object, RenderType renderType);
+        void submitEntity(std::shared_ptr<base::IRenderable> object, RenderType renderType);
 
-        void submitDrawCall(DrawCall *drawCall, RenderType renderType);
+        void submitDrawCall(std::shared_ptr<DrawCall> drawCall, RenderType renderType);
     private:
         void initGraphApi(RenderApiType renderApi, const std::vector<std::any> &params);
 

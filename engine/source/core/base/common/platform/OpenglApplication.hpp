@@ -29,7 +29,10 @@ namespace base
 
         bool stop() override;
 
-    protected:
+        void loadScene(const std::shared_ptr<assets::scene::Scene> &scene);
+
+        std::shared_ptr<assets::scene::Scene> getScene();
+
         int initialize() override;
 
         void finalize() override;

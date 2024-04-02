@@ -43,4 +43,6 @@ namespace runtime
     };
 }
 
+extern runtime::RuntimeApplication runtimeApp;
+
 #endif // DEMONENGINE_RUNTIMEAPPLICATION_HPP

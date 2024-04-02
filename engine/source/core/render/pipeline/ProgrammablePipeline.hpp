@@ -14,31 +14,34 @@ namespace render
     {
     private:
         //渲染前会将这两个list中的内容打包至drawcall的list中，打包时没有shader的实体使用管线默认的shader
-        std::vector<base::IRenderable *> opaqueRenderableEntityList;
-        std::vector<base::IRenderable *> transparentRenderableEntityList;
+        std::vector<std::shared_ptr<base::IRenderable>> opaqueRenderableEntityList;
+        std::vector<std::shared_ptr<base::IRenderable>> transparentRenderableEntityList;
 
-        std::vector<DrawCall *> opaqueDrawCalls;
-        std::vector<DrawCall *> transparentDrawCalls;
+        std::vector<std::shared_ptr<DrawCall>> opaqueDrawCalls;
+        std::vector<std::shared_ptr<DrawCall>> transparentDrawCalls;
         std::shared_ptr<base::Shader> usingShader;
         //后处理的shader列表
     public:
-        void render() override
-        {
-            //todo 准备工作
-            //todo 渲染opaqueDrawCalls
-            //todo 其他渲染任务
-            //todo 渲染transparentDrawCalls
-            //todo 后处理任务
-            //todo 输出到屏幕
-        }
+        explicit ProgrammablePipeline(std::shared_ptr<GraphApi> &graphApi_);
 
-        void submitEntity(base::IRenderable *object, RenderType renderType) override;
+        void render() override;
 
-        void submitDrawCall(DrawCall *drawCall, RenderType renderType) override;
+        void submitEntity(std::shared_ptr<base::IRenderable> object, RenderType renderType) override;
 
-        void bindShader(base::Shader *shader) override;
+        void submitDrawCall(std::shared_ptr<DrawCall> drawCall, RenderType renderType) override;
 
-        void unbindShader(base::Shader *shader) override;
+        void bindShader(std::shared_ptr<base::Shader> shader) override;
+
+        void unbindShader() override;
+
+        void prepare() override;
+
+        void clear() override;
+
+    private:
+        void executeDrawCalls(const std::vector<std::shared_ptr<DrawCall>> &drawCallList);
+
+        void setupRenderState(const std::shared_ptr<DrawCall> &drawCall);
     };
 }
 

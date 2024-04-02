@@ -3,6 +3,8 @@
 //
 #include <exception>
 #include <iostream>
+#include <core/assets/manager/AssetsMainManager.hpp>
+#include <core/render/pipeline/ProgrammablePipeline.hpp>
 #include "GLFW/glfw3.h"
 #include "OpenglApplication.hpp"
 
@@ -49,6 +51,7 @@ bool base::OpenglApplication::stop()
 
 int base::OpenglApplication::initialize()
 {
+    assets::AssetsMainManager::initialize();
     // 创建窗口
     mainWindow = windowFactory.createWindow(800, 600, "Demo Application");
 
@@ -59,7 +62,7 @@ int base::OpenglApplication::initialize()
     }
 
     // 初始化OpenGL
-    if (!renderManager->init({render::RenderApiType::OpenGL, mainWindow}))
+    if (!renderManager->init({render::RenderApiType::OpenGL, mainWindow, render::PipelineType::PROGRAMMABLE}))
     {
         return -1;
     }
@@ -139,7 +142,7 @@ void base::OpenglApplication::onPhysicsUpdate()
 
 void base::OpenglApplication::onPreRender()
 {
-
+    this->mainScene->beforeRendering({});
 }
 
 void base::OpenglApplication::onPostProcess()
@@ -149,7 +152,17 @@ void base::OpenglApplication::onPostProcess()
 
 void base::OpenglApplication::onPostRender()
 {
+    this->mainScene->afterRendering({});
+}
 
+void OpenglApplication::loadScene(const std::shared_ptr<assets::scene::Scene> &scene)
+{
+    this->mainScene = scene;
+}
+
+std::shared_ptr<assets::scene::Scene> OpenglApplication::getScene()
+{
+    return mainScene;
 }
 
 

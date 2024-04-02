@@ -25,18 +25,18 @@ namespace assets
     class ModelManager : implements IFileManager
     {
     public:
-        std::optional<base::UUID> LoadResource(const std::vector<std::any> &params) override;
+        std::optional<std::shared_ptr<base::UUID>> loadResource(const std::vector<std::any> &params) override;
 
-        void UnloadResource(const std::vector<std::any> &params) override;
+        void unloadResource(const std::vector<std::any> &params) override;
 
-        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any> &params) const override;
+        [[nodiscard]] bool isResourceLoaded(const std::vector<std::any> &params) const override;
 
-        void UpdateResource(const std::vector<std::any> &params) override;
+        void updateResource(const std::vector<std::any> &params) override;
 
-        std::optional<std::shared_ptr<base::Model>> GetResourceByUuid(const base::UUID &uuid);
+        std::optional<std::shared_ptr<base::Model>> getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr);
 
     private:
-        std::optional<base::Model> loadModel(const std::string &path);
+        std::shared_ptr<base::Model> loadModel(const std::string &path);
 
         void processNode(const std::shared_ptr<base::Node> &node, aiNode *aiNode, const aiScene *scene,
                          int &meshIndex, const std::string &directory, const base::Transform &parentTransform);

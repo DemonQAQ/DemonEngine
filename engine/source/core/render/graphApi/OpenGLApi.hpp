@@ -39,7 +39,7 @@ namespace render
 
         void drawModel(std::shared_ptr<base::Model> model) override;
 
-        void executeDrawCall(const DrawCall &drawCall) override;
+        void executeDrawCall(std::shared_ptr<DrawCall> drawCall) override;
 
         void useShader(std::shared_ptr<base::Shader> shader) override;
 

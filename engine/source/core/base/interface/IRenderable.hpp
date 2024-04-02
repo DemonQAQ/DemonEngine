@@ -17,8 +17,8 @@ namespace base
         Transform globalTransform;
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
-        base::UUID *material;
-        base::UUID *useShader;
+        std::shared_ptr<base::UUID> material;
+        std::shared_ptr<base::UUID> useShader;
 
         RenderData() : globalTransform(Transform()), material(nullptr), useShader(nullptr)
         {}
@@ -28,8 +28,8 @@ namespace base
     {
     private:
         Transform actualTransform;
-        base::UUID *useShader;
-        base::UUID *material;
+        std::shared_ptr<base::UUID> useShader;
+        std::shared_ptr<base::UUID> material;
 
     public:
         IRenderable() : useShader(nullptr), material(nullptr)
@@ -37,7 +37,7 @@ namespace base
 
         virtual void getRenderData(std::vector<RenderData> renderDataList) = 0;
 
-        void bindMaterial(base::UUID *uuid)
+        void bindMaterial(std::shared_ptr<base::UUID> uuid)
         {
             this->material = uuid;
         }
@@ -52,12 +52,12 @@ namespace base
             return this->material != nullptr;
         }
 
-        base::UUID *getMaterial()
+        std::shared_ptr<base::UUID> getMaterial()
         {
             return this->material;
         }
 
-        void bindShader(base::UUID *uuid)
+        void bindShader(std::shared_ptr<base::UUID> uuid)
         {
             this->useShader = uuid;
         }
@@ -72,7 +72,7 @@ namespace base
             return this->useShader != nullptr;
         }
 
-        base::UUID *getShader()
+        std::shared_ptr<base::UUID> getShader()
         {
             return this->useShader;
         }
@@ -90,12 +90,12 @@ namespace base
         }
 
     protected:
-        static UUID *getDefaultShader()
+        static std::shared_ptr<base::UUID> getDefaultShader()
         {
             return nullptr;
         }
 
-        static UUID *getDefaultMaterial()
+        static std::shared_ptr<base::UUID> getDefaultMaterial()
         {
             return nullptr;
         }

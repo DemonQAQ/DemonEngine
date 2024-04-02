@@ -274,13 +274,13 @@ void OpenGLApi::drawMesh(std::shared_ptr<base::Mesh> mesh)
 
     auto &vertices = mesh->getVertices();
     auto &indices = mesh->getIndices();
-    base::UUID *materialUUID = mesh->getMaterial();
+    auto materialUUID = mesh->getMaterial();
     std::optional<std::shared_ptr<base::Material>> material;
     auto materialsManagerOpt = assets::AssetsMainManager::getManager(assets::AssetType::MATERIALS);
     if (materialsManagerOpt)
     {
         auto materialsManagerPtr = std::dynamic_pointer_cast<assets::MaterialsManager>(materialsManagerOpt.value());
-        if (materialUUID)material = materialsManagerPtr->GetResourceByUuid(*materialUUID);
+        if (materialUUID)material = materialsManagerPtr->getResourceByUuid(materialUUID);
     }
     if (!usingShader)useShader(normalShader);
 
@@ -343,9 +343,9 @@ void OpenGLApi::drawModel(std::shared_ptr<base::Model> model)
 
 }
 
-void OpenGLApi::executeDrawCall(const DrawCall &drawCall)
+void OpenGLApi::executeDrawCall(std::shared_ptr<DrawCall> drawCall)
 {
-    const auto *oglDrawCall = dynamic_cast<const OpenglDrawCall *>(&drawCall);
+    auto oglDrawCall = std::dynamic_pointer_cast<OpenglDrawCall>(drawCall);
     if (!oglDrawCall)
     {
         std::cerr << "Error: drawCall provided to executeDrawCall is not of type OpenglDrawCall." << std::endl;

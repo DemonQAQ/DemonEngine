@@ -8,11 +8,11 @@
 
 using namespace assets;
 
-std::optional<base::UUID> ModelManager::LoadResource(const std::vector<std::any> &params)
+std::optional<std::shared_ptr<base::UUID>> ModelManager::loadResource(const std::vector<std::any> &params)
 {
     if (params.empty() || params[0].type() != typeid(std::string))
     {
-        std::cerr << "Invalid parameters for LoadResource." << std::endl;
+        std::cerr << "Invalid parameters for loadResource." << std::endl;
         return std::nullopt;
     }
 
@@ -27,13 +27,13 @@ std::optional<base::UUID> ModelManager::LoadResource(const std::vector<std::any>
     }
 
     std::vector<std::any> paramsForCheck = {path};
-    if (IsResourceLoaded(paramsForCheck))
+    if (isResourceLoaded(paramsForCheck))
     {
         std::cout << "资源已加载：" << path << std::endl;
         // You need to return the existing model's UUID here
     }
 
-    std::optional<base::Model> model = loadModel(path);
+    auto model = loadModel(path);
     if (!model)
     {
         return std::nullopt;
@@ -42,23 +42,23 @@ std::optional<base::UUID> ModelManager::LoadResource(const std::vector<std::any>
     return model->getUUID();
 }
 
-void ModelManager::UnloadResource(const std::vector<std::any> &params)
+void ModelManager::unloadResource(const std::vector<std::any> &params)
 {
-    // Implementation of UnloadResource
+    // Implementation of unloadResource
 }
 
-bool ModelManager::IsResourceLoaded(const std::vector<std::any> &params) const
+bool ModelManager::isResourceLoaded(const std::vector<std::any> &params) const
 {
-    // Implementation of IsResourceLoaded
+    // Implementation of isResourceLoaded
     return false;
 }
 
-void ModelManager::UpdateResource(const std::vector<std::any> &params)
+void ModelManager::updateResource(const std::vector<std::any> &params)
 {
-    // Implementation of UpdateResource
+    // Implementation of updateResource
 }
 
-std::optional<base::Model> ModelManager::loadModel(const std::string &path)
+std::shared_ptr<base::Model> ModelManager::loadModel(const std::string &path)
 {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs |
@@ -67,7 +67,7 @@ std::optional<base::Model> ModelManager::loadModel(const std::string &path)
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
-        return std::nullopt;
+        return nullptr;
     }
 
     std::string directory = path.substr(0, path.find_last_of('/'));
@@ -79,7 +79,7 @@ std::optional<base::Model> ModelManager::loadModel(const std::string &path)
                 convertAiMatrixToTransform(scene->mRootNode->mTransformation));
 
     auto model = std::make_shared<base::Model>(path, modelName, rootNode, base::Transform());
-    return model ? std::optional<base::Model>(*model) : std::nullopt;
+    return model;
 }
 
 void ModelManager::processNode(const std::shared_ptr<base::Node> &node, aiNode *aiNode, const aiScene *scene,
@@ -108,7 +108,8 @@ void ModelManager::processNode(const std::shared_ptr<base::Node> &node, aiNode *
 }
 
 std::shared_ptr<base::Mesh>
-ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string &meshName,const base::Transform &nodeTransform)
+ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string &meshName,
+                          const base::Transform &nodeTransform)
 {
     std::vector<base::Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -171,17 +172,17 @@ ModelManager::processMesh(aiMesh *mesh, const aiScene *scene, const std::string 
         if (materialsManagerOpt)
         {
             auto materialsManagerPtr = std::dynamic_pointer_cast<assets::MaterialsManager>(materialsManagerOpt.value());
-            auto materialUuid = materialsManagerPtr->LoadResource(params);
+            auto materialUuid = materialsManagerPtr->loadResource(params);
             if (materialUuid.has_value())
             {
-                auto mat = materialsManagerPtr->GetResourceByUuid(materialUuid.value());
+                auto mat = materialsManagerPtr->getResourceByUuid(materialUuid.value());
                 if (mat.has_value())material = mat.value();
             }
         }
     }
 
-    base::UUID materialUUID = material->getUUID();
-    return std::make_shared<base::Mesh>(meshName, vertices, indices, nodeTransform, nullptr, &materialUUID);
+    auto materialUUID = material->getUUID();
+    return std::make_shared<base::Mesh>(meshName, vertices, indices, nodeTransform, nullptr, materialUUID);
 }
 
 base::Transform ModelManager::convertAiMatrixToTransform(const aiMatrix4x4 &aiMatrix)
@@ -209,7 +210,7 @@ base::Transform ModelManager::convertAiMatrixToTransform(const aiMatrix4x4 &aiMa
     return transform;
 }
 
-std::optional<std::shared_ptr<base::Model>> ModelManager::GetResourceByUuid(const base::UUID &uuid)
+std::optional<std::shared_ptr<base::Model>> ModelManager::getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr)
 {
     return std::nullopt;
 }

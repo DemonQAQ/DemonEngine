@@ -6,7 +6,7 @@
 
 namespace assets::scene
 {
-    bool Scene::addChildToNode(const UUID &parentUuid, const std::shared_ptr<Object> &child)
+    bool Scene::addChildToNode(const std::shared_ptr<base::UUID> &parentUuid, const std::shared_ptr<Object> &child)
     {
         auto parentNode = findNodeByUUID(root, parentUuid);
         if (parentNode != nullptr)
@@ -21,12 +21,12 @@ namespace assets::scene
         return false;
     }
 
-    bool Scene::removeChildFromNode(const UUID &uuid)
+    bool Scene::removeChildFromNode(const std::shared_ptr<base::UUID> &uuid)
     {
         return removeChildFromNodeRecursive(root, uuid);
     }
 
-    bool Scene::removeChildFromNodeRecursive(const std::shared_ptr<SceneGroup> &node, const UUID &uuid)
+    bool Scene::removeChildFromNodeRecursive(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid)
     {
         if (node->removeChildByUUID(uuid))
         {
@@ -43,12 +43,12 @@ namespace assets::scene
         return false;
     }
 
-    bool Scene::updateNode(const UUID &uuid, const std::shared_ptr<Object> &newNode)
+    bool Scene::updateNode(const std::shared_ptr<base::UUID> &uuid, const std::shared_ptr<Object> &newNode)
     {
         return updateNodeRecursive(root, uuid, newNode);
     }
 
-    bool Scene::updateNodeRecursive(const std::shared_ptr<SceneGroup> &node, const UUID &uuid,
+    bool Scene::updateNodeRecursive(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid,
                                     const std::shared_ptr<Object> &newNode)
     {
         if (node->updateChildByUUID(uuid, newNode))
@@ -66,7 +66,7 @@ namespace assets::scene
         return false;
     }
 
-    std::shared_ptr<Object> Scene::findNodeByUUID(const std::shared_ptr<SceneGroup> &node, const UUID &uuid) const
+    std::shared_ptr<Object> Scene::findNodeByUUID(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid) const
     {
         if (node->getUUID() == uuid)
         {
@@ -177,6 +177,45 @@ namespace assets::scene
     void Scene::Deserialize(const std::string &data)
     {
 
+    }
+
+    void Scene::beforeRendering(const std::vector<std::any> &params)
+    {
+        if (root)
+        {
+            traverseAndUpdate(root, params);
+        }
+    }
+
+    void Scene::traverseAndUpdate(const std::shared_ptr<base::Object> &node, const std::vector<std::any> &params)
+    {
+        // 尝试将当前节点动态转换为 IRenderUpdatable 接口
+        auto renderUpdatable = std::dynamic_pointer_cast<base::IRenderUpdatable>(node);
+        if (renderUpdatable)
+        {
+            renderUpdatable->beforeRendering(params);
+        }
+
+        // 检查当前节点是否为 SceneGroup 类型
+        auto sceneGroup = std::dynamic_pointer_cast<assets::scene::SceneGroup>(node);
+        if (sceneGroup)
+        {
+            const auto &children = sceneGroup->getChildren();
+            for (const auto &child: children)
+            {
+                traverseAndUpdate(child, params);
+            }
+        }
+    }
+
+    void Scene::afterRendering(const std::vector<std::any> &params)
+    {
+
+    }
+
+    void Scene::addChild(const std::shared_ptr<Object> &child)
+    {
+        root->addChild(child);
     }
 
 } // assets

@@ -2,7 +2,9 @@
 // Created by Demon on 2024/3/27.
 //
 
+#include <runtime/base/RuntimeApplication.hpp>
 #include "Entity.hpp"
+#include "core/base/common/platform/Application.hpp"
 
 namespace assets::scene
 {
@@ -19,7 +21,7 @@ namespace assets::scene
 
     void Entity::beforeRendering(const std::vector<std::any> &params)
     {
-
+        runtimeApp.getRenderManager()->submitEntity(renderableObject, render::RenderType::OPAQUE);
     }
 
     void Entity::afterRendering(const std::vector<std::any> &params)
@@ -35,5 +37,15 @@ namespace assets::scene
     void Entity::Deserialize(const std::string &data)
     {
 
+    }
+
+    Entity::Entity(std::string name) : Object(), name(std::move(name))
+    {
+        renderableObject = std::make_shared<RenderableObject>("renderableObject");
+    }
+
+    void Entity::addModel(const std::shared_ptr<Model> &model)
+    {
+        renderableObject->addModel(model);
     }
 }

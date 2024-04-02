@@ -29,7 +29,7 @@ namespace base
     public:
         Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
              const Transform &initialTransform = Transform(),
-             UUID *shaderUUID = nullptr, UUID *materialUUID = nullptr);
+             const std::shared_ptr<base::UUID> &shaderUUID = nullptr, const std::shared_ptr<base::UUID> &materialUUID = nullptr);
 
         [[nodiscard]] const std::vector<Vertex> &getVertices() const;
 

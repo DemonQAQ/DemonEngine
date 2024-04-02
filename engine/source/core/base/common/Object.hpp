@@ -16,26 +16,26 @@ namespace base
     class Object
     {
     public:
-        Object() : uuid(UUID()) {}
+        Object() : uuid(std::make_shared<UUID>()) {}
 
-        explicit Object(const std::string& str) : uuid(str.empty() ? UUID() : UUID(str)) {}
+        explicit Object(const std::string& str) : uuid(std::make_shared<UUID>(str.empty() ? UUID() : UUID(str))) {}
 
-        explicit Object(const UUID& existingUuid) : uuid(existingUuid) {}
+        explicit Object(const std::shared_ptr<base::UUID>& existingUuid) : uuid(existingUuid) {}
 
         virtual ~Object() = default;
 
         [[nodiscard]] std::string getUuidStr() const
         {
-            return uuid.toString();
+            return uuid->toString();
         }
 
-        [[nodiscard]] UUID getUUID() const
+        [[nodiscard]] std::shared_ptr<UUID> getUUID() const
         {
             return uuid;
         }
 
     private:
-        UUID uuid;
+        std::shared_ptr<UUID> uuid;
     };
 }
 

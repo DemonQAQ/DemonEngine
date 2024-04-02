@@ -21,7 +21,7 @@ namespace assets::scene
     private:
         std::string name;
         std::vector<std::shared_ptr<Object>> childrenList;
-        std::unordered_map<UUID, std::shared_ptr<Object>, std::hash<UUID>> childrenMap;
+        std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<Object>, UUIDHash, UUIDEqual> childrenMap;
     public:
         explicit SceneGroup(std::string name = "Group");
 
@@ -41,11 +41,11 @@ namespace assets::scene
 
         bool removeChild(const std::shared_ptr<Object> &child);
 
-        bool removeChildByUUID(const base::UUID &uuid);
+        bool removeChildByUUID(const std::shared_ptr<base::UUID> &uuid);
 
-        std::shared_ptr<base::Object> findChildByUUID(const base::UUID &uuid);
+        std::shared_ptr<base::Object> findChildByUUID(const std::shared_ptr<base::UUID> &uuid);
 
-        bool updateChildByUUID(const base::UUID &uuid, const std::shared_ptr<base::Object> &newChild);
+        bool updateChildByUUID(const std::shared_ptr<base::UUID> &uuid, const std::shared_ptr<base::Object> &newChild);
 
         [[nodiscard]] const std::vector<std::shared_ptr<Object>> &getChildren() const;
     };

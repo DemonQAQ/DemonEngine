@@ -88,4 +88,23 @@ namespace std
         }
     };
 }
+
+struct UUIDHash
+{
+    size_t operator()(const std::shared_ptr<base::UUID>& uuid_ptr) const noexcept
+    {
+        if (!uuid_ptr) return 0; // 对空指针返回0
+        std::hash<base::UUID> hasher;
+        return hasher(*uuid_ptr);
+    }
+};
+
+struct UUIDEqual
+{
+    bool operator()(const std::shared_ptr<base::UUID>& lhs, const std::shared_ptr<base::UUID>& rhs) const
+    {
+        if (!lhs || !rhs) return !lhs && !rhs; // 两个空指针视为相等
+        return *lhs == *rhs;
+    }
+};
 #endif //DEMONENGINE_UUID_HPP

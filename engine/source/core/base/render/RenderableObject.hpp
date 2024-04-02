@@ -18,23 +18,24 @@ namespace base
 {
     class Model;
 
-    class RenderableObject : implements Object, IRenderable, ITransformableUpdate, INameable
+    class RenderableObject : implements IRenderable, Object, ITransformableUpdate, INameable
     {
     private:
         std::string name;
-        std::vector<Model> models;
+        std::vector<std::shared_ptr<Model>> models;
     public:
         explicit RenderableObject(
                 std::string name,
-                const std::vector<Model>& models = {},
-                const base::Transform& initialTransform = base::Transform(),
-                UUID *shaderUUID = nullptr,
-                UUID *materialUUID = nullptr);
+                const std::vector<std::shared_ptr<Model>> &models = {},
+                const base::Transform &initialTransform = base::Transform(),
+                const std::shared_ptr<base::UUID> &shaderUUID = nullptr, const std::shared_ptr<base::UUID> &materialUUID = nullptr);
 
         void render()
         {
 
         }
+
+        void addModel(const std::shared_ptr<Model> &model);
 
         void getRenderData(std::vector<RenderData> renderDataList) override;
 
@@ -53,15 +54,16 @@ namespace base
             return getTransform();
         }
 
-        void beforeRendering(const std::vector<std::any>& params) override;
+        void beforeRendering(const std::vector<std::any> &params) override;
 
-        void afterRendering(const std::vector<std::any>& params) override;
+        void afterRendering(const std::vector<std::any> &params) override;
 
         void updateGlobalTransform(std::vector<Transform> &additionalTransforms) override;
 
         void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) override;
 
-        void bindShaderToMesh(const std::string &modelName, const std::string &meshName, std::unique_ptr<base::UUID> shader);
+        void
+        bindShaderToMesh(const std::string &modelName, const std::string &meshName, std::unique_ptr<base::UUID> shader);
 
         void unbindShaderFromMesh(const std::string &meshName);
 

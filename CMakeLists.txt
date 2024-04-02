@@ -25,7 +25,8 @@ file(GLOB_RECURSE SOURCE_FILES
         )
 
 # 添加可执行文件
-add_executable(DemonEngine ${SOURCE_FILES})
+add_executable(DemonEngine ${SOURCE_FILES}
+        engine/source/core/assets/manager/MediaManager.cpp)
 
 # 启用预编译头
 target_precompile_headers(DemonEngine PRIVATE engine/source/core/base/lib/pch.hpp)
@@ -47,8 +48,11 @@ target_link_libraries(DemonEngine ${ROOT_PATH}/lib/assimp-vc143-mtd.lib)
 target_link_libraries(DemonEngine ${ROOT_PATH}/lib/yaml-cpp.lib)
 target_link_libraries(${PROJECT_NAME} Boost::filesystem)
 
-# 将DLL复制到可执行文件目录
-add_custom_command(TARGET DemonEngine POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${ROOT_PATH}/dlls/glfw3.dll"
-        $<TARGET_FILE_DIR:DemonEngine>)
+# 新增：将lib文件复制到输出目录（请确认这步是否真的需要）
+file(GLOB LIB_FILES "${ROOT_PATH}/lib/*.lib")
+foreach(LIB_FILE ${LIB_FILES})
+    add_custom_command(TARGET DemonEngine POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${LIB_FILE}"
+            $<TARGET_FILE_DIR:DemonEngine>)
+endforeach()

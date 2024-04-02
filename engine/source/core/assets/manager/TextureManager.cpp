@@ -5,14 +5,14 @@
 
 using namespace assets;
 
-std::unordered_map<base::UUID, std::shared_ptr<base::Texture>> TextureManager::loadedTextures;
+std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Texture>> TextureManager::loadedTextures;
 
 //params1 = path(string), params2 = textureType(base::TextureType)
-std::optional<base::UUID> TextureManager::LoadResource(const std::vector<std::any> &params)
+std::optional<std::shared_ptr<base::UUID>> TextureManager::loadResource(const std::vector<std::any> &params)
 {
     if (params.size() < 2)
     {
-        std::cerr << "Invalid parameters for LoadResource." <<
+        std::cerr << "Invalid parameters for loadResource." <<
                   std::endl;
         return
                 std::nullopt;
@@ -33,8 +33,8 @@ std::optional<base::UUID> TextureManager::LoadResource(const std::vector<std::an
         return std::nullopt;
     }
 
-    base::UUID textureUuid(path);
-    auto it = loadedTextures.find(textureUuid.toString());
+    auto textureUuid = std::make_shared<base::UUID>(path);
+    auto it = loadedTextures.find(textureUuid);
     if (it != loadedTextures.end())
     {
         return it->first;
@@ -52,47 +52,44 @@ std::optional<base::UUID> TextureManager::LoadResource(const std::vector<std::an
     return textureUuid;
 }
 
-std::optional<std::shared_ptr<base::Texture>> TextureManager::GetResourceByUuid(const base::UUID &uuid)
+std::optional<std::shared_ptr<base::Texture>>
+TextureManager::getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr)
 {
-    auto it = loadedTextures.find(uuid);
+    auto it = loadedTextures.find(uuid_ptr);
     if (it != loadedTextures.end())return it->second;
     else return std::nullopt;
 }
 
-void TextureManager::UnloadResource(const std::vector<std::any> &params)
+void TextureManager::unloadResource(const std::vector<std::any> &params)
 {
     if (params.empty())
     {
-        std::cerr << "Invalid parameters for UnloadResource." << std::endl;
+        std::cerr << "Invalid parameters for unloadResource." << std::endl;
         return;
     }
 
-    base::UUID uuid;
     try
     {
-        uuid = std::any_cast<base::UUID>(params[0]);
-    }
-    catch (const std::bad_any_cast &e)
+        auto uuid_ptr = std::any_cast<std::shared_ptr<base::UUID>>(params[0]);
+        auto it = loadedTextures.find(uuid_ptr);
+        if (it != loadedTextures.end())
+        {
+            GLuint textureID = it->second->id;
+            glDeleteTextures(1, &textureID);
+            loadedTextures.erase(it);
+        }
+    } catch (const std::bad_any_cast &e)
     {
         std::cerr << "Error extracting UUID parameter: " << e.what() << std::endl;
-        return;
-    }
-
-    auto it = loadedTextures.find(uuid);
-    if (it != loadedTextures.end())
-    {
-        GLuint textureID = it->second->id;
-        glDeleteTextures(1, &textureID);
-        loadedTextures.erase(it);
     }
 }
 
-[[nodiscard]] bool TextureManager::IsResourceLoaded(const std::vector<std::any>& params) const
+[[nodiscard]] bool TextureManager::isResourceLoaded(const std::vector<std::any> &params) const
 {
     return false;
 }
 
-void TextureManager::UpdateResource(const std::vector<std::any>& params)
+void TextureManager::updateResource(const std::vector<std::any> &params)
 {
 
 }

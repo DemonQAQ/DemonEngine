@@ -9,8 +9,8 @@
 
 using namespace base;
 
-RenderableObject::RenderableObject(std::string name, const std::vector<Model> &models,
-                                   const base::Transform &initialTransform, UUID *shaderUUID, UUID *materialUUID)
+RenderableObject::RenderableObject(std::string name, const std::vector<std::shared_ptr<Model>> &models,
+                                   const base::Transform &initialTransform, const std::shared_ptr<base::UUID> &shaderUUID, const std::shared_ptr<base::UUID> &materialUUID)
         : name(std::move(name)), models(models)
 {
     if (shaderUUID)bindShader(shaderUUID);
@@ -24,9 +24,9 @@ RenderableObject::RenderableObject(std::string name, const std::vector<Model> &m
 
 void RenderableObject::getRenderData(std::vector<RenderData> renderDataList)
 {
-    for (Model model: models)
+    for (std::shared_ptr<Model> model: models)
     {
-        model.getRenderData(renderDataList);
+        model->getRenderData(renderDataList);
     }
 }
 
@@ -61,7 +61,20 @@ void RenderableObject::updateObservedGlobalTransform(std::vector<Transform> &add
 {
     std::vector<Transform> transformsToMerge = {getLocalTransform()};
     transformsToMerge.insert(transformsToMerge.end(), additionalTransforms.begin(), additionalTransforms.end());
-    for (Model &model: models)model.updateGlobalTransform(transformsToMerge);
+    for (const std::shared_ptr<Model>& model: models)model->updateGlobalTransform(transformsToMerge);
+}
+
+void RenderableObject::addModel(const std::shared_ptr<Model> &model)
+{
+    auto it = std::find_if(models.begin(), models.end(), [&model](const std::shared_ptr<Model> &existingModel)
+    {
+        return existingModel == model;
+    });
+
+    if (it == models.end())
+    {
+        models.push_back(model);
+    }
 }
 
 

@@ -67,7 +67,7 @@ namespace base
                 : Object(path), id(id), type(type), texturePath(path)
         {}
 
-        Texture(unsigned int id, TextureType type, std::string path, const UUID &uuid)
+        Texture(unsigned int id, TextureType type, std::string path, const std::shared_ptr<base::UUID> &uuid)
                 : Object(uuid), id(id), type(type), texturePath(std::move(path))
         {}
 

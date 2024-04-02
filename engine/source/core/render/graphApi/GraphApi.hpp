@@ -63,7 +63,7 @@ namespace render
         virtual void drawImage(const std::shared_ptr<base::Texture>& texture, float x, float y, float width, float height, const glm::vec4& color = glm::vec4(1.0f)) = 0;
         virtual void drawMesh(std::shared_ptr<base::Mesh> mesh) = 0;
         virtual void drawModel(std::shared_ptr<base::Model> model) = 0;
-        virtual void executeDrawCall(const DrawCall& drawCall) = 0;
+        virtual void executeDrawCall(std::shared_ptr<DrawCall> drawCall) = 0;
 
         virtual void useShader(std::shared_ptr<base::Shader> shader) = 0;
         virtual std::shared_ptr<base::Shader> getUsingShader()=0;

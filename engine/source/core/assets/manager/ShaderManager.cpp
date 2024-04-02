@@ -5,8 +5,10 @@
 #include "ShaderManager.hpp"
 using namespace assets;
 
+std::map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Shader>> ShaderManager::shaders;
+
 //params1 = vertexPath(string), params2 = fragmentPath(string)
-std::optional<base::UUID> ShaderManager::LoadResource(const std::vector<std::any> &params)
+std::optional<std::shared_ptr<base::UUID>> ShaderManager::loadResource(const std::vector<std::any> &params)
 {
     if (params.size() < 2)return std::nullopt;
 
@@ -17,22 +19,22 @@ std::optional<base::UUID> ShaderManager::LoadResource(const std::vector<std::any
         fragmentPath = std::any_cast<std::string>(params[1]);
     } catch (const std::bad_any_cast &e)
     {
-        std::cerr << "ShaderManager::LoadResource - Bad any_cast: " << e.what() << std::endl;
+        std::cerr << "ShaderManager::loadResource - Bad any_cast: " << e.what() << std::endl;
         return std::nullopt;
     }
 
     auto shader = std::make_shared<base::Shader>(vertexPath, fragmentPath);
-    base::UUID uuid = shader->getUUID();
+    auto uuid = shader->getUUID();
     shaders[uuid] = shader;
     return uuid;
 }
 
-void ShaderManager::UnloadResource(const std::vector<std::any> &params)
+void ShaderManager::unloadResource(const std::vector<std::any> &params)
 {
     if (params.empty() || !params[0].has_value()) return;
     try
     {
-        auto uuid = std::any_cast<base::UUID>(params[0]);
+        auto uuid = std::any_cast<std::shared_ptr<base::UUID>>(params[0]);
         shaders.erase(uuid);
     } catch (const std::bad_any_cast &)
     {
@@ -40,7 +42,7 @@ void ShaderManager::UnloadResource(const std::vector<std::any> &params)
     }
 }
 
-bool ShaderManager::IsResourceLoaded(const std::vector<std::any> &params) const
+bool ShaderManager::isResourceLoaded(const std::vector<std::any> &params) const
 {
     if (params.size() < 2) return false; // 确保有足够的参数
 
@@ -48,8 +50,7 @@ bool ShaderManager::IsResourceLoaded(const std::vector<std::any> &params) const
     {
         auto vertexPath = std::any_cast<std::string>(params[0]);
         auto fragmentPath = std::any_cast<std::string>(params[1]);
-        base::UUID uuid(vertexPath + fragmentPath); // 假设UUID构造函数能够从字符串生成UUID
-
+        auto uuid = std::make_shared<base::UUID>(vertexPath + fragmentPath);
         return shaders.find(uuid) != shaders.end();
     } catch (const std::bad_any_cast &)
     {
@@ -57,7 +58,7 @@ bool ShaderManager::IsResourceLoaded(const std::vector<std::any> &params) const
     }
 }
 
-void ShaderManager::UpdateResource(const std::vector<std::any> &params)
+void ShaderManager::updateResource(const std::vector<std::any> &params)
 {
     if (params.size() < 2) return; // 确保有足够的参数
 
@@ -65,7 +66,7 @@ void ShaderManager::UpdateResource(const std::vector<std::any> &params)
     {
         auto vertexPath = std::any_cast<std::string>(params[0]);
         auto fragmentPath = std::any_cast<std::string>(params[1]);
-        base::UUID uuid(vertexPath + fragmentPath); // 生成UUID
+        auto uuid = std::make_shared<base::UUID>(vertexPath + fragmentPath);
 
         auto it = shaders.find(uuid);
         if (it != shaders.end())
@@ -82,9 +83,11 @@ void ShaderManager::UpdateResource(const std::vector<std::any> &params)
     }
 }
 
-std::optional<std::shared_ptr<base::Shader>> ShaderManager::GetResourceByUuid(const base::UUID &uuid)
+std::optional<std::shared_ptr<base::Shader>> ShaderManager::getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr)
 {
-    return std::nullopt;
+    auto it = shaders.find(uuid_ptr);
+    if (it != shaders.end())return it->second;
+    else return std::nullopt;
 }
 
 

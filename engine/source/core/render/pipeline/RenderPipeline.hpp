@@ -25,16 +25,27 @@ namespace render
 
     class RenderPipeline
     {
+    protected:
+        std::shared_ptr<GraphApi> graphApi = nullptr;
     public:
+        RenderPipeline(std::shared_ptr<GraphApi> graphApi_)
+        {
+            graphApi = graphApi_;
+        }
+
         virtual void render() = 0;
 
-        virtual void submitEntity(base::IRenderable *object, RenderType renderType) = 0;
+        virtual void submitEntity(std::shared_ptr<base::IRenderable> object, RenderType renderType) = 0;
 
-        virtual void submitDrawCall(DrawCall *drawCall, RenderType renderType) = 0;
+        virtual void submitDrawCall(std::shared_ptr<DrawCall> drawCall, RenderType renderType) = 0;
 
-        virtual void bindShader(base::Shader *shader) = 0;
+        virtual void bindShader(std::shared_ptr<base::Shader> shader) = 0;
 
-        virtual void unbindShader(base::Shader *shader) = 0;
+        virtual void unbindShader() = 0;
+
+        virtual void prepare() = 0;
+
+        virtual void clear() = 0;
     };
 }
 

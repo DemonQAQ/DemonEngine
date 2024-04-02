@@ -10,9 +10,9 @@
 
 using namespace assets;
 
-std::unordered_map<base::UUID, std::shared_ptr<io::IFile>> ConfigManager::loadedConfig;
+std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<io::IFile>> ConfigManager::loadedConfig;
 
-std::optional<base::UUID> assets::ConfigManager::LoadResource(const std::vector<std::any> &params)
+std::optional<std::shared_ptr<base::UUID>> assets::ConfigManager::loadResource(const std::vector<std::any> &params)
 {
     if (params.empty() || params[0].type() != typeid(std::string))
         return std::nullopt;
@@ -43,40 +43,40 @@ std::optional<base::UUID> assets::ConfigManager::LoadResource(const std::vector<
     }
 
     configFile->load(path);
-    base::UUID uuid = configFile->getUUID();
+    auto uuid = configFile->getUUID();
     loadedConfig[uuid] = configFile;
 
     return uuid;
 }
 
-void ConfigManager::UnloadResource(const std::vector<std::any> &params)
+void ConfigManager::unloadResource(const std::vector<std::any> &params)
 {
     if (params.empty() || params[0].type() != typeid(base::UUID))return;
 
-    const base::UUID &uuid = std::any_cast<base::UUID>(params[0]);
-    auto it = loadedConfig.find(uuid);
+    auto uuid_ptr = std::any_cast<std::shared_ptr<base::UUID>>(params[0]);
+    auto it = loadedConfig.find(uuid_ptr);
     if (it != loadedConfig.end())
     {
         loadedConfig.erase(it);
     }
 }
 
-bool ConfigManager::IsResourceLoaded(const std::vector<std::any> &params) const
+bool ConfigManager::isResourceLoaded(const std::vector<std::any> &params) const
 {
     if (params.empty() || params[0].type() != typeid(base::UUID))return false;
 
-    const base::UUID &uuid = std::any_cast<base::UUID>(params[0]);
-    return loadedConfig.find(uuid) != loadedConfig.end();
+    auto uuid_ptr = std::any_cast<std::shared_ptr<base::UUID>>(params[0]);
+    return loadedConfig.find(uuid_ptr) != loadedConfig.end();
 }
 
-void ConfigManager::UpdateResource(const std::vector<std::any> &params)
+void ConfigManager::updateResource(const std::vector<std::any> &params)
 {
 
 }
 
-std::optional<std::shared_ptr<io::IFile>> ConfigManager::GetResourceByUuid(const base::UUID &uuid)
+std::optional<std::shared_ptr<io::IFile>> ConfigManager::getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr)
 {
-    auto it = loadedConfig.find(uuid);
-    if(it != loadedConfig.end())return {it->second};
+    auto it = loadedConfig.find(uuid_ptr);
+    if (it != loadedConfig.end()) return {it->second};
     else return {};
 }

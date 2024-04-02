@@ -4,7 +4,9 @@
 using namespace base;
 
 Mesh::Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
-           const Transform &initialTransform, UUID *shaderUUID,UUID *materialUUID) : name(std::move(name)), vertices(vertices), indices(indices)
+           const Transform &initialTransform, const std::shared_ptr<base::UUID> &shaderUUID,
+           const std::shared_ptr<base::UUID> &materialUUID) : name(std::move(name)), vertices(vertices),
+                                                              indices(indices)
 {
     if (shaderUUID)bindShader(shaderUUID);
     else bindShader(getDefaultShader());

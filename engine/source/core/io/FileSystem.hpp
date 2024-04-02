@@ -22,6 +22,32 @@ public:
         return (*pathBuilder)(path);
     }
 
+    static std::string getFullPath(const std::string& path)
+    {
+        std::string fullPath = std::string(sourceRootPath) + path;
+        return fullPath;
+    }
+
+    static std::string combinePaths(const std::string& path1, const std::string& path2)
+    {
+        std::string combinedPath = path1;
+        // 确保第一个路径以斜杠结尾
+        if (!combinedPath.empty() && combinedPath.back() != '/')
+        {
+            combinedPath += "/";
+        }
+        // 如果第二个路径以斜杠开头，去掉这个斜杠
+        if (!path2.empty() && path2.front() == '/')
+        {
+            combinedPath += path2.substr(1);
+        }
+        else
+        {
+            combinedPath += path2;
+        }
+        return combinedPath;
+    }
+
 private:
     static std::string const & getRoot()
     {
@@ -49,7 +75,6 @@ private:
     {
         return "../../../" + path;
     }
-
 
 };
 

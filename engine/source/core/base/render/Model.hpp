@@ -13,22 +13,23 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include "core/base/interface/IRenderable.hpp"
 #include "core/base/interface/Interface.hpp"
 #include "core/base/interface/ITransformable.hpp"
 #include "core/base/common/Transform.hpp"
 #include "core/base/interface/ITransformableUpdate.hpp"
 #include "core/base/common/Object.hpp"
-#include "core/base/interface/IRenderable.hpp"
-#include "Texture.hpp"
-#include "Bone.hpp"
 #include "core/base/interface/INameable.hpp"
-#include "Material.hpp"
+#include "Bone.hpp"
 
 namespace base
 {
-
     // 前向声明
     class Mesh;
+
+    class Material;
+
+    class Texture;
 
     struct Node
     {
@@ -40,7 +41,7 @@ namespace base
         {}
     };
 
-    class Model : implements Object, IRenderable, std::enable_shared_from_this<Model>, ITransformableUpdate, INameable
+    class Model : implements IRenderable, implements Object, std::enable_shared_from_this<Model>, ITransformableUpdate, INameable
     {
     private:
         std::string name;
@@ -52,7 +53,7 @@ namespace base
     public:
         explicit Model(const std::string &modelPath, const std::string &modelName,
                        const std::shared_ptr<Node> &root, const Transform &initialTransform = Transform(),
-                       UUID *shaderUUID = nullptr, UUID *materialUUID = nullptr);
+                       const std::shared_ptr<base::UUID> &shaderUUID = nullptr, const std::shared_ptr<base::UUID> &materialUUID = nullptr);
 
         void setName(const std::string &name_) override;
 
@@ -64,8 +65,6 @@ namespace base
 
         void updateGlobalTransform(std::vector<Transform> &additionalTransforms) override;
 
-        void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) override;
-
         void getRenderData(std::vector<RenderData> renderDataList) override;
 
         [[nodiscard]] Transform getLocalTransform() const override;
@@ -75,7 +74,9 @@ namespace base
         void bindMeshesToModel(const std::shared_ptr<Node> &node);
 
     private:
-        void processNode(const std::shared_ptr<Node>& node, std::vector<RenderData>& renderDataList);
+        void processNode(const std::shared_ptr<Node> &node, std::vector<RenderData> &renderDataList);
+
+        void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) override;
     };
 }
 

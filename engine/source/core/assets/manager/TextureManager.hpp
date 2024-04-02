@@ -48,19 +48,19 @@ namespace assets
     class TextureManager : implements IFileManager
     {
     private:
-        static std::unordered_map<base::UUID, std::shared_ptr<base::Texture>> loadedTextures;
+        static std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Texture>> loadedTextures;
 
     public:
         //params1 = path(string), params2 = textureType(base::TextureType)
-        std::optional<base::UUID> LoadResource(const std::vector<std::any> &params) override;
+        std::optional<std::shared_ptr<base::UUID>> loadResource(const std::vector<std::any> &params) override;
 
-        std::optional<std::shared_ptr<base::Texture>> GetResourceByUuid(const base::UUID &uuid);
+        std::optional<std::shared_ptr<base::Texture>> getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr);
 
-        void UnloadResource(const std::vector<std::any> &params) override;
+        void unloadResource(const std::vector<std::any> &params) override;
 
-        [[nodiscard]] bool IsResourceLoaded(const std::vector<std::any>& params) const override;
+        [[nodiscard]] bool isResourceLoaded(const std::vector<std::any>& params) const override;
 
-        void UpdateResource(const std::vector<std::any>& params) override;
+        void updateResource(const std::vector<std::any>& params) override;
 
     private:
         static unsigned int loadTextureFromFile(const char *filePath);

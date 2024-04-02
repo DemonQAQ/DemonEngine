@@ -1,15 +1,17 @@
 ﻿//
 // Created by Demon on 2024/3/9.
 //
-#include "Model.hpp"
+
 #include "Mesh.hpp"
+#include "Texture.hpp"
 #include <assimp/Importer.hpp>
+#include "Model.hpp"
 
 using namespace base;
 
 Model::Model(const std::string &modelPath, const std::string &modelName,
              const std::shared_ptr<Node> &root, const Transform &initialTransform,
-             UUID *shaderUUID, UUID *materialUUID)
+             const std::shared_ptr<base::UUID> &shaderUUID, const std::shared_ptr<base::UUID> &materialUUID)
         : Object(modelPath + modelName), name(modelName), rootNode(root), directory(modelPath)
 {
     if (shaderUUID)bindShader(shaderUUID);
@@ -17,7 +19,6 @@ Model::Model(const std::string &modelPath, const std::string &modelName,
 
     if (materialUUID)bindMaterial(materialUUID);
     else bindMaterial(getDefaultMaterial());
-
     setTransform(initialTransform);
     // Initialize bonesInfo, boneCount, etc. here if necessary
     bindMeshesToModel(rootNode);

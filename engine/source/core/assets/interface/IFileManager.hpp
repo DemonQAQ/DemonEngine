@@ -19,13 +19,13 @@ namespace assets
     public:
         virtual ~IFileManager() = default;
 
-        virtual std::optional<base::UUID> LoadResource(const std::vector<std::any>& params) = 0;
-        virtual void UnloadResource(const std::vector<std::any>& params) = 0;
-        [[nodiscard]] virtual bool IsResourceLoaded(const std::vector<std::any>& params) const = 0;
-        virtual void UpdateResource(const std::vector<std::any>& params) = 0;
+        virtual std::optional<std::shared_ptr<base::UUID>> loadResource(const std::vector<std::any>& params) = 0;
+        virtual void unloadResource(const std::vector<std::any>& params) = 0;
+        [[nodiscard]] virtual bool isResourceLoaded(const std::vector<std::any>& params) const = 0;
+        virtual void updateResource(const std::vector<std::any>& params) = 0;
 
     protected:
-        static std::vector<char> LoadFile(const std::string& path)
+        static std::vector<char> loadFile(const std::string& path)
         {
             std::ifstream file(path, std::ios::binary | std::ios::ate);
             if (!file)
@@ -47,7 +47,7 @@ namespace assets
             return buffer;
         }
 
-        static void SaveFile(const std::string& path, const std::vector<char>& data)
+        static void saveFile(const std::string& path, const std::vector<char>& data)
         {
             std::ofstream file(path, std::ios::binary);
             if (!file)

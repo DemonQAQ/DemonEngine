@@ -51,6 +51,10 @@ namespace base
 
         virtual void onPostRender() = 0;    // 渲染后的操作
 
+        std::shared_ptr<render::RenderManager> &getRenderManager()
+        {
+            return renderManager;
+        }
     };
 }
 

@@ -8,8 +8,6 @@
 #include "core/base/interface/Interface.hpp"
 #include "core/io/interface/IFile.hpp"
 #include "core/io/interface/IConfiguration.hpp"
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 
 namespace io
 {
