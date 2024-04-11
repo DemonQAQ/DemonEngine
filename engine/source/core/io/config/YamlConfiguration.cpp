@@ -8,7 +8,7 @@
 
 namespace io
 {
-    YamlConfiguration::YamlConfiguration(const std::string &path) : IFile(path)
+    YamlConfiguration::YamlConfiguration(const std::string &path) : IFile(path), filePath(path)
     {
         load(path);
     }
@@ -23,7 +23,23 @@ namespace io
         catch (const YAML::Exception &e)
         {
             std::cerr << "Exception caught in load: " << e.what() << std::endl;
-            // Handle the exception or propagate
+            std::ofstream outFile(path);
+            if (outFile.is_open())
+            {
+                outFile.close();
+                try
+                {
+                    configRoot = YAML::LoadFile(path);
+                }
+                catch (const YAML::Exception &e)
+                {
+                    std::cerr << "Exception caught in load after file creation: " << e.what() << std::endl;
+                }
+            }
+            else
+            {
+                std::cerr << "Failed to create file: " << path << std::endl;
+            }
         }
     }
 
@@ -41,7 +57,8 @@ namespace io
         if (node.IsScalar())
         {
             return std::make_optional<std::any>(node.Scalar());
-        } else if (node.IsSequence())
+        }
+        else if (node.IsSequence())
         {
             std::vector<std::any> sequence;
             for (const auto &item: node)
@@ -49,7 +66,8 @@ namespace io
                 if (item.IsScalar())sequence.push_back(item.Scalar());
             }
             return std::make_optional<std::any>(sequence);
-        } else if (node.IsMap())
+        }
+        else if (node.IsMap())
         {
             std::map<std::string, std::any> map;
             for (const auto &pair: node)
@@ -72,15 +90,26 @@ namespace io
             if (value.type() == typeid(int))
             {
                 configRoot[key] = std::any_cast<int>(value);
-            } else if (value.type() == typeid(double))
+            }
+            else if (value.type() == typeid(double))
             {
                 configRoot[key] = std::any_cast<double>(value);
-            } else if (value.type() == typeid(bool))
+            }
+            else if (value.type() == typeid(bool))
             {
                 configRoot[key] = std::any_cast<bool>(value);
-            } else if (value.type() == typeid(std::string))
+            }
+            else if (value.type() == typeid(std::string))
             {
                 configRoot[key] = std::any_cast<std::string>(value);
+            }
+            else if (value.type() == typeid(std::shared_ptr<base::UUID>))
+            {
+                configRoot[key] = std::any_cast<std::shared_ptr<base::UUID>>(value)->toString();
+            }
+            else if (value.type() == typeid(std::vector<std::string>))
+            {
+                configRoot[key] = std::any_cast<std::vector<std::string>>(value);
             }
         } catch (const std::bad_any_cast &e)
         {
@@ -216,7 +245,8 @@ namespace io
                 if (element.second.IsScalar())
                 {
                     values[key] = element.second.Scalar();
-                } else if (element.second.IsSequence())
+                }
+                else if (element.second.IsSequence())
                 {
                     std::vector<std::any> list;
                     for (const auto &listItem: element.second)
@@ -224,14 +254,16 @@ namespace io
                         if (listItem.IsScalar())
                         {
                             list.emplace_back(listItem.Scalar());
-                        } else
+                        }
+                        else
                         {
                             // For simplicity, this example does not handle nested sequences or maps
                             // You might want to extend this to handle more complex structures
                         }
                     }
                     values[key] = list;
-                } else if (deep && element.second.IsMap())parseNode(element.second, key);
+                }
+                else if (deep && element.second.IsMap())parseNode(element.second, key);
             }
         };
         parseNode(configRoot, "");
@@ -386,6 +418,24 @@ namespace io
         {
             return false;
         }
+    }
+
+    YAML::Node YamlConfiguration::getNode(const std::string &originalPath)
+    {
+        if (originalPath.empty()) return configRoot;
+
+        std::string path = originalPath;
+        YAML::Node node = configRoot;
+        size_t pos = 0;
+        std::string token;
+        while ((pos = path.find('.')) != std::string::npos)
+        {
+            token = path.substr(0, pos);
+            if (!node[token]) return YAML::Node();
+            node = node[token];
+            path = path.substr(pos + 1);
+        }
+        return node[path] ? node[path] : YAML::Node();
     }
 
 }

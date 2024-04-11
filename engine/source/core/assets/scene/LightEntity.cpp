@@ -8,16 +8,15 @@
 
 namespace assets::scene
 {
-    LightEntity::LightEntity(const std::string &uuidStr, const base::Light &light_, std::string name) : base::Object(
-            uuidStr), name(std::move(name)), light(light_)
+    LightEntity::LightEntity(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+                             const Light &light_, std::string name) :
+            Object(uuidStr, isUUID),
+            IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
+            light(light_),
+            name(std::move(name))
     {
-
     }
 
-    LightEntity::LightEntity(std::string name) : base::Object(), name(std::move(name))
-    {
-
-    }
 
     void LightEntity::setName(const std::string &name_)
     {
@@ -190,5 +189,4 @@ namespace assets::scene
         light.cutOff = pt.get<float>("light.cutOff");
         light.outerCutOff = pt.get<float>("light.outerCutOff");
     }
-
 }

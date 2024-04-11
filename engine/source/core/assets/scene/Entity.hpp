@@ -20,14 +20,20 @@ namespace assets::scene
     //todo 网络同步系统接口
     //todo 可序列化接口
     //todo 物理系统接口
-    class Entity : implements Object, INameable, ITransformableUpdate, io::ISerializable
+    class Entity
+            : implements Object,
+              implements INameable,
+              implements ITransformableUpdate,
+              implements io::ISerializable,
+              implements IMetaAccessor
     {
     private:
         std::string name;
         std::shared_ptr<RenderableObject> renderableObject;
         //todo 组件数据，包括碰撞箱、脚本、触发器、音效、特效
     public:
-        explicit Entity(std::string name = "Entity");
+        explicit Entity(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+                        std::string name = "Entity");
 
         void addModel(const std::shared_ptr<Model> &model);
 

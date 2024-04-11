@@ -29,6 +29,8 @@ namespace io
 
         explicit YamlConfiguration(const std::string &path);
 
+        [[nodiscard]]YAML::Node getNode(const std::string &path);
+
         [[nodiscard]] bool contains(const std::string &path) const override;
 
         [[nodiscard]] std::shared_ptr<IConfiguration> createSection(const std::string &path) override;

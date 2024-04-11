@@ -19,6 +19,7 @@ namespace assets
     private:
         static std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Material>> loadedMaterial;
     public:
+        MaterialsManager();
         /**
          * 参数传入aiMaterial* aiMat/io::JsonConfiguration& jsonConfig加载单个Material实例并返回UUID
          * */
@@ -32,11 +33,13 @@ namespace assets
 
         std::optional<std::shared_ptr<base::Material>> getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr);
 
+        void updateMaterialRelation(const std::shared_ptr<base::UUID> &uuid_ptr);
+
         static std::string generateUniqueMaterialName(const aiMaterial *aiMat);
     private:
-        std::shared_ptr<base::Material> loadMaterialFromAssimp(const aiMaterial* aiMat);
+        std::shared_ptr<base::Material> loadMaterialFromAssimp(const aiMaterial* aiMat, const std::string &path);
 
-        std::shared_ptr<base::Material> loadMaterialFromJson(const io::JsonConfiguration& jsonConfig);
+        std::shared_ptr<base::Material> loadMaterialFromJson(const io::YamlConfiguration& yamlConfig);
     };
 }
 

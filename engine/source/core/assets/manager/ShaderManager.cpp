@@ -3,9 +3,14 @@
 //
 
 #include "ShaderManager.hpp"
+
 using namespace assets;
 
 std::map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Shader>> ShaderManager::shaders;
+
+ShaderManager::ShaderManager()
+{
+}
 
 //params1 = vertexPath(string), params2 = fragmentPath(string)
 std::optional<std::shared_ptr<base::UUID>> ShaderManager::loadResource(const std::vector<std::any> &params)
@@ -72,7 +77,8 @@ void ShaderManager::updateResource(const std::vector<std::any> &params)
         if (it != shaders.end())
         {
             //todo Shader的reload逻辑
-        } else
+        }
+        else
         {
             // 着色器未找到，可能需要加载新着色器
             // 这里的具体实现会依据你的需求和Shader类的能力
@@ -83,7 +89,8 @@ void ShaderManager::updateResource(const std::vector<std::any> &params)
     }
 }
 
-std::optional<std::shared_ptr<base::Shader>> ShaderManager::getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr)
+std::optional<std::shared_ptr<base::Shader>>
+ShaderManager::getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr)
 {
     auto it = shaders.find(uuid_ptr);
     if (it != shaders.end())return it->second;

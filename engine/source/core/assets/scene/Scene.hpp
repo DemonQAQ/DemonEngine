@@ -21,7 +21,13 @@ using namespace base;
 namespace assets::scene
 {
 
-    class Scene : implements Object, INameable, Updatable, io::ISerializable, IRenderUpdatable
+    class Scene
+            : implements Object,
+              implements INameable,
+              implements Updatable,
+              implements io::ISerializable,
+              implements IRenderUpdatable,
+              implements IMetaAccessor
     {
     private:
         std::string name;
@@ -33,7 +39,8 @@ namespace assets::scene
         //todo 物理系统参数，待实现
 
     public:
-        explicit Scene(std::string name = "New Scene");
+        explicit Scene(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+                       std::string name = "New Scene");
 
         void update() override;
 
@@ -49,19 +56,22 @@ namespace assets::scene
 
         [[nodiscard]] std::string getName() const override;
 
-        void addChild(const std::shared_ptr<Object>& child);
+        void addChild(const std::shared_ptr<Object> &child);
 
-        bool addChildToNode(const std::shared_ptr<base::UUID>& parentUuid, const std::shared_ptr<Object>& child);
+        bool addChildToNode(const std::shared_ptr<base::UUID> &parentUuid, const std::shared_ptr<Object> &child);
 
-        [[nodiscard]] std::shared_ptr<Object> findNodeByUUID(const std::shared_ptr<SceneGroup>& node, const std::shared_ptr<base::UUID>& uuid) const;
+        [[nodiscard]] std::shared_ptr<Object>
+        findNodeByUUID(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid) const;
 
-        bool updateNode(const std::shared_ptr<base::UUID>& uuid, const std::shared_ptr<Object>& newNode);
+        bool updateNode(const std::shared_ptr<base::UUID> &uuid, const std::shared_ptr<Object> &newNode);
 
-        bool updateNodeRecursive(const std::shared_ptr<SceneGroup>& node, const std::shared_ptr<base::UUID>& uuid, const std::shared_ptr<Object>& newNode);
+        bool updateNodeRecursive(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid,
+                                 const std::shared_ptr<Object> &newNode);
 
-        bool removeChildFromNode(const std::shared_ptr<base::UUID>& uuid);
+        bool removeChildFromNode(const std::shared_ptr<base::UUID> &uuid);
 
-        bool removeChildFromNodeRecursive(const std::shared_ptr<SceneGroup>& node, const std::shared_ptr<base::UUID>& uuid);
+        bool
+        removeChildFromNodeRecursive(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid);
 
         [[nodiscard]] const std::shared_ptr<Skybox> &getSkybox() const;
 
@@ -84,8 +94,9 @@ namespace assets::scene
         void setCameraEntityList(const std::vector<std::shared_ptr<CameraEntity>> &cameraEntityList_);
 
         void addCameraEntity(const std::shared_ptr<CameraEntity> &cameraEntity);
+
     private:
-        void traverseAndUpdate(const std::shared_ptr<Object>& node, const std::vector<std::any>& params);
+        void traverseAndUpdate(const std::shared_ptr<Object> &node, const std::vector<std::any> &params);
     };
 
 }

@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <core/base/interface/IMetaAccessor.hpp>
+#include <core/base/common/manager/UUIDManager.hpp>
 #include "core/base/interface/IRenderable.hpp"
 #include "core/base/interface/Interface.hpp"
 #include "core/base/interface/ITransformable.hpp"
@@ -41,21 +43,86 @@ namespace base
         {}
     };
 
-    class Model : implements IRenderable, implements Object, std::enable_shared_from_this<Model>, ITransformableUpdate, INameable
+    class ModelBlockOperator : implements BlockOperator
+    {
+        void writeToBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        {
+            auto materialsMap = std::any_cast<std::map<std::shared_ptr<UUID>, std::shared_ptr<UUID>>>(metadata->getValue("materials"));
+            std::map<std::string, std::string> materials;
+            for (const auto& pair : materialsMap) {
+                materials[pair.first->toString()] = pair.second->toString();
+            }
+            yml->set("ModelBlockOperator.materials", materials);
+        }
+
+        void readFromBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        {
+            auto materialsNode = yml->getNode("ModelBlockOperator.materials");
+            std::map<std::shared_ptr<UUID>, std::shared_ptr<UUID>> materialsUUIDMap;
+
+            for (auto it = materialsNode.begin(); it != materialsNode.end(); ++it) {
+                auto keyStr = it->first.as<std::string>();
+                auto valueStr = it->second.as<std::string>();
+
+                auto keyUuid = UUIDManager::getUUID(keyStr);
+                auto valueUuid = UUIDManager::getUUID(valueStr);
+                materialsUUIDMap[keyUuid] = valueUuid;
+            }
+
+            metadata->setValue("materials", materialsUUIDMap);
+        }
+
+        void initBlock(std::shared_ptr<Metadata> &metadata, const std::vector<std::any> &params)
+        {
+            if (!params.empty() && params[0].type() == typeid(std::map<std::string, std::string>))
+            {
+                auto materialsStrMap = std::any_cast<std::map<std::string, std::string>>(params[0]);
+                std::map<std::shared_ptr<UUID>, std::shared_ptr<UUID>> materialsMap;
+                for (const auto &pair: materialsStrMap)
+                {
+                    materialsMap[UUIDManager::getUUID(pair.first)] = UUIDManager::getUUID(pair.second);
+                }
+                metadata->setValue("materials", materialsMap);
+            }
+            else
+            {
+                metadata->setValue("materials", std::map<std::shared_ptr<UUID>, std::shared_ptr<UUID>>{});
+            }
+        }
+    };
+
+    class Model
+            : implements IRenderable,
+              implements Object,
+              implements std::enable_shared_from_this<Model>,
+              implements ITransformableUpdate,
+              implements INameable,
+              implements IMetaAccessor
     {
     private:
         std::string name;
-        std::string directory;
         std::shared_ptr<Node> rootNode;
         std::unordered_map<std::string, BoneInfo> bonesInfo;
         unsigned int boneCount = 0;
 
     public:
-        explicit Model(const std::string &modelPath, const std::string &modelName,
-                       const std::shared_ptr<Node> &root, const Transform &initialTransform = Transform(),
-                       const std::shared_ptr<base::UUID> &shaderUUID = nullptr, const std::shared_ptr<base::UUID> &materialUUID = nullptr);
+        explicit Model(const std::shared_ptr<base::UUID> &existingUuid,
+                       bool init,
+                       std::string modelName,
+                       const std::shared_ptr<Node> &root,
+                       std::shared_ptr<io::YamlConfiguration> &yml,
+                       const Transform &initialTransform = Transform(),
+                       const std::shared_ptr<base::UUID> &shaderUUID = nullptr,
+                       const std::shared_ptr<base::UUID> &materialUUID = nullptr);
+
+        void init()
+        {
+            addOperator(std::make_shared<ModelBlockOperator>());
+        }
 
         void setName(const std::string &name_) override;
+
+        std::shared_ptr<Node> &getRootNode();
 
         [[nodiscard]] std::string getName() const override;
 
@@ -69,7 +136,7 @@ namespace base
 
         [[nodiscard]] Transform getLocalTransform() const override;
 
-        std::shared_ptr<Mesh> getMesh(const std::string &meshName);
+        std::shared_ptr<Mesh> getMesh(const std::shared_ptr<base::UUID> &uuidPtr);
 
         void bindMeshesToModel(const std::shared_ptr<Node> &node);
 

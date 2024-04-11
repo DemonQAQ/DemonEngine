@@ -6,7 +6,11 @@
 
 namespace base
 {
-    Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath): Object(vertexPath + fragmentPath)
+    Shader::Shader(const std::string &uuidStr, bool isUUID,
+                   const std::string &vertexPath, const std::string &fragmentPath,
+                   std::shared_ptr<io::YamlConfiguration> &yml) :
+            Object(uuidStr, isUUID),
+            IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID))
     {
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
@@ -139,7 +143,8 @@ namespace base
                 std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog
                           << "\n -- --------------------------------------------------- -- " << std::endl;
             }
-        } else
+        }
+        else
         {
             glGetProgramiv(shader, GL_LINK_STATUS, &success);
             if (!success)

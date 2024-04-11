@@ -19,7 +19,7 @@ namespace io
 
         virtual void save(const std::string &path) const = 0;
 
-        explicit IFile(const std::string &path) : Object(path)
+        explicit IFile(const std::string &path) : Object(path, false)
         {}
 
     };

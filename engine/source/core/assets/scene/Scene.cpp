@@ -2,10 +2,22 @@
 // Created by Demon on 2024/3/27.
 //
 
+#include <core/base/utils/UUIDUtil.hpp>
 #include "Scene.hpp"
 
 namespace assets::scene
 {
+    Scene::Scene(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml, std::string name)
+            : base::Object(uuidStr, isUUID),
+              IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
+              name(std::move(name))
+    {
+        root = std::make_shared<SceneGroup>(utils::uuidUtil::getUUID(""), false, yml);
+        environmentLight = std::make_shared<LightEntity>(utils::uuidUtil::getUUID(""), false, yml);
+        mainCameraEntity = std::make_shared<CameraEntity>(utils::uuidUtil::getUUID(""), false, yml);
+        skybox = std::make_shared<Skybox>(utils::uuidUtil::getUUID(""), false, yml);
+    }
+
     bool Scene::addChildToNode(const std::shared_ptr<base::UUID> &parentUuid, const std::shared_ptr<Object> &child)
     {
         auto parentNode = findNodeByUUID(root, parentUuid);
@@ -26,7 +38,8 @@ namespace assets::scene
         return removeChildFromNodeRecursive(root, uuid);
     }
 
-    bool Scene::removeChildFromNodeRecursive(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid)
+    bool Scene::removeChildFromNodeRecursive(const std::shared_ptr<SceneGroup> &node,
+                                             const std::shared_ptr<base::UUID> &uuid)
     {
         if (node->removeChildByUUID(uuid))
         {
@@ -66,7 +79,8 @@ namespace assets::scene
         return false;
     }
 
-    std::shared_ptr<Object> Scene::findNodeByUUID(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid) const
+    std::shared_ptr<Object>
+    Scene::findNodeByUUID(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid) const
     {
         if (node->getUUID() == uuid)
         {
@@ -159,14 +173,6 @@ namespace assets::scene
     void Scene::addCameraEntity(const std::shared_ptr<CameraEntity> &cameraEntity)
     {
         cameraEntityList.push_back(cameraEntity);
-    }
-
-    Scene::Scene(std::string name) : base::Object(), name(std::move(name))
-    {
-        root = std::make_shared<SceneGroup>();
-        environmentLight = std::make_shared<LightEntity>();
-        mainCameraEntity = std::make_shared<CameraEntity>();
-        skybox = std::make_shared<Skybox>();
     }
 
     std::string Scene::Serialize() const

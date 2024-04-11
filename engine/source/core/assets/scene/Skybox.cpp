@@ -6,6 +6,14 @@
 
 namespace assets::scene
 {
+    Skybox::Skybox(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+                   std::string name) : base::Object(uuidStr, isUUID),
+                                       IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
+                                       name(std::move(name))
+    {
+
+    }
+
     void Skybox::setName(const std::string &name_)
     {
         name = name_;
@@ -14,11 +22,6 @@ namespace assets::scene
     std::string Skybox::getName() const
     {
         return name;
-    }
-
-    Skybox::Skybox(std::string name) : base::Object(), name(std::move(name))
-    {
-
     }
 
     std::string Skybox::Serialize() const

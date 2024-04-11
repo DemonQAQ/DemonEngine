@@ -18,17 +18,23 @@ namespace base
 {
     class Model;
 
-    class RenderableObject : implements IRenderable, Object, ITransformableUpdate, INameable
+    class RenderableObject : implements IRenderable,
+                             implements Object,
+                             implements ITransformableUpdate,
+                             implements INameable,
+                             implements IMetaAccessor
     {
     private:
         std::string name;
         std::vector<std::shared_ptr<Model>> models;
     public:
         explicit RenderableObject(
-                std::string name,
+                const std::string &uuidStr, bool isUUID, std::string name,
+                std::shared_ptr<io::YamlConfiguration> &yml,
                 const std::vector<std::shared_ptr<Model>> &models = {},
                 const base::Transform &initialTransform = base::Transform(),
-                const std::shared_ptr<base::UUID> &shaderUUID = nullptr, const std::shared_ptr<base::UUID> &materialUUID = nullptr);
+                const std::shared_ptr<base::UUID> &shaderUUID = nullptr,
+                const std::shared_ptr<base::UUID> &materialUUID = nullptr);
 
         void render()
         {

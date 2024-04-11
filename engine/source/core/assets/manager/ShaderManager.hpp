@@ -17,6 +17,8 @@ namespace assets
     private:
         static std::map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Shader>> shaders;
     public:
+        ShaderManager();
+
         std::optional<std::shared_ptr<base::UUID>> loadResource(const std::vector<std::any> &params) override;
 
         void unloadResource(const std::vector<std::any> &params) override;

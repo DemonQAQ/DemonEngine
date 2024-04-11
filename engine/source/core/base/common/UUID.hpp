@@ -13,6 +13,7 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/functional/hash.hpp>
 #include <string>
+#include "iostream"
 
 namespace base
 {
@@ -27,9 +28,28 @@ namespace base
         explicit UUID(const boost::uuids::uuid &u) : uuid(u)
         {}
 
-        // 从字符串构造
-        UUID(const std::string &str) : uuid(boost::uuids::string_generator{}(str))
-        {}
+        // 从字符串构造UUID
+        explicit UUID(const std::string &str, bool isUUID)
+        {
+            if (isUUID)
+            {
+                boost::uuids::string_generator gen;
+                try
+                {
+                    uuid = gen(str);
+                } catch (const std::exception &e)
+                {
+                    std::cerr << "Exception creating UUID from string: " << e.what() << std::endl;
+                    throw;
+                }
+            } else
+            {
+                static const boost::uuids::uuid name_space_uuid = boost::uuids::string_generator()(
+                        "6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+                boost::uuids::name_generator_sha1 gen(name_space_uuid);
+                uuid = gen(str.c_str(), str.size());
+            }
+        }
 
         [[nodiscard]] std::string toString() const
         {
@@ -91,7 +111,7 @@ namespace std
 
 struct UUIDHash
 {
-    size_t operator()(const std::shared_ptr<base::UUID>& uuid_ptr) const noexcept
+    size_t operator()(const std::shared_ptr<base::UUID> &uuid_ptr) const noexcept
     {
         if (!uuid_ptr) return 0; // 对空指针返回0
         std::hash<base::UUID> hasher;
@@ -101,10 +121,11 @@ struct UUIDHash
 
 struct UUIDEqual
 {
-    bool operator()(const std::shared_ptr<base::UUID>& lhs, const std::shared_ptr<base::UUID>& rhs) const
+    bool operator()(const std::shared_ptr<base::UUID> &lhs, const std::shared_ptr<base::UUID> &rhs) const
     {
         if (!lhs || !rhs) return !lhs && !rhs; // 两个空指针视为相等
         return *lhs == *rhs;
     }
 };
+
 #endif //DEMONENGINE_UUID_HPP

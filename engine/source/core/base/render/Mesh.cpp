@@ -3,9 +3,11 @@
 
 using namespace base;
 
-Mesh::Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
+Mesh::Mesh(const std::shared_ptr<base::UUID> &existingUuid, std::string name, const std::vector<Vertex> &vertices,
+           const std::vector<unsigned int> &indices,
            const Transform &initialTransform, const std::shared_ptr<base::UUID> &shaderUUID,
-           const std::shared_ptr<base::UUID> &materialUUID) : name(std::move(name)), vertices(vertices),
+           const std::shared_ptr<base::UUID> &materialUUID) : Object(existingUuid),
+                                                              vertices(vertices),
                                                               indices(indices)
 {
     if (shaderUUID)bindShader(shaderUUID);

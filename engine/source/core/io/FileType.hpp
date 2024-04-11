@@ -36,6 +36,7 @@ namespace io
     static io::FileType fromStringToFileType(const std::string &typeName)
     {
         if (typeName == ".yml") return FileType::YAML;
+        else if (typeName == ".meta") return FileType::YAML;
         else if (typeName == ".json") return FileType::JSON;
         else if (typeName == ".xml") return FileType::XML;
         else return FileType::NORMAL;

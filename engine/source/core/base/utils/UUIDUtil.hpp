@@ -9,30 +9,60 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "core/base/common/UUID.hpp"
+#include <chrono>
 
 using namespace base;
 
-namespace utils
+namespace utils::uuidUtil
 {
-    static UUID getUUID()
+    /**
+     * 处理获得获取唯一id的字符串
+     *
+     * @param str 字符串
+     * @return 用于构造唯一uuid的字符串
+     * */
+    static std::string getUUID(const std::string &str)
     {
-        return UUID();
+        boost::uuids::uuid random_uuid = boost::uuids::random_generator()();
+
+        auto now = std::chrono::system_clock::now();
+        auto duration = now.time_since_epoch();
+        auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+        std::stringstream ss;
+        ss << milliseconds << "-" << random_uuid << "-" << str;
+
+        return ss.str();
     }
 
-    static UUID getUUID(const std::string &str, bool isUUID)
+    /**
+     * 根据固定规则生成可复现的uuid字符串，使用同一输入一定会得到同一输出
+     *
+     * @param str 字符串
+     * @return 根据固定规则生成的字符串
+     * */
+    static std::string getReappearUUID(const std::string &str)
     {
-        if (isUUID)
-        {
-            return UUID(str); // 直接从字符串构造UUID
-        } else
-        {
-            // 使用一个预定义的UUID作为命名空间
-            boost::uuids::string_generator gen;
-            boost::uuids::uuid dns_namespace_uuid = gen("6ba7b810-9dad-11d1-80b4-00c04fd430c8");
-            boost::uuids::name_generator_sha1 name_gen(dns_namespace_uuid);
+        boost::uuids::uuid dns_namespace_uuid = boost::uuids::string_generator()(
+                "6ba7b810-9dad-11d1-80b4-00c04fd430c8");
+        boost::uuids::name_generator gen(dns_namespace_uuid);
+        boost::uuids::uuid uuid = gen(str);
+        std::string uuid_str = boost::uuids::to_string(uuid);
+        return uuid_str;
+    }
 
-            return UUID(name_gen(str));
+    static bool isUUIDStr(const std::string &str)
+    {
+        try
+        {
+            boost::uuids::string_generator gen;
+            boost::uuids::uuid uuid = gen(str);
+            return true;
+        } catch (...)
+        {
+            return false;
         }
     }
+
 }
 #endif //DEMONENGINE_UUIDUTIL_HPP

@@ -5,6 +5,7 @@
 #ifndef DEMONENGINE_CAMERAENTITY_HPP
 #define DEMONENGINE_CAMERAENTITY_HPP
 
+#include <core/base/interface/IMetaAccessor.hpp>
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
 #include "core/base/interface/INameable.hpp"
@@ -17,15 +18,19 @@ using namespace base;
 namespace assets::scene
 {
 
-    class CameraEntity : implements Object, INameable, ITransformableUpdate, io::ISerializable
+    class CameraEntity
+            : implements Object,
+              implements INameable,
+              implements ITransformableUpdate,
+              implements io::ISerializable,
+              implements IMetaAccessor
     {
     private:
         std::string name;
         Camera camera;
     public:
-        explicit CameraEntity(std::string name = "Normal Camera");
-
-        CameraEntity(const std::string &uuidStr, const base::Camera &camera_,std::string name = "Normal Camera");
+        CameraEntity(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+                     const base::Camera &camera_ = {}, std::string name = "Normal Camera");
 
         void setName(const std::string &name_) override;
 

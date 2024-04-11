@@ -18,7 +18,10 @@ namespace base
 {
     class Model;
 
-    class Mesh : implements IRenderable, ITransformableUpdate, INameable
+    class Mesh : implements IRenderable,
+                 implements Object,
+                 implements ITransformableUpdate,
+                 implements INameable
     {
     private:
         std::string name;
@@ -27,9 +30,12 @@ namespace base
         std::weak_ptr<Model> fatherModel;
 
     public:
-        Mesh(std::string name, const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
+        Mesh(const std::shared_ptr<base::UUID> &existingUuid,
+             std::string name, const std::vector<Vertex> &vertices,
+             const std::vector<unsigned int> &indices,
              const Transform &initialTransform = Transform(),
-             const std::shared_ptr<base::UUID> &shaderUUID = nullptr, const std::shared_ptr<base::UUID> &materialUUID = nullptr);
+             const std::shared_ptr<base::UUID> &shaderUUID = nullptr,
+             const std::shared_ptr<base::UUID> &materialUUID = nullptr);
 
         [[nodiscard]] const std::vector<Vertex> &getVertices() const;
 

@@ -5,14 +5,22 @@
 #include "Mesh.hpp"
 #include "Texture.hpp"
 #include <assimp/Importer.hpp>
+#include <utility>
 #include "Model.hpp"
 
 using namespace base;
 
-Model::Model(const std::string &modelPath, const std::string &modelName,
-             const std::shared_ptr<Node> &root, const Transform &initialTransform,
-             const std::shared_ptr<base::UUID> &shaderUUID, const std::shared_ptr<base::UUID> &materialUUID)
-        : Object(modelPath + modelName), name(modelName), rootNode(root), directory(modelPath)
+Model::Model(const std::shared_ptr<base::UUID> &existingUuid,
+             bool init,
+             std::string modelName,
+             const std::shared_ptr<Node> &root,
+             std::shared_ptr<io::YamlConfiguration> &yml,
+             const Transform &initialTransform,
+             const std::shared_ptr<base::UUID> &shaderUUID,
+             const std::shared_ptr<base::UUID> &materialUUID)
+        : Object(existingUuid),
+          IMetaAccessor(yml, !init, init ? nullptr : existingUuid),
+          name(std::move(modelName)), rootNode(root)
 {
     if (shaderUUID)bindShader(shaderUUID);
     else bindShader(getDefaultShader());
@@ -87,15 +95,47 @@ Transform Model::getLocalTransform() const
     return getTransform();
 }
 
-std::shared_ptr<Mesh> Model::getMesh(const std::string &meshName)
+std::shared_ptr<Mesh> Model::getMesh(const std::shared_ptr<base::UUID> &uuidPtr)
 {
-    // Implementation for finding a mesh by name within the model
-    return nullptr; // Placeholder return
+    std::function<std::shared_ptr<Mesh>(const std::shared_ptr<Node> &)> searchMesh;
+    searchMesh = [&searchMesh, &uuidPtr](const std::shared_ptr<Node> &node) -> std::shared_ptr<Mesh>
+    {
+        for (const auto &mesh: node->meshes)
+        {
+            if (mesh->getUUID() == uuidPtr)
+            {
+                return mesh;
+            }
+        }
+        for (const auto &child: node->children)
+        {
+            auto foundMesh = searchMesh(child);
+            if (foundMesh != nullptr)
+            {
+                return foundMesh;
+            }
+        }
+        return nullptr;
+    };
+
+    return searchMesh(rootNode);
 }
 
 void Model::bindMeshesToModel(const std::shared_ptr<Node> &node)
 {
-    // Bind meshes to model, setting fatherModel for each mesh
+    std::function<void(const std::shared_ptr<Node> &)> bindMesh;
+    bindMesh = [this, &bindMesh](const std::shared_ptr<Node> &node)
+    {
+        for (const auto &mesh: node->meshes)
+        {
+            mesh->setFatherModel(shared_from_this());
+        }
+        for (const auto &child: node->children)
+        {
+            bindMesh(child);
+        }
+    };
+    bindMesh(node);
 }
 
 void Model::processNode(const std::shared_ptr<Node> &node, std::vector<RenderData> &renderDataList)
@@ -109,4 +149,9 @@ void Model::processNode(const std::shared_ptr<Node> &node, std::vector<RenderDat
     {
         processNode(child, renderDataList);
     }
+}
+
+std::shared_ptr<Node> &Model::getRootNode()
+{
+    return rootNode;
 }

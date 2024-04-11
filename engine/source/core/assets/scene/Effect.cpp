@@ -6,6 +6,15 @@
 
 namespace assets::scene
 {
+    Effect::Effect(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+                   std::string name) :
+            Object(uuidStr, isUUID),
+            IMetaAccessor(yml, !isUUID,uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr,isUUID)),
+            name(std::move(name))
+    {
+
+    }
+
     void Effect::setName(const std::string &name_)
     {
         name = name_;
@@ -22,11 +31,6 @@ namespace assets::scene
     }
 
     void Effect::afterRendering(const std::vector<std::any> &params)
-    {
-
-    }
-
-    Effect::Effect(std::string name) : base::Object(), name(std::move(name))
     {
 
     }

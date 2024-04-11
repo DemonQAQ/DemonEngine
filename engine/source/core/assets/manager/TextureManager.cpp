@@ -1,30 +1,44 @@
 ﻿//
 // Created by Demon on 2024/3/9.
 //
+#include <core/io/FileSystem.hpp>
+#include <core/base/utils/UUIDUtil.hpp>
+#include <core/base/common/manager/UUIDManager.hpp>
+#include <core/io/config/YamlConfiguration.hpp>
 #include "TextureManager.hpp"
+#include "AssetsMainManager.hpp"
+#include "ConfigManager.hpp"
 
 using namespace assets;
 
 std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Texture>> TextureManager::loadedTextures;
 
-//params1 = path(string), params2 = textureType(base::TextureType)
+TextureManager::TextureManager()
+{
+}
+
+/**
+ * @params[0] std::string 资源文件架路径下的资源地址
+ * @params[1] TextureType 贴图类型
+ * */
 std::optional<std::shared_ptr<base::UUID>> TextureManager::loadResource(const std::vector<std::any> &params)
 {
     if (params.size() < 2)
     {
-        std::cerr << "Invalid parameters for loadResource." <<
-                  std::endl;
-        return
-                std::nullopt;
+        std::cerr << "Invalid parameters for loadResource." <<std::endl;
+        return std::nullopt;
     }
 
-    std::string path;
+    std::string sourcePath;
+    std::string metadataPath;
     base::TextureType type;
 
     try
     {
-        path = std::any_cast<std::string>(params[0]);
+        sourcePath = std::any_cast<std::string>(params[0]);
         type = std::any_cast<base::TextureType>(params[1]);
+        sourcePath = FileSystem::combinePaths(SOURCE_ROOT_PATH, sourcePath);
+        metadataPath = sourcePath + ".meta";
     } catch (
             const std::bad_any_cast &e
     )
@@ -33,22 +47,52 @@ std::optional<std::shared_ptr<base::UUID>> TextureManager::loadResource(const st
         return std::nullopt;
     }
 
-    auto textureUuid = std::make_shared<base::UUID>(path);
+    auto configManagerOpt = AssetsMainManager::getManager(AssetType::CONFIG);
+    if (!configManagerOpt.has_value()) return nullptr;
+    auto configManager = std::dynamic_pointer_cast<ConfigManager>(configManagerOpt.value());
+    if (!configManager) return nullptr;
+
+    auto metaUuid = configManager->loadResource({metadataPath});
+    if (!metaUuid.has_value())
+    {
+        std::cerr << "Failed to load metadata from: " << metadataPath << std::endl;
+        return std::nullopt;
+    }
+
+    auto metaFileOpt = configManager->getResourceByUuid(metaUuid.value());
+    if (!metaFileOpt.has_value())
+    {
+        std::cerr << "Failed to find metadata file with UUID: " << metaUuid.value()->toString() << std::endl;
+        return std::nullopt;
+    }
+
+    auto metaFile = std::dynamic_pointer_cast<io::YamlConfiguration>(metaFileOpt.value());
+    if (!metaFile)
+    {
+        std::cerr << "Metadata file is not a YAML configuration." << std::endl;
+        return std::nullopt;
+    }
+
+    std::string uuidStr = metaFile->getString("uuid");
+    bool init = uuidStr.empty();
+    if (init) uuidStr = utils::uuidUtil::getUUID(sourcePath);
+    auto textureUuid = UUIDManager::getUUID(uuidStr);
     auto it = loadedTextures.find(textureUuid);
     if (it != loadedTextures.end())
     {
         return it->first;
     }
 
-// 加载纹理
-    unsigned int textureID = loadTextureFromFile(path.c_str());
+    // 加载纹理
+    unsigned int textureID = loadTextureFromFile(sourcePath.c_str());
     if (textureID == 0)
     {
-        std::cerr << "Texture failed to load at path: " << path << std::endl;
+        std::cerr << "Texture failed to load at path: " << sourcePath << std::endl;
         return std::nullopt;
     }
 
-    loadedTextures[textureUuid] = std::make_shared<base::Texture>(textureID, type, path, textureUuid);
+    loadedTextures[textureUuid] = std::make_shared<base::Texture>(textureUuid, init, metaFile, textureID, type,
+                                                                  sourcePath);
     return textureUuid;
 }
 

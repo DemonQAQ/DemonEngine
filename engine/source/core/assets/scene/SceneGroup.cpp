@@ -6,6 +6,15 @@
 
 namespace assets::scene
 {
+    SceneGroup::SceneGroup(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+                           std::string name) :
+            base::Object(uuidStr, isUUID),
+            IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
+            name(std::move(name))
+    {
+
+    }
+
     void SceneGroup::setName(const std::string &name_)
     {
         name = name_;
@@ -66,7 +75,8 @@ namespace assets::scene
         return false;
     }
 
-    bool SceneGroup::updateChildByUUID(const std::shared_ptr<base::UUID> &uuid, const std::shared_ptr<base::Object> &newChild)
+    bool SceneGroup::updateChildByUUID(const std::shared_ptr<base::UUID> &uuid,
+                                       const std::shared_ptr<base::Object> &newChild)
     {
         auto it = childrenMap.find(uuid);
         if (it != childrenMap.end())
@@ -90,11 +100,6 @@ namespace assets::scene
     const std::vector<std::shared_ptr<Object>> &SceneGroup::getChildren() const
     {
         return childrenList;
-    }
-
-    SceneGroup::SceneGroup(std::string name) : base::Object(), name(std::move(name))
-    {
-
     }
 
     std::string SceneGroup::Serialize() const

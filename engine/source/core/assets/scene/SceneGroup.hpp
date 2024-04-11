@@ -5,6 +5,7 @@
 #ifndef DEMONENGINE_SCENEGROUP_HPP
 #define DEMONENGINE_SCENEGROUP_HPP
 
+#include <core/base/interface/IMetaAccessor.hpp>
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
 #include "core/base/interface/INameable.hpp"
@@ -16,14 +17,20 @@ using namespace base;
 namespace assets::scene
 {
 
-    class SceneGroup : implements Object, INameable, ITransformableUpdate, io::ISerializable
+    class SceneGroup
+            : implements Object,
+              implements INameable,
+              implements ITransformableUpdate,
+              implements io::ISerializable,
+              implements IMetaAccessor
     {
     private:
         std::string name;
         std::vector<std::shared_ptr<Object>> childrenList;
         std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<Object>, UUIDHash, UUIDEqual> childrenMap;
     public:
-        explicit SceneGroup(std::string name = "Group");
+        explicit SceneGroup(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+                            std::string name = "Group");
 
         void setName(const std::string &name_) override;
 

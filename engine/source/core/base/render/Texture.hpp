@@ -56,19 +56,43 @@ namespace base
         else return base::TextureType::UNKNOWN;
     }
 
-    class Texture : implements Object
+    class TextureBlockOperator : implements BlockOperator
+    {
+        void writeToBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        {
+
+        }
+
+        void readFromBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        {
+
+        }
+
+        void initBlock(std::shared_ptr<Metadata> &metadata, const std::vector<std::any> &params)
+        {
+
+        }
+    };
+
+    class Texture : implements Object, implements IMetaAccessor
     {
     public:
         unsigned int id;       // 贴图的 OpenGL ID
         TextureType type;
         std::string texturePath;
 
-        Texture(unsigned int id, TextureType type, const std::string &path)
-                : Object(path), id(id), type(type), texturePath(path)
-        {}
+        void init()
+        {
+            addOperator(std::make_shared<TextureBlockOperator>());
+        }
 
-        Texture(unsigned int id, TextureType type, std::string path, const std::shared_ptr<base::UUID> &uuid)
-                : Object(uuid), id(id), type(type), texturePath(std::move(path))
+        Texture(const std::shared_ptr<base::UUID> &existingUuid,
+                bool init,
+                std::shared_ptr<io::YamlConfiguration> &yml,
+                unsigned int id, TextureType type, const std::string &path)
+                : Object(existingUuid),
+                  IMetaAccessor(yml, !init, init ? nullptr : existingUuid),
+                  id(id), type(type), texturePath(path)
         {}
 
         [[nodiscard]] std::string getTypeName() const

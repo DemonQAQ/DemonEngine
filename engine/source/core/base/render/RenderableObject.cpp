@@ -9,9 +9,15 @@
 
 using namespace base;
 
-RenderableObject::RenderableObject(std::string name, const std::vector<std::shared_ptr<Model>> &models,
-                                   const base::Transform &initialTransform, const std::shared_ptr<base::UUID> &shaderUUID, const std::shared_ptr<base::UUID> &materialUUID)
-        : name(std::move(name)), models(models)
+RenderableObject::RenderableObject(const std::string &uuidStr, bool isUUID, std::string name,
+                                   std::shared_ptr<io::YamlConfiguration> &yml,
+                                   const std::vector<std::shared_ptr<Model>> &models,
+                                   const base::Transform &initialTransform,
+                                   const std::shared_ptr<base::UUID> &shaderUUID,
+                                   const std::shared_ptr<base::UUID> &materialUUID)
+        : Object(uuidStr, isUUID),
+          IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
+          name(std::move(name)), models(models)
 {
     if (shaderUUID)bindShader(shaderUUID);
     else bindShader(getDefaultShader());
@@ -61,7 +67,7 @@ void RenderableObject::updateObservedGlobalTransform(std::vector<Transform> &add
 {
     std::vector<Transform> transformsToMerge = {getLocalTransform()};
     transformsToMerge.insert(transformsToMerge.end(), additionalTransforms.begin(), additionalTransforms.end());
-    for (const std::shared_ptr<Model>& model: models)model->updateGlobalTransform(transformsToMerge);
+    for (const std::shared_ptr<Model> &model: models)model->updateGlobalTransform(transformsToMerge);
 }
 
 void RenderableObject::addModel(const std::shared_ptr<Model> &model)

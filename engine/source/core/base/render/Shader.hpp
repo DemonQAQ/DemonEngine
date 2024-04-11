@@ -13,17 +13,43 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <core/base/interface/IMetaAccessor.hpp>
 
 namespace base
 {
-    class Shader : implements Object
+    class ShaderBlockOperator : implements BlockOperator
+    {
+        void writeToBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        {
+
+        }
+
+        void readFromBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        {
+
+        }
+
+        void initBlock(std::shared_ptr<Metadata> &metadata, const std::vector<std::any> &params)
+        {
+
+        }
+    };
+
+    class Shader : implements Object, implements IMetaAccessor
     {
     public:
         // 程序ID
         unsigned int ID;
 
         // 构造器读取并构建着色器
-        Shader(const std::string& vertexPath, const std::string& fragmentPath);
+        Shader(const std::string &uuidStr, bool isUUID,
+               const std::string &vertexPath, const std::string &fragmentPath,
+               std::shared_ptr<io::YamlConfiguration> &yml);
+
+        void init()
+        {
+            addOperator(std::make_shared<ShaderBlockOperator>());
+        }
 
         // 使用/激活程序
         void use();

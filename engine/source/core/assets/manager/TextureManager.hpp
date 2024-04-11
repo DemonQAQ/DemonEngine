@@ -51,6 +51,7 @@ namespace assets
         static std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Texture>> loadedTextures;
 
     public:
+        TextureManager();
         //params1 = path(string), params2 = textureType(base::TextureType)
         std::optional<std::shared_ptr<base::UUID>> loadResource(const std::vector<std::any> &params) override;
 

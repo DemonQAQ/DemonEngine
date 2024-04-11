@@ -12,6 +12,9 @@ using namespace assets;
 
 std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<io::IFile>> ConfigManager::loadedConfig;
 
+/**
+ * @params[0] std::string 文件路径
+ * */
 std::optional<std::shared_ptr<base::UUID>> assets::ConfigManager::loadResource(const std::vector<std::any> &params)
 {
     if (params.empty() || params[0].type() != typeid(std::string))
