@@ -16,15 +16,17 @@ namespace io
     private:
         boost::property_tree::ptree tree;
     public:
-        void load(const std::string &path) override;
+        explicit JsonConfiguration(const std::shared_ptr<base::UUID> &existingUuid, const std::string &path);
 
-        void save(const std::string &path) const override;
+        void load() override;
+
+        void save() const override;
+
+        bool isEmpty() const override;
 
         [[nodiscard]] std::optional<std::any> get(const std::string &key) const override;
 
         void set(const std::string &key, const std::any &value) override;
-
-        explicit JsonConfiguration(const std::string &path);
 
         [[nodiscard]] bool contains(const std::string &path) const override;
 

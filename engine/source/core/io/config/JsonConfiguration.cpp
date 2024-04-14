@@ -7,9 +7,9 @@
 
 namespace io
 {
-    JsonConfiguration::JsonConfiguration(const std::string &path) : IFile(path)
+    JsonConfiguration::JsonConfiguration(const std::shared_ptr<base::UUID> &existingUuid, const std::string &path) : IFile(existingUuid,path)
     {
-        load(path);
+        load();
     }
 
     void JsonConfiguration::set(const std::string &key, const std::any &value)
@@ -38,7 +38,7 @@ namespace io
         }
     }
 
-    void JsonConfiguration::save(const std::string &path) const
+    void JsonConfiguration::save() const
     {
         try
         {
@@ -50,7 +50,7 @@ namespace io
         }
     }
 
-    void JsonConfiguration::load(const std::string &path)
+    void JsonConfiguration::load()
     {
         try
         {
@@ -269,6 +269,10 @@ namespace io
         return opt.has_value();
     }
 
+    bool JsonConfiguration::isEmpty() const
+    {
+        return tree.empty();
+    }
 
 }
 

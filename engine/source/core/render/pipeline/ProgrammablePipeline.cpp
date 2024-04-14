@@ -3,9 +3,9 @@
 //
 
 #include <core/base/common/platform/Application.hpp>
-#include <core/assets/manager/AssetsMainManager.hpp>
-#include <core/assets/manager/ShaderManager.hpp>
-#include <core/assets/manager/MaterialsManager.hpp>
+#include <core/assets/manager/AssetsDataMainManager.hpp>
+#include <core/assets/manager/data/ShaderManager.hpp>
+#include <core/assets/manager/data/MaterialsManager.hpp>
 #include "ProgrammablePipeline.hpp"
 #include "OpenglDrawCall.hpp"
 
@@ -92,8 +92,8 @@ void ProgrammablePipeline::setupRenderState(const std::shared_ptr<DrawCall> &dra
 
 void ProgrammablePipeline::prepare()
 {
-    auto shaderManager = assets::AssetsMainManager::getManagerAs<assets::ShaderManager>(assets::AssetType::SHADER);
-    auto materialsManager = assets::AssetsMainManager::getManagerAs<assets::MaterialsManager>(
+    auto shaderManager = assets::AssetsDataMainManager::getManagerAs<assets::ShaderManager>(assets::AssetType::SHADER);
+    auto materialsManager = assets::AssetsDataMainManager::getManagerAs<assets::MaterialsManager>(
             assets::AssetType::MATERIALS);
 
     auto createAndSubmitDrawCalls = [&](std::vector<std::shared_ptr<base::IRenderable>> &renderableList,

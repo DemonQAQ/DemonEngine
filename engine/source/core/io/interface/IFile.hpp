@@ -14,14 +14,17 @@ namespace io
 {
     class IFile : implements base::Object
     {
+    protected:
+        std::string path;
     public:
-        virtual void load(const std::string &path) = 0;
+        IFile(const std::shared_ptr<base::UUID> &existingUuid, const std::string &path_) :
+        Object(existingUuid),path(path_){}
 
-        virtual void save(const std::string &path) const = 0;
+        virtual void load() = 0;
 
-        explicit IFile(const std::string &path) : Object(path, false)
-        {}
+        virtual void save() const = 0;
 
+        virtual bool isEmpty() const = 0;
     };
 }
 #endif //DEMONENGINE_IFILE_HPP

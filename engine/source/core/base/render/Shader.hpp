@@ -14,6 +14,7 @@
 #include <sstream>
 #include <iostream>
 #include <core/base/interface/IMetaAccessor.hpp>
+#include <core/base/interface/INameable.hpp>
 
 namespace base
 {
@@ -21,28 +22,55 @@ namespace base
     {
         void writeToBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
         {
+            auto vertexPath = std::any_cast<std::string>(metadata->getValue("vertexPath"));
+            auto fragmentPath = std::any_cast<std::string>(metadata->getValue("fragmentPath"));
 
+            yml->set("ShaderBlockOperator.vertexPath", vertexPath);
+            yml->set("ShaderBlockOperator.fragmentPath", fragmentPath);
         }
 
         void readFromBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
         {
+            auto vertexPath = yml->getString("ShaderBlockOperator.vertexPath");
+            metadata->setValue("vertexPath", vertexPath);
 
+            auto fragmentPath = yml->getString("ShaderBlockOperator.fragmentPath");
+            metadata->setValue("vertexPath", fragmentPath);
         }
 
         void initBlock(std::shared_ptr<Metadata> &metadata, const std::vector<std::any> &params)
         {
-
+            if (!params.empty() && params[0].type() == typeid(std::string))
+            {
+                auto vertexPath = std::any_cast<std::string>(params[0]);
+                metadata->setValue("vertexPath", vertexPath);
+            }
+            else
+            {
+                metadata->setValue("vertexPath", "");
+            }
+            if (!params.empty() && params.size() >= 2 && params[0].type() == typeid(std::string))
+            {
+                auto vertexPath = std::any_cast<std::string>(params[0]);
+                metadata->setValue("fragmentPath", vertexPath);
+            }
+            else
+            {
+                metadata->setValue("fragmentPath", "");
+            }
         }
     };
 
-    class Shader : implements Object, implements IMetaAccessor
+    class Shader : implements Object, implements IMetaAccessor, implements INameable
     {
+    private:
+        std::string name;
     public:
         // 程序ID
         unsigned int ID;
 
         // 构造器读取并构建着色器
-        Shader(const std::string &uuidStr, bool isUUID,
+        Shader(const std::shared_ptr<base::UUID> &existingUuid, bool init, std::string name_,
                const std::string &vertexPath, const std::string &fragmentPath,
                std::shared_ptr<io::YamlConfiguration> &yml);
 
@@ -53,6 +81,10 @@ namespace base
 
         // 使用/激活程序
         void use();
+
+        void setName(const std::string &name_) override;
+
+        [[nodiscard]] std::string getName() const override;
 
         // uniform工具函数
         void setBool(const std::string &name, bool value) const;

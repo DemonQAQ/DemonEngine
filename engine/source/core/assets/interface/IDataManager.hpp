@@ -2,8 +2,8 @@
 // Created by Demon on 2024/3/6.
 //
 
-#ifndef DEMONENGINE_IFILEMANAGER_HPP
-#define DEMONENGINE_IFILEMANAGER_HPP
+#ifndef DEMONENGINE_IDATAMANAGER_HPP
+#define DEMONENGINE_IDATAMANAGER_HPP
 
 #include <string>
 #include <fstream>
@@ -14,15 +14,15 @@
 
 namespace assets
 {
-    class IFileManager
+    class IDataManager
     {
     public:
-        virtual ~IFileManager() = default;
+        virtual ~IDataManager() = default;
 
-        virtual std::optional<std::shared_ptr<base::UUID>> loadResource(const std::vector<std::any>& params) = 0;
-        virtual void unloadResource(const std::vector<std::any>& params) = 0;
-        [[nodiscard]] virtual bool isResourceLoaded(const std::vector<std::any>& params) const = 0;
-        virtual void updateResource(const std::vector<std::any>& params) = 0;
+        virtual bool loadData(const std::vector<std::any>& params) = 0;
+        virtual void unloadData(const std::vector<std::any>& params) = 0;
+        [[nodiscard]] virtual bool isDataLoaded(const std::vector<std::any>& params) const = 0;
+        virtual void updateData(const std::vector<std::any>& params) = 0;
 
     protected:
         static std::vector<char> loadFile(const std::string& path)
@@ -65,4 +65,4 @@ namespace assets
     };
 }
 
-#endif //DEMONENGINE_IFILEMANAGER_HPP
+#endif //DEMONENGINE_IDATAMANAGER_HPP

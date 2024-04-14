@@ -1,20 +1,20 @@
 ﻿//
 // Created by Demon on 2024/3/15.
 //
-#include "ModelManager.hpp"
-#include "MaterialsManager.hpp"
-#include "AssetsMainManager.hpp"
-#include "ConfigManager.hpp"
-#include "ShaderManager.hpp"
-#include "MediaManager.hpp"
-#include "TextureManager.hpp"
+#include "core/assets/manager/data/ModelManager.hpp"
+#include "core/assets/manager/data/MaterialsManager.hpp"
+#include "AssetsDataMainManager.hpp"
+#include "core/assets/manager/data/ConfigManager.hpp"
+#include "core/assets/manager/data/ShaderManager.hpp"
+#include "core/assets/manager/data/MediaManager.hpp"
+#include "core/assets/manager/data/TextureManager.hpp"
 
 
 namespace assets
 {
-    std::unordered_map<AssetType, std::shared_ptr<IFileManager>> AssetsMainManager::MANAGERS;
+    std::unordered_map<AssetType, std::shared_ptr<IDataManager>> AssetsDataMainManager::MANAGERS;
 
-    void AssetsMainManager::initializeManager()
+    void AssetsDataMainManager::initializeManager()
     {
         MANAGERS.insert({AssetType::TEXTURE, std::make_shared<TextureManager>()});
         MANAGERS.insert({AssetType::MODEL, std::make_shared<ModelManager>()});
@@ -24,12 +24,12 @@ namespace assets
         MANAGERS.insert({AssetType::MEDIA, std::make_shared<MediaManager>()});
     }
 
-    void AssetsMainManager::finalizeManager()
+    void AssetsDataMainManager::finalizeManager()
     {
 
     }
 
-    std::string AssetsMainManager::getManagerClassName(AssetType assetType)
+    std::string AssetsDataMainManager::getManagerClassName(AssetType assetType)
     {
         switch (assetType)
         {
@@ -50,7 +50,7 @@ namespace assets
         }
     }
 
-    std::optional<std::shared_ptr<IFileManager>> AssetsMainManager::getManager(AssetType assetType)
+    std::optional<std::shared_ptr<IDataManager>> AssetsDataMainManager::getManager(AssetType assetType)
     {
         auto it = MANAGERS.find(assetType);
         if (it != MANAGERS.end()) return it->second;

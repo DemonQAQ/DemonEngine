@@ -6,11 +6,12 @@
 
 namespace base
 {
-    Shader::Shader(const std::string &uuidStr, bool isUUID,
+    Shader::Shader(const std::shared_ptr<base::UUID> &existingUuid, bool init, std::string name_,
                    const std::string &vertexPath, const std::string &fragmentPath,
                    std::shared_ptr<io::YamlConfiguration> &yml) :
-            Object(uuidStr, isUUID),
-            IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID))
+            Object(existingUuid),
+            IMetaAccessor(yml, !init, init ? nullptr : existingUuid),
+            name(name_)
     {
         // 1. retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
@@ -154,5 +155,15 @@ namespace base
                           << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
+    }
+
+    void Shader::setName(const std::string &name_)
+    {
+        this->name = name_;
+    }
+
+    std::string Shader::getName() const
+    {
+        return name;
     }
 }

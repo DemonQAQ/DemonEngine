@@ -2,8 +2,8 @@
 // Created by Demon on 2023/12/12.
 //
 
-#ifndef DEMONENGINE_ASSETSMAINMANAGER_HPP
-#define DEMONENGINE_ASSETSMAINMANAGER_HPP
+#ifndef DEMONENGINE_ASSETSDATAMAINMANAGER_HPP
+#define DEMONENGINE_ASSETSDATAMAINMANAGER_HPP
 
 //todo 处理模型，还包括纹理，材质、音频、着色器等其他资源的加载、缓存和卸载。
 //todo 提供资源的加载，卸载，引用，缓存等
@@ -11,17 +11,17 @@
 #include <unordered_map>
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/AssetType.hpp"
-#include "core/assets/interface/IFileManager.hpp"
+#include "core/assets/interface/IDataManager.hpp"
 
 namespace assets
 {
     template<typename T>
-    concept DerivedFromBase = std::is_base_of_v<IFileManager, T>;
+    concept DerivedFromBase = std::is_base_of_v<IDataManager, T>;
 
-    class AssetsMainManager
+    class AssetsDataMainManager
     {
     private:
-        static std::unordered_map<AssetType, std::shared_ptr<IFileManager>> MANAGERS;
+        static std::unordered_map<AssetType, std::shared_ptr<IDataManager>> MANAGERS;
     public:
         static void initialize()
         {
@@ -33,7 +33,7 @@ namespace assets
             finalizeManager();
         }
 
-        static std::optional<std::shared_ptr<IFileManager>> getManager(AssetType assetType);
+        static std::optional<std::shared_ptr<IDataManager>> getManager(AssetType assetType);
 
         template<DerivedFromBase T>
         static std::shared_ptr<T> getManagerAs(AssetType assetType)
@@ -55,4 +55,4 @@ namespace assets
         static void finalizeManager();
     };
 }
-#endif //DEMONENGINE_ASSETSMAINMANAGER_HPP
+#endif //DEMONENGINE_ASSETSDATAMAINMANAGER_HPP

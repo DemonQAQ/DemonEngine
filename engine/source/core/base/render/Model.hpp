@@ -120,9 +120,9 @@ namespace base
             addOperator(std::make_shared<ModelBlockOperator>());
         }
 
-        void setName(const std::string &name_) override;
-
         std::shared_ptr<Node> &getRootNode();
+
+        void setName(const std::string &name_) override;
 
         [[nodiscard]] std::string getName() const override;
 

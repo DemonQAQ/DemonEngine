@@ -8,17 +8,16 @@
 
 namespace io
 {
-    YamlConfiguration::YamlConfiguration(const std::string &path) : IFile(path), filePath(path)
+    YamlConfiguration::YamlConfiguration(const std::shared_ptr<base::UUID> &existingUuid, const std::string &path) : IFile(existingUuid, path)
     {
-        load(path);
+        load();
     }
 
-    void YamlConfiguration::load(const std::string &path)
+    void YamlConfiguration::load()
     {
         try
         {
             configRoot = YAML::LoadFile(path);
-            filePath = path;
         }
         catch (const YAML::Exception &e)
         {
@@ -43,7 +42,7 @@ namespace io
         }
     }
 
-    void YamlConfiguration::save(const std::string &path) const
+    void YamlConfiguration::save() const
     {
         std::ofstream fout(path);
         fout << YAML::Dump(configRoot);
@@ -436,6 +435,11 @@ namespace io
             path = path.substr(pos + 1);
         }
         return node[path] ? node[path] : YAML::Node();
+    }
+
+    bool YamlConfiguration::isEmpty() const
+    {
+        return configRoot.IsNull() || (configRoot.IsMap() && configRoot.size() == 0);
     }
 
 }

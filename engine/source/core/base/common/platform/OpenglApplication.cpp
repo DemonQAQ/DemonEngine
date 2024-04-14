@@ -3,7 +3,7 @@
 //
 #include <exception>
 #include <iostream>
-#include <core/assets/manager/AssetsMainManager.hpp>
+#include <core/assets/manager/AssetsDataMainManager.hpp>
 #include <core/render/pipeline/ProgrammablePipeline.hpp>
 #include "GLFW/glfw3.h"
 #include "OpenglApplication.hpp"
@@ -51,7 +51,7 @@ bool base::OpenglApplication::stop()
 
 int base::OpenglApplication::initialize()
 {
-    assets::AssetsMainManager::initialize();
+    assets::AssetsDataMainManager::initialize();
     // 创建窗口
     mainWindow = windowFactory.createWindow(800, 600, "Demo Application");
 

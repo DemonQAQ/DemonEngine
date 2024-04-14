@@ -3,8 +3,8 @@
 //
 #include <glm/gtc/type_ptr.hpp>
 #include "OpenGLApi.hpp"
-#include "core/assets/manager/MaterialsManager.hpp"
-#include "core/assets/manager/AssetsMainManager.hpp"
+#include "core/assets/manager/data/MaterialsManager.hpp"
+#include "core/assets/manager/AssetsDataMainManager.hpp"
 #include "core/render/pipeline/OpenglDrawCall.hpp"
 #include "core/render/manager/RenderManager.hpp"
 
@@ -276,7 +276,7 @@ void OpenGLApi::drawMesh(std::shared_ptr<base::Mesh> mesh)
     auto &indices = mesh->getIndices();
     auto materialUUID = mesh->getMaterial();
     std::optional<std::shared_ptr<base::Material>> material;
-    auto materialsManagerOpt = assets::AssetsMainManager::getManager(assets::AssetType::MATERIALS);
+    auto materialsManagerOpt = assets::AssetsDataMainManager::getManager(assets::AssetType::MATERIALS);
     if (materialsManagerOpt)
     {
         auto materialsManagerPtr = std::dynamic_pointer_cast<assets::MaterialsManager>(materialsManagerOpt.value());

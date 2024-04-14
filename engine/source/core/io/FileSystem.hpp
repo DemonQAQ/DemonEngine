@@ -22,6 +22,11 @@ public:
         return (*pathBuilder)(path);
     }
 
+    static std::string extractDirectory(const std::string filePath)
+    {
+        return filePath.substr(0, filePath.find_last_of('/'));
+    }
+
     static std::string getFullPath(const std::string& path)
     {
         std::string fullPath = std::string(sourceRootPath) + path;

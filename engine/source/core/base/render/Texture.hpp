@@ -86,8 +86,7 @@ namespace base
             addOperator(std::make_shared<TextureBlockOperator>());
         }
 
-        Texture(const std::shared_ptr<base::UUID> &existingUuid,
-                bool init,
+        Texture(const std::shared_ptr<base::UUID> &existingUuid, bool init,
                 std::shared_ptr<io::YamlConfiguration> &yml,
                 unsigned int id, TextureType type, const std::string &path)
                 : Object(existingUuid),

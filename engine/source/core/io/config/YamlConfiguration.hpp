@@ -16,18 +16,18 @@ namespace io
     {
     private:
         YAML::Node configRoot;
-        std::string filePath;
-
     public:
-        void load(const std::string &path) override;
+        explicit YamlConfiguration(const std::shared_ptr<base::UUID> &existingUuid, const std::string &path);
 
-        void save(const std::string &path) const override;
+        void load() override;
+
+        void save() const override;
+
+        bool isEmpty() const override;
 
         [[nodiscard]] std::optional<std::any> get(const std::string &key) const override;
 
         void set(const std::string &key, const std::any &value) override;
-
-        explicit YamlConfiguration(const std::string &path);
 
         [[nodiscard]]YAML::Node getNode(const std::string &path);
 

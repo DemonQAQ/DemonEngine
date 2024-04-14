@@ -7,9 +7,9 @@
 
 namespace io
 {
-    XmlConfiguration::XmlConfiguration(const std::string &path) : IFile(path)
+    XmlConfiguration::XmlConfiguration(const std::shared_ptr<base::UUID> &existingUuid, const std::string &path) : IFile(existingUuid, path)
     {
-        load(path);
+        load();
     }
 
     void XmlConfiguration::set(const std::string &key, const std::any &value)
@@ -41,7 +41,7 @@ namespace io
         return std::nullopt;
     }
 
-    void XmlConfiguration::save(const std::string &path) const
+    void XmlConfiguration::save() const
     {
         try
         {
@@ -53,7 +53,7 @@ namespace io
         }
     }
 
-    void XmlConfiguration::load(const std::string &path)
+    void XmlConfiguration::load()
     {
         try
         {
@@ -265,6 +265,11 @@ namespace io
     {
         auto opt = tree.get_optional<std::string>(path);
         return opt.has_value();
+    }
+
+    bool XmlConfiguration::isEmpty() const
+    {
+        return tree.empty();
     }
 }
 
