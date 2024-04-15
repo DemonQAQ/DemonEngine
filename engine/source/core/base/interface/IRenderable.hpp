@@ -37,7 +37,7 @@ namespace base
 
         virtual void getRenderData(std::vector<RenderData> renderDataList) = 0;
 
-        void bindMaterial(std::shared_ptr<base::UUID> uuid)
+        void bindMaterial(const std::shared_ptr<base::UUID> &uuid)
         {
             this->material = uuid;
         }
@@ -57,7 +57,7 @@ namespace base
             return this->material;
         }
 
-        void bindShader(std::shared_ptr<base::UUID> uuid)
+        void bindShader(const std::shared_ptr<base::UUID> &uuid)
         {
             this->useShader = uuid;
         }

@@ -13,7 +13,7 @@ namespace assets::scene
                                        IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
                    name(std::move(name))
     {
-        renderableObject = std::make_shared<RenderableObject>("renderableObject");
+        renderableObject = nullptr;
     }
 
     void Entity::setName(const std::string &name_)

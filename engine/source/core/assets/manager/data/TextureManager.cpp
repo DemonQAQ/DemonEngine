@@ -59,42 +59,6 @@ bool TextureManager::loadData(const std::vector<std::any> &params)
         return false;
     }
 
-//    auto configManagerOpt = AssetsDataMainManager::getManager(AssetType::CONFIG);
-//    if (!configManagerOpt.has_value()) return nullptr;
-//    auto configManager = std::dynamic_pointer_cast<ConfigManager>(configManagerOpt.value());
-//    if (!configManager) return nullptr;
-//
-//    auto metaUuid = configManager->loadData({metadataPath});
-//    if (!metaUuid.has_value())
-//    {
-//        std::cerr << "Failed to load metadata from: " << metadataPath << std::endl;
-//        return std::nullopt;
-//    }
-//
-//    auto metaFileOpt = configManager->getResourceByUuid(metaUuid.value());
-//    if (!metaFileOpt.has_value())
-//    {
-//        std::cerr << "Failed to find metadata file with UUID: " << metaUuid.value()->toString() << std::endl;
-//        return std::nullopt;
-//    }
-//
-//    auto metaFile = std::dynamic_pointer_cast<io::YamlConfiguration>(metaFileOpt.value());
-//    if (!metaFile)
-//    {
-//        std::cerr << "Metadata file is not a YAML configuration." << std::endl;
-//        return std::nullopt;
-//    }
-//
-//    std::string uuidStr = metaFile->getString("uuid");
-//    bool init = uuidStr.empty();
-//    if (init) uuidStr = utils::uuidUtil::getUUID(sourcePath);
-//    auto textureUuid = UUIDManager::getUUID(uuidStr);
-//    auto it = loadedTextures.find(textureUuid);
-//    if (it != loadedTextures.end())
-//    {
-//        return it->first;
-//    }
-
     // 加载纹理
     unsigned int textureID = loadTextureFromFile(path.c_str());
     if (textureID == 0)
@@ -139,9 +103,29 @@ void TextureManager::unloadData(const std::vector<std::any> &params)
     }
 }
 
+/**
+ *
+ * @params[0] const std::shared_ptr<base::UUID> &existingUuid   材质的uuid
+ * */
 [[nodiscard]] bool TextureManager::isDataLoaded(const std::vector<std::any> &params) const
 {
-    return false;
+    if (params.size() != 1) return false;
+
+    std::shared_ptr<base::UUID> existingUuid;
+
+    try
+    {
+        existingUuid = std::any_cast<std::shared_ptr<base::UUID>>(params[0]);
+        auto it = loadedTextures.find(existingUuid);
+        if (it != loadedTextures.end())
+        {
+            return true;
+        }
+    } catch (const std::bad_any_cast &e)
+    {
+        std::cerr << "Error extracting parameters: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 void TextureManager::updateData(const std::vector<std::any> &params)

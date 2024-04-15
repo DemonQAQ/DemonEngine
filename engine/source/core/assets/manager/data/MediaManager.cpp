@@ -7,7 +7,7 @@ using namespace assets;
 
 bool MediaManager::loadData(const std::vector<std::any> &params)
 {
-    return std::nullopt;
+    return false;
 }
 
 void MediaManager::unloadData(const std::vector<std::any> &params)

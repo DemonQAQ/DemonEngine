@@ -101,8 +101,19 @@ bool MaterialsManager::loadData(const std::vector<std::any> &params)
             metallic = std::any_cast<float>(params[11]);
             reflectivity = std::any_cast<float>(params[12]);
 
-            material = std::make_shared<Material>(existingUuid, init, yml, name, diffuse, specular, ambient, emissive,
-                                                  shininess, opacity, roughness, metallic, reflectivity);
+            if (params.size() == 14)
+            {
+                auto textures = std::any_cast<std::map<TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>>>(
+                        params[13]);
+                material = std::make_shared<Material>(existingUuid, init, yml, name, diffuse, specular, ambient,
+                                                      emissive,
+                                                      shininess, opacity, roughness, metallic, reflectivity, textures);
+            }
+            else
+                material = std::make_shared<Material>(existingUuid, init, yml, name, diffuse, specular, ambient,
+                                                      emissive,
+                                                      shininess, opacity, roughness, metallic, reflectivity);
+
         } catch (const std::bad_any_cast &e)
         {
             std::cerr << "Error extracting parameters: " << e.what() << std::endl;
@@ -123,9 +134,29 @@ void MaterialsManager::unloadData(const std::vector<std::any> &params)
 
 }
 
+/**
+ *
+ * @params[0] const std::shared_ptr<base::UUID> &existingUuid   材质的uuid
+ * */
 bool MaterialsManager::isDataLoaded(const std::vector<std::any> &params) const
 {
-    return false;
+    if (params.size() != 1) return false;
+
+    std::shared_ptr<base::UUID> existingUuid;
+
+    try
+    {
+        existingUuid = std::any_cast<std::shared_ptr<base::UUID>>(params[0]);
+        auto it = loadedMaterial.find(existingUuid);
+        if (it != loadedMaterial.end())
+        {
+            return true;
+        }
+    } catch (const std::bad_any_cast &e)
+    {
+        std::cerr << "Error extracting parameters: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 void MaterialsManager::updateData(const std::vector<std::any> &params)

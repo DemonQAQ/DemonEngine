@@ -11,7 +11,7 @@
 
 namespace io
 {
-    class XmlConfiguration : implements IFile, IConfiguration
+    class XmlConfiguration : implements IFile, implements IConfiguration
     {
     private:
         boost::property_tree::ptree tree;

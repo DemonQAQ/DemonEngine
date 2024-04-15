@@ -43,7 +43,10 @@ namespace assets
         bool loadData(const std::vector<std::any> &params) override;
 
         void unloadData(const std::vector<std::any> &params) override;
-
+        /**
+         *
+         * @params[0] const std::shared_ptr<base::UUID> &existingUuid   材质的uuid
+         * */
         [[nodiscard]] bool isDataLoaded(const std::vector<std::any> &params) const override;
 
         void updateData(const std::vector<std::any> &params) override;

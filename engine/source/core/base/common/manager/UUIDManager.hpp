@@ -17,8 +17,8 @@ namespace base
     class UUIDManager
     {
     private:
-        static std::unordered_set<std::shared_ptr<UUID>, UUIDHash, UUIDEqual> uuids;
-        static std::unordered_set<std::shared_ptr<UUID>, UUIDHash, UUIDEqual> reappearUuids;
+        static std::unordered_set<std::shared_ptr<base::UUID>, UUIDHash, UUIDEqual, std::allocator<std::shared_ptr<base::UUID>>> uuids;
+        static std::unordered_set<std::shared_ptr<base::UUID>, UUIDHash, UUIDEqual, std::allocator<std::shared_ptr<base::UUID>>> reappearUuids;
     public:
         static std::shared_ptr<UUID> getUUID(const std::string &str, bool canReappear = false)
         {
@@ -56,9 +56,6 @@ namespace base
             return newUuid;
         }
     };
-
-    std::unordered_set<std::shared_ptr<UUID>, UUIDHash, UUIDEqual> UUIDManager::uuids{};
-    std::unordered_set<std::shared_ptr<UUID>, UUIDHash, UUIDEqual> UUIDManager::reappearUuids{};
 }
 
 #endif //DEMONENGINE_UUIDMANAGER_HPP

@@ -6,6 +6,8 @@
 #include <core/assets/manager/data/MaterialsManager.hpp>
 #include <core/assets/AssetType.hpp>
 #include <core/assets/manager/AssetsDataMainManager.hpp>
+#include <core/assets/manager/data/ConfigManager.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "AssimpLoader.hpp"
 #include "ConfigLoader.hpp"
 
@@ -14,7 +16,8 @@ std::shared_ptr<base::Model> assets::AssimpLoader::loadModel(const std::string &
     std::string directory = path.substr(0, path.find_last_of('/'));
     std::string modelName = directory.substr(directory.find_last_of('/') + 1);
     directory = FileSystem::combinePaths(SOURCE_ROOT_PATH, directory);
-    std::string metaYmlPath = directory + ".meta";
+    std::string modelFullPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, path);
+    std::string metaYmlPath = modelFullPath + ".mat.meta";
 
     auto metaYml = ConfigLoader::loadYml(metaYmlPath, true);
     if (!metaYml)return nullptr;
@@ -27,17 +30,17 @@ std::shared_ptr<base::Model> assets::AssimpLoader::loadModel(const std::string &
     else uuidStr = metaYml->getString("uuid");
 
     existingUuid = base::UUIDManager::getUUID(uuidStr, false);
-
-    return loadModel(directory, existingUuid, init, metaYml);
+    return loadModel(directory, modelName, existingUuid, init, metaYml);
 }
 
 std::shared_ptr<base::Model>
-assets::AssimpLoader::loadModel(const std::string &path, const std::shared_ptr<base::UUID> &existingUuid, bool init,
+assets::AssimpLoader::loadModel(const std::string &directory, const std::string &modelName,
+                                const std::shared_ptr<base::UUID> &existingUuid, bool init,
                                 std::shared_ptr<io::YamlConfiguration> &yml)
 {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs |
-                                                   aiProcess_CalcTangentSpace);
+    const aiScene *scene = importer.ReadFile(directory, aiProcess_Triangulate | aiProcess_FlipUVs |
+                                                        aiProcess_CalcTangentSpace);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -45,15 +48,31 @@ assets::AssimpLoader::loadModel(const std::string &path, const std::shared_ptr<b
         return nullptr;
     }
 
-    std::string directory = path.substr(0, path.find_last_of('/'));
-    std::string modelName = directory.substr(directory.find_last_of('/') + 1);
+    std::string metadataPath = directory + ".meta";
+    auto metaYml = ConfigLoader::loadYml(metadataPath, true);
+    if (!metaYml)return nullptr;
+
+    std::vector<std::shared_ptr<base::Material>> materials = {};
+    if (scene->HasMaterials())
+    {
+        for (unsigned int i = 0; i < scene->mNumMaterials; ++i)
+        {
+            aiMaterial *aiMat = scene->mMaterials[i];
+            auto material = loadMaterialFromAssimp(aiMat, metaYml, directory);
+            if (material)
+            {
+                materials.push_back(material);
+            }
+        }
+    }
+
     auto rootNode = std::make_shared<base::Node>(scene->mRootNode->mName.C_Str());
     int index = 0;
 
-    std::string rootPathIdentifier = path + "." + scene->mRootNode->mName.C_Str();
+    std::string rootPathIdentifier = modelName + "." + scene->mRootNode->mName.C_Str();
 
     processNode(rootNode, scene->mRootNode, scene, index, directory,
-                convertAiMatrixToTransform(scene->mRootNode->mTransformation), rootPathIdentifier);
+                convertAiMatrixToTransform(scene->mRootNode->mTransformation), rootPathIdentifier, materials);
 
     auto model = std::make_shared<base::Model>(existingUuid, init, modelName, rootNode, yml);
     return model;
@@ -61,18 +80,11 @@ assets::AssimpLoader::loadModel(const std::string &path, const std::shared_ptr<b
 
 void assets::AssimpLoader::processNode(const std::shared_ptr<base::Node> &node, aiNode *aiNode, const aiScene *scene,
                                        int &meshIndex, const std::string &directory, const Transform &parentTransform,
-                                       const std::string &pathIdentifier)
+                                       const std::string &pathIdentifier,
+                                       std::vector<std::shared_ptr<base::Material>> &materials)
 {
     base::Transform nodeTransform = convertAiMatrixToTransform(aiNode->mTransformation);
     base::Transform globalTransform = base::Transform::merge({parentTransform, nodeTransform});
-
-//        auto materialsManagerOpt = AssetsDataMainManager::getManager(AssetType::MATERIALS);
-//    if (!materialsManagerOpt.has_value()) return nullptr;
-//    auto materialsManager = std::dynamic_pointer_cast<MaterialsManager>(materialsManagerOpt.value());
-//    if (!materialsManager) return;
-
-    aiMaterial **material = scene->mMaterials;
-    materialsManager->loadData({material, path});
 
     for (unsigned int i = 0; i < aiNode->mNumMeshes; i++)
     {
@@ -85,6 +97,13 @@ void assets::AssimpLoader::processNode(const std::shared_ptr<base::Node> &node, 
         meshPathIdentifier.append(meshName);
 
         auto newMesh = processMesh(mesh, scene, meshName, meshPathIdentifier, globalTransform);
+
+        if (!materials.empty() && mesh->mMaterialIndex < materials.size())
+        {
+            std::shared_ptr<base::Material> firstMaterial = materials[mesh->mMaterialIndex];
+            newMesh->bindMaterial(firstMaterial->getUUID());
+        }
+
         node->meshes.push_back(newMesh);
     }
 
@@ -93,7 +112,8 @@ void assets::AssimpLoader::processNode(const std::shared_ptr<base::Node> &node, 
         std::shared_ptr<base::Node> childNode = std::make_shared<base::Node>(aiNode->mChildren[i]->mName.C_Str());
         std::string childPathIdentifier = pathIdentifier + "." + aiNode->mChildren[i]->mName.C_Str();
 
-        processNode(childNode, aiNode->mChildren[i], scene, meshIndex, directory, globalTransform, childPathIdentifier);
+        processNode(childNode, aiNode->mChildren[i], scene, meshIndex, directory, globalTransform, childPathIdentifier,
+                    materials);
         node->children.push_back(childNode);
     }
 }
@@ -155,51 +175,55 @@ assets::AssimpLoader::processMesh(aiMesh *mesh, const aiScene *scene, const std:
         }
     }
 
-    return std::make_shared<base::Mesh>(meshUuid, meshName, vertices, indices, nodeTransform, nullptr, nullptr);
+    return std::make_shared<base::Mesh>(meshUuid, meshName, vertices, indices, nodeTransform);
 }
 
 base::Transform assets::AssimpLoader::convertAiMatrixToTransform(const aiMatrix4x4 &aiMatrix)
 {
-    return base::Transform();
+    glm::mat4 matrix = glm::transpose(glm::make_mat4(&aiMatrix.a1));
+    glm::vec3 translation(matrix[3]);
+
+    glm::vec3 scale;
+    scale.x = glm::length(glm::vec3(matrix[0]));
+    scale.y = glm::length(glm::vec3(matrix[1]));
+    scale.z = glm::length(glm::vec3(matrix[2]));
+
+    glm::mat3 rotationMatrix;
+    rotationMatrix[0] = glm::normalize(glm::vec3(matrix[0]));
+    rotationMatrix[1] = glm::normalize(glm::vec3(matrix[1]));
+    rotationMatrix[2] = glm::normalize(glm::vec3(matrix[2]));
+
+    glm::quat rotation = glm::quat_cast(rotationMatrix);
+    return base::Transform(translation, rotation, scale);
 }
 
 std::shared_ptr<base::Material>
-MaterialsManager::loadMaterialFromAssimp(const aiMaterial *aiMat, const std::string &metadataPath)
+assets::AssimpLoader::loadMaterialFromAssimp(const aiMaterial *aiMat, std::shared_ptr<io::YamlConfiguration> &metaYml,
+                                             const std::string &directory)
 {
-    auto configManagerOpt = AssetsDataMainManager::getManager(AssetType::CONFIG);
-    if (!configManagerOpt.has_value()) return nullptr;
-    auto configManager = std::dynamic_pointer_cast<ConfigManager>(configManagerOpt.value());
-    if (!configManager) return nullptr;
+    auto materialsManagerOpt = AssetsDataMainManager::getManager(AssetType::MATERIALS);
+    if (!materialsManagerOpt.has_value()) return nullptr;
+    auto materialsManager = std::dynamic_pointer_cast<MaterialsManager>(materialsManagerOpt.value());
+    if (!materialsManager) return nullptr;
 
-    auto metaUuid = configManager->loadData({metadataPath});
-    if (!metaUuid.has_value())
+    aiString matName;
+    std::string materialName;
+    if (aiMat->Get(AI_MATKEY_NAME, matName) == AI_SUCCESS)
     {
-        std::cerr << "Failed to load metadata from: " << metadataPath << std::endl;
-        return nullptr;
+        materialName = matName.C_Str();
     }
 
-    auto metaFileOpt = configManager->getResourceByUuid(metaUuid.value());
-    if (!metaFileOpt.has_value())
-    {
-        std::cerr << "Failed to find metadata file with UUID: " << metaUuid.value()->toString() << std::endl;
-        return nullptr;
-    }
-
-    auto metaFile = std::dynamic_pointer_cast<io::YamlConfiguration>(metaFileOpt.value());
-    if (!metaFile)
-    {
-        std::cerr << "Metadata file is not a YAML configuration." << std::endl;
-        return nullptr;
-    }
-
-    std::string uuidStr = metaFile->getString("uuid");
+    std::string uuidStr = metaYml->getString("materials." + materialName + ".uuid");
     bool init = uuidStr.empty();
-    if (init) uuidStr = utils::uuidUtil::getUUID(metadataPath);
-    auto materialUuid = UUIDManager::getUUID(uuidStr);
-    auto it = loadedMaterial.find(materialUuid);
-    if (it != loadedMaterial.end())
+    if (init) uuidStr = utils::uuidUtil::getUUID(directory + "." + materialName);
+    auto materialUuid = UUIDManager::getUUID(uuidStr, false);
+    if (materialsManager->isDataLoaded({materialUuid}))
     {
-        return it->second;
+        auto materialOpt = materialsManager->getResourceByUuid(materialUuid);
+        if (!materialOpt.has_value()) return nullptr;
+
+        auto material = std::dynamic_pointer_cast<base::Material>(materialOpt.value());
+        return material;
     }
 
     glm::vec3 diffuse(0.8f), specular(1.0f), ambient(0.2f), emissive(0.0f);
@@ -229,8 +253,75 @@ MaterialsManager::loadMaterialFromAssimp(const aiMaterial *aiMat, const std::str
         emissive = glm::vec3(aiEmissive.r, aiEmissive.g, aiEmissive.b);
     }
 
-    auto material = std::make_shared<base::Material>(materialUuid, init, metaFile, generateUniqueMaterialName(aiMat),
-                                                     diffuse, specular, ambient, emissive,
-                                                     shininess, opacity, roughness, metallic, reflectivity);
-    return material;
+    std::map<TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>> textures;
+    for (int type = aiTextureType_NONE + 1; type < aiTextureType_UNKNOWN; ++type)
+    {
+        aiString texPath;
+        unsigned int textureCount = aiMat->GetTextureCount((aiTextureType) type);
+
+        for (unsigned int i = 0; i < textureCount; ++i)
+        {
+            if (AI_SUCCESS == aiMat->GetTexture((aiTextureType) type, i, &texPath))
+            {
+                std::string fullPath = directory + "/" + texPath.C_Str();
+                auto texture = loadTextureFromAssimp((aiTextureType) type, fullPath);
+
+                if (texture)
+                {
+                    TextureType genericType = aiTextureTypeToTextureType((aiTextureType) type);
+                    if (textures.find(genericType) == textures.end())
+                    {
+                        textures[genericType] = std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>();
+                    }
+                    textures[genericType][texture->getUUID()] = texture;
+                }
+            }
+        }
+    }
+
+    if (materialsManager->loadData(
+            {materialUuid, init, metaYml, materialName, diffuse, specular, ambient, emissive, shininess, opacity,
+             roughness, metallic, reflectivity, textures}))
+    {
+        auto materialOpt = materialsManager->getResourceByUuid(materialUuid);
+        if (!materialOpt.has_value()) return nullptr;
+
+        auto material = std::dynamic_pointer_cast<base::Material>(materialOpt.value());
+        return material;
+    }
+    else return nullptr;
+}
+
+std::shared_ptr<base::Texture>
+assets::AssimpLoader::loadTextureFromAssimp(const aiTextureType &aiType, const std::string &texturePath)
+{
+    base::TextureType textureType = aiTextureTypeToTextureType(aiType);
+    std::string metadataPath = texturePath + ".meta";
+    auto metaYml = ConfigLoader::loadYml(metadataPath, true);
+    if (!metaYml)return nullptr;
+
+    bool init = metaYml->isEmpty();
+    std::shared_ptr<base::UUID> existingUuid;
+    std::string uuidStr;
+
+    if (init)uuidStr = utils::uuidUtil::getUUID(texturePath);
+    else uuidStr = metaYml->getString("uuid");
+
+    existingUuid = base::UUIDManager::getUUID(uuidStr, false);
+
+    auto texturesManagerOpt = AssetsDataMainManager::getManager(AssetType::TEXTURE);
+    if (!texturesManagerOpt.has_value()) return nullptr;
+    auto texturesManager = std::dynamic_pointer_cast<MaterialsManager>(texturesManagerOpt.value());
+    if (!texturesManager) return nullptr;
+
+    if (texturesManager->isDataLoaded({existingUuid}) ||
+        texturesManager->loadData({existingUuid, init, metaYml, textureType, texturePath}))
+    {
+        auto textureOpt = texturesManager->getResourceByUuid(existingUuid);
+        if (!textureOpt.has_value()) return nullptr;
+
+        auto texture = std::dynamic_pointer_cast<base::Texture>(textureOpt.value());
+        return texture;
+    }
+    else return nullptr;
 }

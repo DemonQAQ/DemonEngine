@@ -2,7 +2,6 @@
 // Created by Demon on 2024/4/13.
 //
 
-#include <core/io/FileType.hpp>
 #include <core/base/utils/UUIDUtil.hpp>
 #include <core/base/common/manager/UUIDManager.hpp>
 #include <core/assets/manager/AssetsDataMainManager.hpp>

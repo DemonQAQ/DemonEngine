@@ -10,6 +10,8 @@
 #include <utility>
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
+#include "core/base/interface/BlockOperator.hpp"
+#include "core/base/interface/IMetaAccessor.hpp"
 
 namespace base
 {

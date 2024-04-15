@@ -15,36 +15,6 @@
 
 namespace assets
 {
-    static base::TextureType aiTextureTypeToTextureType(aiTextureType aiType)
-    {
-        switch (aiType)
-        {
-            case aiTextureType_DIFFUSE:
-                return base::TextureType::DIFFUSE;
-            case aiTextureType_SPECULAR:
-                return base::TextureType::SPECULAR;
-            case aiTextureType_HEIGHT:
-                return base::TextureType::HEIGHT;
-            case aiTextureType_AMBIENT:
-                return base::TextureType::AMBIENT_OCCLUSION;
-            case aiTextureType_EMISSIVE:
-                return base::TextureType::EMISSIVE;
-            case aiTextureType_NORMALS:
-                return base::TextureType::NORMAL;
-            default:
-                return base::TextureType::UNKNOWN;
-        }
-    }
-
-    static const std::vector<aiTextureType> supportedAiTextureTypes = {
-            aiTextureType_DIFFUSE,
-            aiTextureType_SPECULAR,
-            aiTextureType_HEIGHT,
-            aiTextureType_AMBIENT,
-            aiTextureType_EMISSIVE,
-            aiTextureType_NORMALS,
-    };
-
     class TextureManager : implements IDataManager
     {
     private:
@@ -68,6 +38,10 @@ namespace assets
 
         void unloadData(const std::vector<std::any> &params) override;
 
+        /**
+         *
+         * @params[0] const std::shared_ptr<base::UUID> &existingUuid   材质的uuid
+         * */
         [[nodiscard]] bool isDataLoaded(const std::vector<std::any>& params) const override;
 
         void updateData(const std::vector<std::any>& params) override;

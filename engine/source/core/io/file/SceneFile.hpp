@@ -18,7 +18,7 @@ namespace io
         explicit SceneFile(const std::string &path);
 
         //todo 调用时将实例中的数据初始化为scene实例返回
-        assets::scene::Scene loadScene();
+        //assets::scene::Scene loadScene();
 
         void saveScene(const assets::scene::Scene &scene, const std::string &path);
 
@@ -26,9 +26,11 @@ namespace io
 
         void Deserialize(const std::string &data) override;
 
-        void load(const std::string &path) override;
+        void load() override;
 
-        void save(const std::string &path) const override;
+        void save() const override;
+
+        bool isEmpty() const override;
     };
 }
 

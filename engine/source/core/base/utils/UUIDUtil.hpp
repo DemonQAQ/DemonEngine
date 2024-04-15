@@ -11,8 +11,6 @@
 #include "core/base/common/UUID.hpp"
 #include <chrono>
 
-using namespace base;
-
 namespace utils::uuidUtil
 {
     /**
