@@ -50,9 +50,9 @@ namespace base
     {
     private:
         std::shared_ptr<Metadata> metadata;
-        static NormalBlockOperators normalBlockOperators;
         bool inited = false;
     protected:
+        static NormalBlockOperators normalBlockOperators;
         std::vector<std::shared_ptr<BlockOperator>> operators = {};
     public:
         IMetaAccessor(std::shared_ptr<io::YamlConfiguration> &yml, bool needInit,

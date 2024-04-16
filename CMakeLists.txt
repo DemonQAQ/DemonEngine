@@ -25,8 +25,7 @@ file(GLOB_RECURSE SOURCE_FILES
         )
 
 # 添加可执行文件
-add_executable(DemonEngine ${SOURCE_FILES}
-        engine/source/core/assets/manager/data/MediaManager.cpp)
+add_executable(DemonEngine ${SOURCE_FILES})
 
 # 启用预编译头
 target_precompile_headers(DemonEngine PRIVATE engine/source/core/base/lib/pch.hpp)

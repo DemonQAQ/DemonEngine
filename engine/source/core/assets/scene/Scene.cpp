@@ -12,10 +12,10 @@ namespace assets::scene
               IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
               name(std::move(name))
     {
-        root = std::make_shared<SceneGroup>(utils::uuidUtil::getUUID(""), false, yml);
-        environmentLight = std::make_shared<LightEntity>(utils::uuidUtil::getUUID(""), false, yml);
-        mainCameraEntity = std::make_shared<CameraEntity>(utils::uuidUtil::getUUID(""), false, yml);
-        skybox = std::make_shared<Skybox>(utils::uuidUtil::getUUID(""), false, yml);
+        root = std::make_shared<SceneGroup>(utils::uuidUtil::getUUID(), false, yml);
+        environmentLight = std::make_shared<LightEntity>(utils::uuidUtil::getUUID(), false, yml);
+        mainCameraEntity = std::make_shared<CameraEntity>(utils::uuidUtil::getUUID(), false, yml);
+        skybox = std::make_shared<Skybox>(utils::uuidUtil::getUUID(), false, yml);
     }
 
     bool Scene::addChildToNode(const std::shared_ptr<base::UUID> &parentUuid, const std::shared_ptr<Object> &child)

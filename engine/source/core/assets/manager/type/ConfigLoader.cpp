@@ -6,6 +6,7 @@
 #include <core/base/common/manager/UUIDManager.hpp>
 #include <core/assets/manager/AssetsDataMainManager.hpp>
 #include <core/assets/manager/data/ConfigManager.hpp>
+#include <core/io/FileSystem.hpp>
 #include "ConfigLoader.hpp"
 
 std::shared_ptr<io::YamlConfiguration> assets::ConfigLoader::loadYml(const std::string &path, bool isYml)
@@ -27,7 +28,9 @@ std::shared_ptr<io::YamlConfiguration> assets::ConfigLoader::loadYml(const std::
     auto configManager = std::dynamic_pointer_cast<ConfigManager>(configManagerOpt.value());
     if (!configManager) return nullptr;
 
-    if (configManager->loadData({existingUuid, path, fileType}))
+    std::string fullPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, path);
+
+    if (configManager->loadData({existingUuid, fullPath, fileType}))
     {
         auto yamlOpt = configManager->getResourceByUuid(existingUuid);
         if (!yamlOpt.has_value()) return nullptr;

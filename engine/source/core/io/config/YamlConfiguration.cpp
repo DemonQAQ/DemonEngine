@@ -8,8 +8,23 @@
 
 namespace io
 {
-    YamlConfiguration::YamlConfiguration(const std::shared_ptr<base::UUID> &existingUuid, const std::string &path) : IFile(existingUuid, path)
+    YamlConfiguration::YamlConfiguration(const std::shared_ptr<base::UUID> &existingUuid, const std::string &path)
+            : IFile(existingUuid, path)
     {
+        std::ifstream inFile(path);
+        if (!inFile)
+        {
+            std::ofstream outFile(path);
+            if (outFile.is_open())
+            {
+                outFile.close();
+                std::cout << "Empty file created: " << path << std::endl;
+            }
+            else
+            {
+                std::cerr << "Failed to create file: " << path << std::endl;
+            }
+        }
         load();
     }
 

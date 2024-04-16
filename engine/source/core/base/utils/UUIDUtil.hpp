@@ -10,6 +10,7 @@
 #include <boost/uuid/uuid_io.hpp>
 #include "core/base/common/UUID.hpp"
 #include <chrono>
+#include <random>
 
 namespace utils::uuidUtil
 {
@@ -19,18 +20,11 @@ namespace utils::uuidUtil
      * @param str 字符串
      * @return 用于构造唯一uuid的字符串
      * */
-    static std::string getUUID(const std::string &str)
+    static std::string getUUID()
     {
-        boost::uuids::uuid random_uuid = boost::uuids::random_generator()();
-
-        auto now = std::chrono::system_clock::now();
-        auto duration = now.time_since_epoch();
-        auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-
-        std::stringstream ss;
-        ss << milliseconds << "-" << random_uuid << "-" << str;
-
-        return ss.str();
+        boost::uuids::random_generator generator;
+        boost::uuids::uuid uuid = generator();
+        return boost::uuids::to_string(uuid);
     }
 
     /**

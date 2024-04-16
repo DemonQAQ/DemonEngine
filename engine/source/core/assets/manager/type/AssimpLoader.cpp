@@ -2,6 +2,7 @@
 // Created by Demon on 2024/4/13.
 //
 
+
 #include <core/io/FileSystem.hpp>
 #include <core/assets/manager/data/MaterialsManager.hpp>
 #include <core/assets/AssetType.hpp>
@@ -10,6 +11,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "AssimpLoader.hpp"
 #include "ConfigLoader.hpp"
+
+using namespace base;
 
 std::shared_ptr<base::Model> assets::AssimpLoader::loadModel(const std::string &path)
 {
@@ -26,7 +29,7 @@ std::shared_ptr<base::Model> assets::AssimpLoader::loadModel(const std::string &
     std::shared_ptr<base::UUID> existingUuid;
     std::string uuidStr;
 
-    if (init)uuidStr = utils::uuidUtil::getUUID(directory);
+    if (init)uuidStr = utils::uuidUtil::getUUID();
     else uuidStr = metaYml->getString("uuid");
 
     existingUuid = base::UUIDManager::getUUID(uuidStr, false);
@@ -215,7 +218,7 @@ assets::AssimpLoader::loadMaterialFromAssimp(const aiMaterial *aiMat, std::share
 
     std::string uuidStr = metaYml->getString("materials." + materialName + ".uuid");
     bool init = uuidStr.empty();
-    if (init) uuidStr = utils::uuidUtil::getUUID(directory + "." + materialName);
+    if (init) uuidStr = utils::uuidUtil::getUUID();
     auto materialUuid = UUIDManager::getUUID(uuidStr, false);
     if (materialsManager->isDataLoaded({materialUuid}))
     {
@@ -304,7 +307,7 @@ assets::AssimpLoader::loadTextureFromAssimp(const aiTextureType &aiType, const s
     std::shared_ptr<base::UUID> existingUuid;
     std::string uuidStr;
 
-    if (init)uuidStr = utils::uuidUtil::getUUID(texturePath);
+    if (init)uuidStr = utils::uuidUtil::getUUID();
     else uuidStr = metaYml->getString("uuid");
 
     existingUuid = base::UUIDManager::getUUID(uuidStr, false);

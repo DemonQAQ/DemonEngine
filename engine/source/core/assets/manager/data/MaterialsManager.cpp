@@ -11,6 +11,7 @@
 #include "ConfigManager.hpp"
 
 using namespace assets;
+using namespace base;
 
 std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Material>> MaterialsManager::loadedMaterial;
 
