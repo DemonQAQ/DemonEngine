@@ -6,10 +6,12 @@
 
 namespace assets::scene
 {
-    CameraEntity::CameraEntity(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+    CameraEntity::CameraEntity(const std::shared_ptr<base::UUID> &existingUuid,
+                               bool init,  std::shared_ptr<io::YamlConfiguration> &yml,
                                const Camera &camera_, std::string name) :
-            Object(uuidStr, isUUID),
-            IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
+            base::Object(existingUuid),
+            IMetaAccessor(yml, init, existingUuid),
+            camera(camera_),
             name(std::move(name))
     {
 

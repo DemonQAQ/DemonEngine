@@ -32,7 +32,8 @@ namespace assets::scene
         std::shared_ptr<RenderableObject> renderableObject;
         //todo 组件数据，包括碰撞箱、脚本、触发器、音效、特效
     public:
-        explicit Entity(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+        explicit Entity(const std::shared_ptr<base::UUID> &existingUuid,
+                        bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                         std::string name = "Entity");
 
         void addModel(const std::shared_ptr<Model> &model);

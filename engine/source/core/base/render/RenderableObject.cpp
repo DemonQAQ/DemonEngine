@@ -9,14 +9,14 @@
 
 using namespace base;
 
-RenderableObject::RenderableObject(const std::string &uuidStr, bool isUUID, std::string name,
+RenderableObject::RenderableObject(const std::shared_ptr<base::UUID> &existingUuid, bool init, std::string name,
                                    std::shared_ptr<io::YamlConfiguration> &yml,
                                    const std::vector<std::shared_ptr<Model>> &models,
                                    const base::Transform &initialTransform,
                                    const std::shared_ptr<base::UUID> &shaderUUID,
                                    const std::shared_ptr<base::UUID> &materialUUID)
-        : Object(uuidStr, isUUID),
-          IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
+        : Object(existingUuid),
+          IMetaAccessor(yml, init, existingUuid),
           name(std::move(name)), models(models)
 {
     if (shaderUUID)bindShader(shaderUUID);

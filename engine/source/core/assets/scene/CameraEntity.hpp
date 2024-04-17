@@ -29,7 +29,8 @@ namespace assets::scene
         std::string name;
         Camera camera;
     public:
-        CameraEntity(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+        CameraEntity(const std::shared_ptr<base::UUID> &existingUuid,
+                     bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                      const base::Camera &camera_ = {}, std::string name = "Normal Camera");
 
         void setName(const std::string &name_) override;

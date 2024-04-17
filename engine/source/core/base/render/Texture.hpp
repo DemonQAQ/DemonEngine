@@ -92,7 +92,7 @@ namespace base
                 std::shared_ptr<io::YamlConfiguration> &yml,
                 unsigned int id, TextureType type, const std::string &path)
                 : Object(existingUuid),
-                  IMetaAccessor(yml, !init, init ? nullptr : existingUuid),
+                  IMetaAccessor(yml, init, existingUuid),
                   id(id), type(type), texturePath(path)
         {}
 

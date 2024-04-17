@@ -23,11 +23,8 @@ int main()
 {
     runtimeApp.initialize();
 
-    std::string uuidStr = utils::uuidUtil::getUUID();
-    auto sceneUuid = UUIDManager::getUUID(uuidStr);
-
     auto metaYml = assets::ConfigLoader::loadYml("/package0/scene/test.scene.meta", true);
-    auto scene = std::make_shared<assets::scene::Scene>(uuidStr, true, metaYml);
+    auto scene = std::make_shared<assets::scene::Scene>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), true, metaYml);
 
     auto model = assets::AssimpLoader::loadModel("/package0/model/untitled.obj");
 
@@ -35,9 +32,8 @@ int main()
                                                    "/package0/shader/fsh/Color.vsh");
     model->bindShader(shader->getUUID());
 
-    std::string entityUuidStr = utils::uuidUtil::getUUID();
     auto entityMetaYml = assets::ConfigLoader::loadYml("/package0/scene/test.entity.meta", true);
-    std::shared_ptr<assets::scene::Entity> entity = std::make_shared<assets::scene::Entity>(entityUuidStr, true,
+    std::shared_ptr<assets::scene::Entity> entity = std::make_shared<assets::scene::Entity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), true,
                                                                                             entityMetaYml,
                                                                                             "testEntity");
     entity->addModel(model);

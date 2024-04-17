@@ -10,7 +10,7 @@ namespace base
                    const std::string &vertexPath, const std::string &fragmentPath,
                    std::shared_ptr<io::YamlConfiguration> &yml) :
             Object(existingUuid),
-            IMetaAccessor(yml, !init, init ? nullptr : existingUuid),
+            IMetaAccessor(yml, init, existingUuid),
             name(name_)
     {
         // 1. retrieve the vertex/fragment source code from filePath

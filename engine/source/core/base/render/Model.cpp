@@ -19,7 +19,7 @@ Model::Model(const std::shared_ptr<base::UUID> &existingUuid,
              const std::shared_ptr<base::UUID> &shaderUUID,
              const std::shared_ptr<base::UUID> &materialUUID)
         : Object(existingUuid),
-          IMetaAccessor(yml, !init, init ? nullptr : existingUuid),
+          IMetaAccessor(yml, init, existingUuid),
           name(std::move(modelName)), rootNode(root)
 {
     if (shaderUUID)bindShader(shaderUUID);

@@ -27,7 +27,8 @@ namespace assets::scene
     private:
         std::string name;
     public:
-        explicit Effect(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+        explicit Effect(const std::shared_ptr<base::UUID> &existingUuid,
+                        bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                         std::string name = "Effect Entity");
 
         void setName(const std::string &name_) override;

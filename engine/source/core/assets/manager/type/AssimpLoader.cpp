@@ -17,10 +17,9 @@ using namespace base;
 std::shared_ptr<base::Model> assets::AssimpLoader::loadModel(const std::string &path)
 {
     std::string directory = path.substr(0, path.find_last_of('/'));
-    std::string modelName = directory.substr(directory.find_last_of('/') + 1);
+    std::string modelName = path.substr(path.find_last_of('/') + 1);
     directory = FileSystem::combinePaths(SOURCE_ROOT_PATH, directory);
-    std::string modelFullPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, path);
-    std::string metaYmlPath = modelFullPath + ".mat.meta";
+    std::string metaYmlPath = path + ".mat.meta";
 
     auto metaYml = ConfigLoader::loadYml(metaYmlPath, true);
     if (!metaYml)return nullptr;

@@ -8,10 +8,12 @@
 
 namespace assets::scene
 {
-    Entity::Entity(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
-                   std::string name) : Object(uuidStr, isUUID),
-                                       IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
-                   name(std::move(name))
+    Entity::Entity(const std::shared_ptr<base::UUID> &existingUuid,
+                   bool init, std::shared_ptr<io::YamlConfiguration> &yml,
+                   std::string name) :
+            base::Object(existingUuid),
+            IMetaAccessor(yml, init, existingUuid),
+            name(std::move(name))
     {
         renderableObject = nullptr;
     }

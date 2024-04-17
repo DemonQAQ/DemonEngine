@@ -29,7 +29,7 @@ namespace base
         std::vector<std::shared_ptr<Model>> models;
     public:
         explicit RenderableObject(
-                const std::string &uuidStr, bool isUUID, std::string name,
+                const std::shared_ptr<base::UUID> &existingUuid, bool init, std::string name,
                 std::shared_ptr<io::YamlConfiguration> &yml,
                 const std::vector<std::shared_ptr<Model>> &models = {},
                 const base::Transform &initialTransform = base::Transform(),

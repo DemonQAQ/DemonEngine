@@ -6,10 +6,11 @@
 
 namespace assets::scene
 {
-    Effect::Effect(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+    Effect::Effect(const std::shared_ptr<base::UUID> &existingUuid,
+                   bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                    std::string name) :
-            Object(uuidStr, isUUID),
-            IMetaAccessor(yml, !isUUID,uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr,isUUID)),
+            base::Object(existingUuid),
+            IMetaAccessor(yml, init, existingUuid),
             name(std::move(name))
     {
 

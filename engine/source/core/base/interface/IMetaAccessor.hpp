@@ -36,7 +36,7 @@ namespace base
             }
 
             std::string uuidValue;
-            if (params[0].type() != typeid(std::shared_ptr<base::UUID>))
+            if (params[0].type() == typeid(std::shared_ptr<base::UUID>))
             {
                 auto uuidPtr = std::any_cast<std::shared_ptr<base::UUID>>(params[0]);
                 uuidValue = uuidPtr->toString();
@@ -50,7 +50,6 @@ namespace base
     {
     private:
         std::shared_ptr<Metadata> metadata;
-        bool inited = false;
     protected:
         static NormalBlockOperators normalBlockOperators;
         std::vector<std::shared_ptr<BlockOperator>> operators = {};
@@ -58,7 +57,8 @@ namespace base
         IMetaAccessor(std::shared_ptr<io::YamlConfiguration> &yml, bool needInit,
                       const std::shared_ptr<base::UUID> &uuid = nullptr)
         {
-            if (!inited)init();
+            metadata = std::make_shared<Metadata>();
+            init();
             if (needInit)
             {
                 normalBlockOperators.initBlock(metadata, {uuid});

@@ -44,7 +44,7 @@ target_link_libraries(DemonEngine ${ROOT_PATH}/lib/glfw3.lib)
 target_link_libraries(DemonEngine opengl32)
 target_link_libraries(DemonEngine ${ROOT_PATH}/lib/zlibstaticd.lib)
 target_link_libraries(DemonEngine ${ROOT_PATH}/lib/assimp-vc143-mtd.lib)
-target_link_libraries(DemonEngine ${ROOT_PATH}/lib/yaml-cpp.lib)
+target_link_libraries(DemonEngine ${ROOT_PATH}/lib/yaml-cppd.lib)
 target_link_libraries(${PROJECT_NAME} Boost::filesystem)
 
 # 新增：将lib文件复制到输出目录（请确认这步是否真的需要）

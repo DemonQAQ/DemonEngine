@@ -3,19 +3,21 @@
 //
 
 #include <core/base/utils/UUIDUtil.hpp>
+#include <core/base/common/manager/UUIDManager.hpp>
 #include "Scene.hpp"
 
 namespace assets::scene
 {
-    Scene::Scene(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml, std::string name)
-            : base::Object(uuidStr, isUUID),
-              IMetaAccessor(yml, !isUUID, uuidStr.empty() ? nullptr : std::make_shared<base::UUID>(uuidStr, isUUID)),
+    Scene::Scene(const std::shared_ptr<base::UUID> &existingUuid,
+                 bool init, std::shared_ptr<io::YamlConfiguration> &yml, std::string name)
+            : base::Object(existingUuid),
+              IMetaAccessor(yml, init, existingUuid),
               name(std::move(name))
     {
-        root = std::make_shared<SceneGroup>(utils::uuidUtil::getUUID(), false, yml);
-        environmentLight = std::make_shared<LightEntity>(utils::uuidUtil::getUUID(), false, yml);
-        mainCameraEntity = std::make_shared<CameraEntity>(utils::uuidUtil::getUUID(), false, yml);
-        skybox = std::make_shared<Skybox>(utils::uuidUtil::getUUID(), false, yml);
+        root = std::make_shared<SceneGroup>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
+        environmentLight = std::make_shared<LightEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
+        mainCameraEntity = std::make_shared<CameraEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
+        skybox = std::make_shared<Skybox>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
     }
 
     bool Scene::addChildToNode(const std::shared_ptr<base::UUID> &parentUuid, const std::shared_ptr<Object> &child)

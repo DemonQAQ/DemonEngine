@@ -20,7 +20,8 @@ namespace assets::scene
     private:
         std::string name;
     public:
-        explicit Skybox(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+        explicit Skybox(const std::shared_ptr<base::UUID> &existingUuid,
+                        bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                         std::string name = "Skybox");
 
         void setName(const std::string &name_) override;

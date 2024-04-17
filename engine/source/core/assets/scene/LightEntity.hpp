@@ -29,7 +29,8 @@ namespace assets::scene
         std::string name;
         Light light;
     public:
-        LightEntity(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+        LightEntity(const std::shared_ptr<base::UUID> &existingUuid,
+                    bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                     const base::Light &light_ = {}, std::string name = "Normal Light");
 
         void setName(const std::string &name_) override;

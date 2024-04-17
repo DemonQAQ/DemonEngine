@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include "YamlConfiguration.hpp"
 
 namespace io
@@ -11,30 +12,30 @@ namespace io
     YamlConfiguration::YamlConfiguration(const std::shared_ptr<base::UUID> &existingUuid, const std::string &path)
             : IFile(existingUuid, path)
     {
-        std::ifstream inFile(path);
-        if (!inFile)
-        {
-            std::ofstream outFile(path);
-            if (outFile.is_open())
-            {
-                outFile.close();
-                std::cout << "Empty file created: " << path << std::endl;
-            }
-            else
-            {
-                std::cerr << "Failed to create file: " << path << std::endl;
-            }
-        }
         load();
     }
 
     void YamlConfiguration::load()
     {
+        namespace fs = std::filesystem;
+
+        if (!fs::exists(path))
+        {
+            std::cout << "Info: Configuration file does not exist. Creating new file at: " << path << std::endl;
+
+            std::ofstream outFile(path);
+            if (!outFile.is_open())
+            {
+                std::cerr << "Failed to create file: " << path << std::endl;
+                return;
+            }
+            outFile.close();
+        }
+
         try
         {
             configRoot = YAML::LoadFile(path);
-        }
-        catch (const YAML::Exception &e)
+        } catch (const YAML::Exception &e)
         {
             std::cerr << "Exception caught in load: " << e.what() << std::endl;
             std::ofstream outFile(path);
@@ -44,15 +45,14 @@ namespace io
                 try
                 {
                     configRoot = YAML::LoadFile(path);
-                }
-                catch (const YAML::Exception &e)
+                } catch (const YAML::Exception &e)
                 {
                     std::cerr << "Exception caught in load after file creation: " << e.what() << std::endl;
                 }
             }
             else
             {
-                std::cerr << "Failed to create file: " << path << std::endl;
+                std::cerr << "Failed to recreate file after load failure: " << path << std::endl;
             }
         }
     }

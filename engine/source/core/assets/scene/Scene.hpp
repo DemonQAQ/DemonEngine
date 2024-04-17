@@ -39,7 +39,8 @@ namespace assets::scene
         //todo 物理系统参数，待实现
 
     public:
-        explicit Scene(const std::string &uuidStr, bool isUUID, std::shared_ptr<io::YamlConfiguration> &yml,
+        explicit Scene(const std::shared_ptr<base::UUID> &existingUuid,
+                       bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                        std::string name = "New Scene");
 
         void update() override;

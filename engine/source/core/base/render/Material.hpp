@@ -64,8 +64,7 @@ namespace base
         float reflectivity;                // 反射率
         std::map<TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>> textures;
     public:
-        explicit Material(const std::shared_ptr<base::UUID> &existingUuid,
-                          bool init,
+        explicit Material(const std::shared_ptr<base::UUID> &existingUuid, bool init,
                           std::shared_ptr<io::YamlConfiguration> &yml,
                           std::string name_ = "Unnamed Material",
                           const glm::vec3 &diffuse_ = glm::vec3(0.8f, 0.8f, 0.8f),
@@ -79,7 +78,7 @@ namespace base
                           float reflectivity_ = 0.5f,
                           const std::map<TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>> &textures_ = {})
                 : Object(existingUuid),
-                  IMetaAccessor(yml, !init, init ? nullptr : existingUuid),
+                  IMetaAccessor(yml, init, existingUuid),
                   name(std::move(name_)), diffuse(diffuse_), specular(specular_), ambient(ambient_),
                   emissive(emissive_), shininess(shininess_), opacity(opacity_), roughness(roughness_),
                   metallic(metallic_), reflectivity(reflectivity_), textures(textures_)
