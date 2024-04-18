@@ -29,7 +29,6 @@ Model::Model(const std::shared_ptr<base::UUID> &existingUuid,
     else bindMaterial(getDefaultMaterial());
     setTransform(initialTransform);
     // Initialize bonesInfo, boneCount, etc. here if necessary
-    bindMeshesToModel(rootNode);
 }
 
 void Model::setName(const std::string &name_)

@@ -28,7 +28,7 @@ int main()
 
     auto model = assets::AssimpLoader::loadModel("/package0/model/untitled.obj");
 
-    auto shader = assets::ShaderLoader::loadShader("testShader", "/package0/shader/fsh/Color.fsh",
+    auto shader = assets::ShaderLoader::loadShader("testShader","/package0/shader" ,"/package0/shader/fsh/Color.fsh",
                                                    "/package0/shader/fsh/Color.vsh");
     model->bindShader(shader->getUUID());
 

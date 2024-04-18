@@ -19,11 +19,11 @@ namespace assets
     class ConfigLoader : implements IFileLoader
     {
     public:
-        static std::shared_ptr<io::YamlConfiguration>loadYml(const std::string &path, bool isYml = false);
+        static std::shared_ptr<io::YamlConfiguration>loadYml(const std::string &path, bool isYml = false, bool isFullPath = false);
 
-        static std::shared_ptr<io::XmlConfiguration> loadXml(const std::string &path, bool isXml = false);
+        static std::shared_ptr<io::XmlConfiguration> loadXml(const std::string &path, bool isXml = false, bool isFullPath = false);
 
-        static std::shared_ptr<io::JsonConfiguration> loadJson(const std::string &path, bool isJson = false);
+        static std::shared_ptr<io::JsonConfiguration> loadJson(const std::string &path, bool isJson = false, bool isFullPath = false);
 
         static io::FileType getFileType(const std::string &path);
     };

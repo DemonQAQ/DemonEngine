@@ -2,7 +2,7 @@
 // Created by Demon on 2024/4/13.
 //
 
-
+#include "assimp/scene.h"
 #include <core/io/FileSystem.hpp>
 #include <core/assets/manager/data/MaterialsManager.hpp>
 #include <core/assets/AssetType.hpp>
@@ -21,7 +21,7 @@ std::shared_ptr<base::Model> assets::AssimpLoader::loadModel(const std::string &
     directory = FileSystem::combinePaths(SOURCE_ROOT_PATH, directory);
     std::string metaYmlPath = path + ".mat.meta";
 
-    auto metaYml = ConfigLoader::loadYml(metaYmlPath, true);
+    auto metaYml = ConfigLoader::loadYml(metaYmlPath, true, false);
     if (!metaYml)return nullptr;
 
     bool init = metaYml->isEmpty();
@@ -41,8 +41,8 @@ assets::AssimpLoader::loadModel(const std::string &directory, const std::string 
                                 std::shared_ptr<io::YamlConfiguration> &yml)
 {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(directory, aiProcess_Triangulate | aiProcess_FlipUVs |
-                                                        aiProcess_CalcTangentSpace);
+    std::string modelFullPath = directory + "/" + modelName;
+    const aiScene *scene = importer.ReadFile(modelFullPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -50,8 +50,8 @@ assets::AssimpLoader::loadModel(const std::string &directory, const std::string 
         return nullptr;
     }
 
-    std::string metadataPath = directory + ".meta";
-    auto metaYml = ConfigLoader::loadYml(metadataPath, true);
+    std::string metadataPath = modelFullPath + ".meta";
+    auto metaYml = ConfigLoader::loadYml(metadataPath, true, true);
     if (!metaYml)return nullptr;
 
     std::vector<std::shared_ptr<base::Material>> materials = {};
@@ -77,6 +77,7 @@ assets::AssimpLoader::loadModel(const std::string &directory, const std::string 
                 convertAiMatrixToTransform(scene->mRootNode->mTransformation), rootPathIdentifier, materials);
 
     auto model = std::make_shared<base::Model>(existingUuid, init, modelName, rootNode, yml);
+    model->bindMeshesToModel(model->getRootNode());
     return model;
 }
 

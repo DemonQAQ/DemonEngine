@@ -11,14 +11,14 @@
 #include "ConfigLoader.hpp"
 
 std::shared_ptr<base::Shader>
-assets::ShaderLoader::loadShader(const std::string& name, const std::string &vertexPath, const std::string &fragmentPath)
+assets::ShaderLoader::loadShader(const std::string &name, const std::string &metaPath, const std::string &vertexPath,
+                                 const std::string &fragmentPath)
 {
-    std::string fullVertexPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, vertexPath);
-    std::string dirPath = FileSystem::extractDirectory(vertexPath);
+    std::string dirPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, metaPath);
     std::string metadataPath = dirPath.append(name + ".meta");
 
     bool init;
-    auto metaYml = ConfigLoader::loadYml(metadataPath);
+    auto metaYml = ConfigLoader::loadYml(metadataPath, true, true);
     if (!metaYml)return nullptr;
     init = metaYml->isEmpty();
 
@@ -31,7 +31,7 @@ assets::ShaderLoader::loadShader(const std::string& name, const std::string &ver
     std::string uuidStr = utils::uuidUtil::getReappearUUID(name + vertexPath + fragmentPath);
     const std::shared_ptr<base::UUID> existingUuid = base::UUIDManager::getUUID(uuidStr, true);
 
-    if (shaderManager->loadData({existingUuid,init,name,vertexPath,fragmentPath,metaYml}))
+    if (shaderManager->loadData({existingUuid, init, name, vertexPath, fragmentPath, metaYml}))
     {
         auto shaderOpt = shaderManager->getResourceByUuid(existingUuid);
         if (!shaderOpt.has_value()) return nullptr;
