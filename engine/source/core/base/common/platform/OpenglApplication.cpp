@@ -52,7 +52,37 @@ bool base::OpenglApplication::stop()
 int base::OpenglApplication::initialize()
 {
     assets::AssetsDataMainManager::initialize();
-    // 创建窗口
+
+//    glfwInit();
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//
+//    mainWindow = glfwCreateWindow(960, 540, "LearnOpenGL", NULL, NULL);
+//
+//    if (mainWindow == NULL)
+//    {
+//        std::cout << "Failed to create GLFW window" << std::endl;
+//        glfwTerminate();
+//        return -1;
+//    }
+//    glfwMakeContextCurrent(mainWindow);
+//
+//    // tell GLFW to capture our mouse
+//    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//
+//    // glad: load all OpenGL function pointers
+//    // ---------------------------------------
+//    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
+//    {
+//        std::cout << "Failed to initialize GLAD" << std::endl;
+//        return -1;
+//    }
+//
+//    // configure global opengl state
+//    // -----------------------------
+//    glEnable(GL_DEPTH_TEST);
+// 创建窗口
     mainWindow = windowFactory.createWindow(800, 600, "Demo Application");
 
     // 如果窗口创建失败，返回错误代码
