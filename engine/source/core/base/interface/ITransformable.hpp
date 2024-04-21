@@ -7,6 +7,7 @@
 
 #include "glm/vec3.hpp"
 #include "glm/fwd.hpp"
+#include "Interface.hpp"
 
 namespace base
 {

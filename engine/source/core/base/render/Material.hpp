@@ -100,6 +100,19 @@ namespace base
             textures[texture->type][texture->getUUID()] = texture;
         }
 
+        std::shared_ptr<Texture> getRenderTexture(const TextureType type)
+        {
+            auto it = textures.find(type);
+            if (it != textures.end())
+            {
+                if (!it->second.empty())
+                {
+                    return it->second.begin()->second;
+                }
+            }
+            return nullptr;
+        }
+
         std::shared_ptr<Texture> getTexture(const TextureType type, const std::shared_ptr<base::UUID> &uuid)
         {
             auto typeIt = textures.find(type);

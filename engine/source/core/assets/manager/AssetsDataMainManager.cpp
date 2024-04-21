@@ -8,6 +8,7 @@
 #include "core/assets/manager/data/ShaderManager.hpp"
 #include "core/assets/manager/data/MediaManager.hpp"
 #include "core/assets/manager/data/TextureManager.hpp"
+#include <core/assets/manager/data/RenderableObjectManager.hpp>
 
 
 namespace assets
@@ -22,6 +23,7 @@ namespace assets
         MANAGERS.insert({AssetType::CONFIG, std::make_shared<ConfigManager>()});
         MANAGERS.insert({AssetType::SHADER, std::make_shared<ShaderManager>()});
         MANAGERS.insert({AssetType::MEDIA, std::make_shared<MediaManager>()});
+        MANAGERS.insert({AssetType::RENDERABLE_OBJECT, std::make_shared<RenderableObjectManager>()});
     }
 
     void AssetsDataMainManager::finalizeManager()
@@ -45,6 +47,8 @@ namespace assets
                 return "ShaderManager";
             case AssetType::MEDIA:
                 return "MediaManager";
+            case AssetType::RENDERABLE_OBJECT:
+                return "RenderableObjectManager";
             default:
                 throw std::runtime_error("Unknown assetType");
         }

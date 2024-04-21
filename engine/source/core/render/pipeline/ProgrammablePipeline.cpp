@@ -52,22 +52,126 @@ void ProgrammablePipeline::clear()
 {
     for (const auto &drawCall: opaqueDrawCalls)drawCall->afterExecute();
     for (const auto &drawCall: transparentDrawCalls)drawCall->afterExecute();
-    graphApi->clear(255, 255, 255, 255);
+    graphApi->clear(32 / 255.0f, 32 / 255.0f, 32 / 255.0f, 255 / 255.0f);
     opaqueRenderableEntityList.clear();
     transparentRenderableEntityList.clear();
     opaqueDrawCalls.clear();
     transparentDrawCalls.clear();
 }
 
+GLuint setupSimpleShader() {
+    const char* vertexShaderSource = R"glsl(
+        #version 410 core
+        layout (location = 0) in vec3 position;
+        layout (location = 1) in vec3 color;
+        out vec3 vertexColor;
+        void main() {
+            gl_Position = vec4(position, 1.0);
+            vertexColor = color;
+        }
+    )glsl";
+
+    const char* fragmentShaderSource = R"glsl(
+        #version 410 core
+        in vec3 vertexColor;
+        out vec4 FragColor;
+        void main() {
+            FragColor = vec4(vertexColor, 1.0);
+        }
+    )glsl";
+
+    // Compile shaders and create a shader program
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+    // Check for shader compile errors...
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+    // Check for shader compile errors...
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    // Check for linking errors...
+
+    GLint success;
+    char infoLog[512];
+
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return shaderProgram;
+}
+
 void ProgrammablePipeline::render()
 {
-    prepare();
-    executeDrawCalls(opaqueDrawCalls);
-    //todo 其他渲染任务
-    executeDrawCalls(transparentDrawCalls);
-    //todo 后处理任务
-    clear();
-    //todo 输出到屏幕
+    std::cerr << "render" << std::endl;
+
+    // Setup the shader program
+    GLuint shaderProgram = setupSimpleShader();
+
+    // Seed random number generator for color values
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    // Define vertices for a triangle with random colors
+    float vertices[] = {
+            // Positions        // Colors
+            -0.5f, -0.5f, 0.0f,  rand() % 256 / 255.0f, rand() % 256 / 255.0f, rand() % 256 / 255.0f,  // Vertex 1
+            0.5f, -0.5f, 0.0f,  rand() % 256 / 255.0f, rand() % 256 / 255.0f, rand() % 256 / 255.0f,  // Vertex 2
+            0.0f,  0.5f, 0.0f,  rand() % 256 / 255.0f, rand() % 256 / 255.0f, rand() % 256 / 255.0f   // Vertex 3
+    };
+
+    // Generate and bind VAO and VBO
+    GLuint VAO, VBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // Color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Use the shader program and draw the triangle
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Clean up
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteProgram(shaderProgram);
+//    prepare();
+//    executeDrawCalls(opaqueDrawCalls);
+//    //todo 其他渲染任务
+//    executeDrawCalls(transparentDrawCalls);
+//    //todo 后处理任务
+//    clear();
 }
 
 

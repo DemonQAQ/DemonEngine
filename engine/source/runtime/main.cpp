@@ -28,9 +28,10 @@ int main()
 
     auto model = assets::AssimpLoader::loadModel("/package0/model/untitled.obj");
 
-    auto shader = assets::ShaderLoader::loadShader("testShader","/package0/shader" ,"/package0/shader/fsh/Shader.vsh",
-                                                   "/package0/shader/vsh/Shader.fsh");
+    auto shader = assets::ShaderLoader::loadShader("testShader","/package0/shader" ,"/package0/shader/vsh/Shader.vsh",
+                                                   "/package0/shader/fsh/Shader.fsh");
     model->bindShader(shader->getUUID());
+    model->updateAllMeshShader();
 
     auto entityMetaYml = assets::ConfigLoader::loadYml("/package0/scene/test.entity.meta", true);
     std::shared_ptr<assets::scene::Entity> entity = std::make_shared<assets::scene::Entity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), true,

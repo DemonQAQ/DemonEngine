@@ -42,7 +42,8 @@ assets::AssimpLoader::loadModel(const std::string &directory, const std::string 
 {
     Assimp::Importer importer;
     std::string modelFullPath = directory + "/" + modelName;
-    const aiScene *scene = importer.ReadFile(modelFullPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    const aiScene *scene = importer.ReadFile(modelFullPath,
+                                             aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -223,10 +224,11 @@ assets::AssimpLoader::loadMaterialFromAssimp(const aiMaterial *aiMat, std::share
     if (materialsManager->isDataLoaded({materialUuid}))
     {
         auto materialOpt = materialsManager->getResourceByUuid(materialUuid);
-        if (!materialOpt.has_value()) return nullptr;
-
-        auto material = std::dynamic_pointer_cast<base::Material>(materialOpt.value());
-        return material;
+        if (materialOpt.has_value())
+        {
+            auto material = std::dynamic_pointer_cast<base::Material>(materialOpt.value());
+            return material;
+        }
     }
 
     glm::vec3 diffuse(0.8f), specular(1.0f), ambient(0.2f), emissive(0.0f);
@@ -300,7 +302,7 @@ assets::AssimpLoader::loadTextureFromAssimp(const aiTextureType &aiType, const s
 {
     base::TextureType textureType = aiTextureTypeToTextureType(aiType);
     std::string metadataPath = texturePath + ".meta";
-    auto metaYml = ConfigLoader::loadYml(metadataPath, true);
+    auto metaYml = ConfigLoader::loadYml(metadataPath, true, true);
     if (!metaYml)return nullptr;
 
     bool init = metaYml->isEmpty();

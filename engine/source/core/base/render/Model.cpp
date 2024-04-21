@@ -83,7 +83,7 @@ void Model::updateObservedGlobalTransform(std::vector<Transform> &additionalTran
     if (rootNode)updateNodeTransforms(rootNode, transformsToMerge);
 }
 
-void Model::getRenderData(std::vector<RenderData> renderDataList)
+void Model::getRenderData(std::vector<RenderData> &renderDataList)
 {
     if (!rootNode)return;
     processNode(rootNode, renderDataList);
@@ -153,4 +153,39 @@ void Model::processNode(const std::shared_ptr<Node> &node, std::vector<RenderDat
 std::shared_ptr<Node> &Model::getRootNode()
 {
     return rootNode;
+}
+
+void Model::updateAllMeshShader()
+{
+// Check if there's a default shader assigned at the model level
+    auto defaultShaderUUID = this->getShader();
+    if (!defaultShaderUUID)
+    {
+        std::cerr << "No default shader UUID provided to Model." << std::endl;
+        return;
+    }
+
+    // Function to recursively traverse nodes and update mesh shaders
+    std::function<void(const std::shared_ptr<Node> &)> updateNodeShaders = [&](const std::shared_ptr<Node> &node)
+    {
+        if (!node) return;
+
+        for (auto &mesh: node->meshes)
+        {
+            // If the mesh does not have a shader, assign the default shader
+            if (!mesh->getShader())
+            {
+                mesh->bindShader(defaultShaderUUID);
+            }
+        }
+
+        // Recurse for each child node
+        for (auto &child: node->children)
+        {
+            updateNodeShaders(child);
+        }
+    };
+
+    // Start the shader update from the root node
+    updateNodeShaders(rootNode);
 }

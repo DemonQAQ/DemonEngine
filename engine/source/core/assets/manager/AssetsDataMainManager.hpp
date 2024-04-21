@@ -5,9 +5,6 @@
 #ifndef DEMONENGINE_ASSETSDATAMAINMANAGER_HPP
 #define DEMONENGINE_ASSETSDATAMAINMANAGER_HPP
 
-//todo 处理模型，还包括纹理，材质、音频、着色器等其他资源的加载、缓存和卸载。
-//todo 提供资源的加载，卸载，引用，缓存等
-
 #include <unordered_map>
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/AssetType.hpp"

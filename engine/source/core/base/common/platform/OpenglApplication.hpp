@@ -17,11 +17,12 @@ namespace base
     {
     private:
         render::WindowFactory windowFactory;
-        GLFWwindow *mainWindow{};
+        GLFWwindow *mainWindow;
         std::shared_ptr<assets::scene::Scene> mainScene;
     public:
         OpenglApplication()
         {
+            mainWindow = nullptr;
             renderManager = std::make_shared<render::RenderManager>();
         }
 

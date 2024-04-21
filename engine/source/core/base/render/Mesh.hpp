@@ -57,7 +57,7 @@ namespace base
 
         void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) override;
 
-        void getRenderData(std::vector<RenderData> renderDataList) override;
+        void getRenderData(std::vector<RenderData> &renderDataList) override;
 
         void setFatherModel(const std::shared_ptr<Model> &model);
 

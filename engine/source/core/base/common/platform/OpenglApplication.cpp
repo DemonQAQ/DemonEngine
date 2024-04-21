@@ -5,6 +5,8 @@
 #include <iostream>
 #include <core/assets/manager/AssetsDataMainManager.hpp>
 #include <core/render/pipeline/ProgrammablePipeline.hpp>
+#include <thread>
+#include <chrono>
 #include "GLFW/glfw3.h"
 #include "OpenglApplication.hpp"
 
@@ -12,21 +14,22 @@ int base::OpenglApplication::start()
 {
     try
     {
-        if (initialize() != 0)
-        {
-            return -1;
-        }
-
-        if (loadAssets() != 0)
-        {
-            return -1;
-        }
-
         onStart();
+
+        int i = 0;
+        auto next_tick = std::chrono::steady_clock::now();
 
         while (!isQuit())
         {
+            std::this_thread::sleep_until(next_tick);
+
+            //todo
+            std::cerr << "第" << i << "次tick准备" << std::endl;
             tick();
+            std::cerr << "第" << i << "次tick结束" << std::endl;
+            i++;
+
+            next_tick += std::chrono::milliseconds(50);
         }
 
         stop();
@@ -52,36 +55,6 @@ bool base::OpenglApplication::stop()
 int base::OpenglApplication::initialize()
 {
     assets::AssetsDataMainManager::initialize();
-
-//    glfwInit();
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-//    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//
-//    mainWindow = glfwCreateWindow(960, 540, "LearnOpenGL", NULL, NULL);
-//
-//    if (mainWindow == NULL)
-//    {
-//        std::cout << "Failed to create GLFW window" << std::endl;
-//        glfwTerminate();
-//        return -1;
-//    }
-//    glfwMakeContextCurrent(mainWindow);
-//
-//    // tell GLFW to capture our mouse
-//    glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-//
-//    // glad: load all OpenGL function pointers
-//    // ---------------------------------------
-//    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
-//    {
-//        std::cout << "Failed to initialize GLAD" << std::endl;
-//        return -1;
-//    }
-//
-//    // configure global opengl state
-//    // -----------------------------
-//    glEnable(GL_DEPTH_TEST);
 // 创建窗口
     mainWindow = windowFactory.createWindow(800, 600, "Demo Application");
 

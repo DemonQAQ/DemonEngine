@@ -3,8 +3,10 @@
 //
 
 #include <runtime/base/RuntimeApplication.hpp>
+#include <core/assets/manager/type/ConfigLoader.hpp>
 #include "Entity.hpp"
 #include "core/base/common/platform/Application.hpp"
+#include <core/assets/manager/type/RenderObjectLoader.hpp>
 
 namespace assets::scene
 {
@@ -15,7 +17,11 @@ namespace assets::scene
             IMetaAccessor(yml, init, existingUuid),
             name(std::move(name))
     {
-        renderableObject = nullptr;
+        //todo 尝试从yml中读取RenderObject的数据，没有则初始化
+        std::shared_ptr<base::UUID> renderableObjectUuid = UUIDManager::getUUID(utils::uuidUtil::getUUID(), true);
+        auto renderObjectMetaYml = assets::ConfigLoader::loadYml("/package0/scene/test.renderObject.meta", true);
+        renderableObject = RenderObjectLoader::loadObject(renderableObjectUuid, true, "test",
+                                                                renderObjectMetaYml);
     }
 
     void Entity::setName(const std::string &name_)
@@ -30,7 +36,8 @@ namespace assets::scene
 
     void Entity::beforeRendering(const std::vector<std::any> &params)
     {
-        runtimeApp.getRenderManager()->submitEntity(renderableObject, render::RenderType::OPAQUE);
+        std::shared_ptr<base::IRenderable> iRenderable = renderableObject;
+        runtimeApp.getRenderManager()->submitEntity(iRenderable, render::RenderType::OPAQUE);
     }
 
     void Entity::afterRendering(const std::vector<std::any> &params)

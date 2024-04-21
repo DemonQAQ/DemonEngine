@@ -132,7 +132,7 @@ namespace base
 
         void updateGlobalTransform(std::vector<Transform> &additionalTransforms) override;
 
-        void getRenderData(std::vector<RenderData> renderDataList) override;
+        void getRenderData(std::vector<RenderData> &renderDataList) override;
 
         [[nodiscard]] Transform getLocalTransform() const override;
 
@@ -140,6 +140,7 @@ namespace base
 
         void bindMeshesToModel(const std::shared_ptr<Node> &node);
 
+        void updateAllMeshShader();
     private:
         void processNode(const std::shared_ptr<Node> &node, std::vector<RenderData> &renderDataList);
 

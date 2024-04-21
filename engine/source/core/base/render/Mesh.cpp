@@ -59,7 +59,7 @@ void Mesh::updateObservedGlobalTransform(std::vector<Transform> &additionalTrans
     return;
 }
 
-void Mesh::getRenderData(std::vector<RenderData> renderDataList)
+void Mesh::getRenderData(std::vector<RenderData> &renderDataList)
 {
     RenderData renderData;
     renderData.vertices = this->vertices;

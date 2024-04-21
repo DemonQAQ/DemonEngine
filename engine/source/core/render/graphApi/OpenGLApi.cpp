@@ -360,18 +360,80 @@ void OpenGLApi::executeDrawCall(std::shared_ptr<DrawCall> drawCall)
 
     glBindVertexArray(oglDrawCall->VAO);
 
-    for (const auto& renderData : oglDrawCall->data) {
-        glm::mat4 mvpMatrix = render::vpMatrix * renderData.modelMatrix;
-        glUniformMatrix4fv(glGetUniformLocation(oglDrawCall->shader->ID, "mvp"), 1, GL_FALSE, glm::value_ptr(mvpMatrix));
+    glm::vec3 lightPosition = glm::vec3(0, 10, 10); // 光源位于模型上方
+    glm::vec3 cameraPosition = glm::vec3(0, 0, 10); // 摄像机在z轴的正方向
 
-        if (oglDrawCall->EBO != 0) {
+    GLint lightPosLoc = glGetUniformLocation(oglDrawCall->shader->ID, "lightPos");
+    GLint viewPosLoc = glGetUniformLocation(oglDrawCall->shader->ID, "viewPos");
+
+    if (lightPosLoc != -1) {
+        glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPosition));
+    } else {
+        std::cerr << "Error: Unable to find 'lightPos' uniform location." << std::endl;
+    }
+
+    if (viewPosLoc != -1) {
+        glUniform3fv(viewPosLoc, 1, glm::value_ptr(cameraPosition));
+    } else {
+        std::cerr << "Error: Unable to find 'viewPos' uniform location." << std::endl;
+    }
+
+    // 处理所有的贴图
+    int textureUnit = 0; // 贴图单元索引
+    for (const auto &texturePair: oglDrawCall->material->getTextures())
+    {
+        for (const auto &texture: texturePair.second)
+        {
+            const char* textureName = base::toString(texturePair.first);
+            std::string textureNameStr = textureName;
+            std::string uniformName = "texture_" + textureNameStr + std::to_string(textureUnit + 1);
+            GLint textureLocation = glGetUniformLocation(oglDrawCall->shader->ID, uniformName.c_str());
+            if (textureLocation != -1)
+            {
+                glActiveTexture(GL_TEXTURE0 + textureUnit);
+                glBindTexture(GL_TEXTURE_2D, texture.second->id);
+                glUniform1i(textureLocation, textureUnit);
+                textureUnit++;
+            }
+        }
+    }
+
+    // 传递 vp 矩阵 (视图-投影矩阵的乘积)
+    GLint vpLocation = glGetUniformLocation(oglDrawCall->shader->ID, "vp");
+    if (vpLocation != -1)
+    {
+        glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(render::vpMatrix));
+    }
+    else
+    {
+        std::cerr << "Error: Unable to find 'vp' uniform location." << std::endl;
+    }
+
+    for (const auto &renderData: oglDrawCall->data)
+    {
+        // 传递 model 矩阵
+        GLint modelLocation = glGetUniformLocation(oglDrawCall->shader->ID, "model");
+        if (modelLocation != -1)
+        {
+            glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(renderData.modelMatrix));
+        }
+        else
+        {
+            std::cerr << "Error: Unable to find 'model' uniform location." << std::endl;
+        }
+
+        if (oglDrawCall->EBO != 0)
+        {
             glDrawElements(GL_TRIANGLES, oglDrawCall->indexCount, GL_UNSIGNED_INT, nullptr);
-        } else {
+        }
+        else
+        {
             glDrawArrays(GL_TRIANGLES, 0, oglDrawCall->vertexCount);
         }
     }
 
     glBindVertexArray(0);
+    glUseProgram(0);
 }
 
 void OpenGLApi::useShader(std::shared_ptr<base::Shader> shader)
@@ -380,7 +442,8 @@ void OpenGLApi::useShader(std::shared_ptr<base::Shader> shader)
     {
         glUseProgram(shader->ID);
         usingShader = shader;
-    } else
+    }
+    else
     {
         glUseProgram(normalShader->ID);
         usingShader = normalShader;

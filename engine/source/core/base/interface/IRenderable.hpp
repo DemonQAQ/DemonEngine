@@ -35,7 +35,7 @@ namespace base
         IRenderable() : useShader(nullptr), material(nullptr)
         {}
 
-        virtual void getRenderData(std::vector<RenderData> renderDataList) = 0;
+        virtual void getRenderData(std::vector<RenderData> &renderDataList) = 0;
 
         void bindMaterial(const std::shared_ptr<base::UUID> &uuid)
         {

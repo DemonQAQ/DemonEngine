@@ -122,12 +122,12 @@ namespace render
         renderPipeline->render();
     }
 
-    void RenderManager::submitEntity(std::shared_ptr<base::IRenderable> object, RenderType renderType)
+    void RenderManager::submitEntity(std::shared_ptr<base::IRenderable> &object, RenderType renderType)
     {
         renderPipeline->submitEntity(object, renderType);
     }
 
-    void RenderManager::submitDrawCall(std::shared_ptr<DrawCall> drawCall, RenderType renderType)
+    void RenderManager::submitDrawCall(std::shared_ptr<DrawCall> &drawCall, RenderType renderType)
     {
         renderPipeline->submitDrawCall(drawCall, renderType);
     }

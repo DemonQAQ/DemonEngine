@@ -15,6 +15,7 @@ namespace assets
         MATERIALS,
         MEDIA,
         MODEL,
+        RENDERABLE_OBJECT,
         TEXTURE,
         SHADER,
         CONFIG,

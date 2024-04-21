@@ -43,7 +43,7 @@ namespace base
 
         void addModel(const std::shared_ptr<Model> &model);
 
-        void getRenderData(std::vector<RenderData> renderDataList) override;
+        void getRenderData(std::vector<RenderData> &renderDataList) override;
 
         void setName(const std::string &name_) override
         {

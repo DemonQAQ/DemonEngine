@@ -28,9 +28,9 @@ RenderableObject::RenderableObject(const std::shared_ptr<base::UUID> &existingUu
     setTransform(initialTransform);
 }
 
-void RenderableObject::getRenderData(std::vector<RenderData> renderDataList)
+void RenderableObject::getRenderData(std::vector<RenderData> &renderDataList)
 {
-    for (std::shared_ptr<Model> model: models)
+    for (std::shared_ptr<Model> &model: models)
     {
         model->getRenderData(renderDataList);
     }
@@ -81,6 +81,22 @@ void RenderableObject::addModel(const std::shared_ptr<Model> &model)
     {
         models.push_back(model);
     }
+}
+
+void RenderableObject::bindShaderToMesh(const std::string &modelName, const std::string &meshName,
+                                        std::unique_ptr<base::UUID> shader)
+{
+
+}
+
+void RenderableObject::unbindShaderFromMesh(const std::string &meshName)
+{
+
+}
+
+const UUID *RenderableObject::getShaderForMesh(const std::string &meshName)
+{
+    return nullptr;
 }
 
 

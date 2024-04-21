@@ -29,7 +29,7 @@ namespace assets::scene
     {
     private:
         std::string name;
-        std::shared_ptr<RenderableObject> renderableObject;
+        std::shared_ptr<base::RenderableObject> renderableObject;
         //todo 组件数据，包括碰撞箱、脚本、触发器、音效、特效
     public:
         explicit Entity(const std::shared_ptr<base::UUID> &existingUuid,
