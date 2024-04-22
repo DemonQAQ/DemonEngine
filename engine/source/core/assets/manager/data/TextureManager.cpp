@@ -16,6 +16,7 @@ std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Texture>> 
 
 TextureManager::TextureManager()
 {
+    stbi_set_flip_vertically_on_load(true);
 }
 
 /**
@@ -127,6 +128,7 @@ void TextureManager::unloadData(const std::vector<std::any> &params)
         std::cerr << "Error extracting parameters: " << e.what() << std::endl;
         return false;
     }
+    return false;
 }
 
 void TextureManager::updateData(const std::vector<std::any> &params)

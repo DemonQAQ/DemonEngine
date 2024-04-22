@@ -20,3 +20,16 @@ void main()
 
     gl_Position = vp * worldPosition; // 计算裁剪空间位置
 }
+//#version 410 core
+//layout (location = 0) in vec3 aPos;
+//
+//uniform mat4 model;
+//uniform mat4 vp;
+//
+//out vec4 debugColor;
+//
+//void main()
+//{
+//    gl_Position = vp * model * vec4(aPos, 1.0); // 计算裁剪空间位置
+//    debugColor = vec4(aPos * 0.5 + 0.5, 1.0);  // 输出颜色以视觉化顶点位置
+//}

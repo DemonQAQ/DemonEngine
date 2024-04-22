@@ -75,7 +75,8 @@ namespace render
         // 渲染状态管理
         virtual void setBlendMode(BlendMode mode) = 0;
         virtual void setViewport(int x, int y, int width, int height) = 0;
-        virtual void clear(float r, float g, float b, float a) = 0;
+        virtual void setClearColor(float r, float g, float b, float a) = 0;
+        virtual void clear() = 0;
 
         virtual void enableDepthTest(bool enable) = 0; // 启用\禁用深度测试
         virtual void setDepthFunction(DepthFunction func) = 0; // 设置深度测试函数

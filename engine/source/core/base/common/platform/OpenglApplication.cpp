@@ -29,7 +29,7 @@ int base::OpenglApplication::start()
             std::cerr << "第" << i << "次tick结束" << std::endl;
             i++;
 
-            next_tick += std::chrono::milliseconds(50);
+            next_tick += std::chrono::milliseconds(200);
         }
 
         stop();

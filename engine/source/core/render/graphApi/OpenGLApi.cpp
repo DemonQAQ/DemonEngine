@@ -19,6 +19,8 @@ void OpenGLApi::init(const std::vector<std::any> &params)
         this->normalShader = std::any_cast<std::shared_ptr<base::Shader>>(params[0]);
         useShader(normalShader);
     }
+
+    setClearColor(20, 80, 20, 255);
 }
 
 void OpenGLApi::bindContext(GLFWwindow *window)
@@ -352,12 +354,6 @@ void OpenGLApi::executeDrawCall(std::shared_ptr<DrawCall> drawCall)
         return;
     }
 
-    setBlendMode(oglDrawCall->blendMode);
-    enableDepthTest(oglDrawCall->depthFunction != DepthFunction::ALWAYS);
-    setDepthFunction(oglDrawCall->depthFunction);
-    enableCulling(oglDrawCall->cullFace != CullFace::FRONT_AND_BACK);
-    setCullFace(oglDrawCall->cullFace);
-
     glBindVertexArray(oglDrawCall->VAO);
 
     glm::vec3 lightPosition = glm::vec3(0, 10, 10); // 光源位于模型上方
@@ -366,15 +362,21 @@ void OpenGLApi::executeDrawCall(std::shared_ptr<DrawCall> drawCall)
     GLint lightPosLoc = glGetUniformLocation(oglDrawCall->shader->ID, "lightPos");
     GLint viewPosLoc = glGetUniformLocation(oglDrawCall->shader->ID, "viewPos");
 
-    if (lightPosLoc != -1) {
+    if (lightPosLoc != -1)
+    {
         glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPosition));
-    } else {
+    }
+    else
+    {
         std::cerr << "Error: Unable to find 'lightPos' uniform location." << std::endl;
     }
 
-    if (viewPosLoc != -1) {
+    if (viewPosLoc != -1)
+    {
         glUniform3fv(viewPosLoc, 1, glm::value_ptr(cameraPosition));
-    } else {
+    }
+    else
+    {
         std::cerr << "Error: Unable to find 'viewPos' uniform location." << std::endl;
     }
 
@@ -382,27 +384,36 @@ void OpenGLApi::executeDrawCall(std::shared_ptr<DrawCall> drawCall)
     int textureUnit = 0; // 贴图单元索引
     for (const auto &texturePair: oglDrawCall->material->getTextures())
     {
-        for (const auto &texture: texturePair.second)
+        auto texture = oglDrawCall->material->getRenderTexture(texturePair.first);
+        if (texture == nullptr)continue;
+        const char *textureName = base::toString(texturePair.first);
+        std::string textureNameStr = textureName;
+        std::string uniformName = "texture_" + textureNameStr;
+        GLint textureLocation = glGetUniformLocation(oglDrawCall->shader->ID, uniformName.c_str());
+        if (textureLocation != -1)
         {
-            const char* textureName = base::toString(texturePair.first);
-            std::string textureNameStr = textureName;
-            std::string uniformName = "texture_" + textureNameStr + std::to_string(textureUnit + 1);
-            GLint textureLocation = glGetUniformLocation(oglDrawCall->shader->ID, uniformName.c_str());
-            if (textureLocation != -1)
-            {
-                glActiveTexture(GL_TEXTURE0 + textureUnit);
-                glBindTexture(GL_TEXTURE_2D, texture.second->id);
-                glUniform1i(textureLocation, textureUnit);
-                textureUnit++;
-            }
+            glActiveTexture(GL_TEXTURE0 + textureUnit);
+            glBindTexture(GL_TEXTURE_2D, texture->id);
+            glUniform1i(textureLocation, textureUnit);
+            textureUnit++;
         }
     }
+
+// 创建一个默认的视图-投影矩阵
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    glm::mat4 view = glm::lookAt(
+            glm::vec3(0, 0, 3), // 相机位置在Z轴上
+            glm::vec3(0, 0, 0), // 看向原点
+            glm::vec3(0, 1, 0)  // 头部朝向上方
+    );
+    glm::mat4 vp = projection * view;
 
     // 传递 vp 矩阵 (视图-投影矩阵的乘积)
     GLint vpLocation = glGetUniformLocation(oglDrawCall->shader->ID, "vp");
     if (vpLocation != -1)
     {
-        glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(render::vpMatrix));
+        //glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(render::vpMatrix));
+        glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(vp));
     }
     else
     {
@@ -422,18 +433,11 @@ void OpenGLApi::executeDrawCall(std::shared_ptr<DrawCall> drawCall)
             std::cerr << "Error: Unable to find 'model' uniform location." << std::endl;
         }
 
-        if (oglDrawCall->EBO != 0)
-        {
-            glDrawElements(GL_TRIANGLES, oglDrawCall->indexCount, GL_UNSIGNED_INT, nullptr);
-        }
-        else
-        {
-            glDrawArrays(GL_TRIANGLES, 0, oglDrawCall->vertexCount);
-        }
+        if (oglDrawCall->EBO != 0)glDrawElements(GL_TRIANGLES, oglDrawCall->indexCount, GL_UNSIGNED_INT, nullptr);
+        else glDrawArrays(GL_TRIANGLES, 0, oglDrawCall->vertexCount);
     }
 
     glBindVertexArray(0);
-    glUseProgram(0);
 }
 
 void OpenGLApi::useShader(std::shared_ptr<base::Shader> shader)
@@ -513,9 +517,13 @@ void OpenGLApi::setViewport(int x, int y, int width, int height)
     glViewport(x, y, width, height);
 }
 
-void OpenGLApi::clear(float r, float g, float b, float a)
+void OpenGLApi::setClearColor(float r, float g, float b, float a)
 {
-    glClearColor(r, g, b, a);
+    glClearColor(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
+}
+
+void OpenGLApi::clear()
+{
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

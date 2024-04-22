@@ -316,11 +316,12 @@ assets::AssimpLoader::loadTextureFromAssimp(const aiTextureType &aiType, const s
 
     auto texturesManagerOpt = AssetsDataMainManager::getManager(AssetType::TEXTURE);
     if (!texturesManagerOpt.has_value()) return nullptr;
-    auto texturesManager = std::dynamic_pointer_cast<MaterialsManager>(texturesManagerOpt.value());
+    auto texturesManager = std::dynamic_pointer_cast<TextureManager>(texturesManagerOpt.value());
     if (!texturesManager) return nullptr;
 
-    if (texturesManager->isDataLoaded({existingUuid}) ||
-        texturesManager->loadData({existingUuid, init, metaYml, textureType, texturePath}))
+    bool isLoad = texturesManager->isDataLoaded({existingUuid});
+
+    if (isLoad || texturesManager->loadData({existingUuid, init, metaYml, textureType, texturePath}))
     {
         auto textureOpt = texturesManager->getResourceByUuid(existingUuid);
         if (!textureOpt.has_value()) return nullptr;

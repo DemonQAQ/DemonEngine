@@ -33,3 +33,12 @@ void main()
     vec3 result = (diffuse * diff + specular * spec) * ambientOcclusion + emissive;
     FragColor = vec4(result, 1.0);
 }
+
+//#version 410 core
+//in vec4 debugColor;
+//out vec4 FragColor;
+//
+//void main()
+//{
+//    FragColor = debugColor;  // 使用顶点着色器输出的颜色
+//}

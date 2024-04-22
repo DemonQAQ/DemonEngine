@@ -58,7 +58,8 @@ namespace render
 
         void setViewport(int x, int y, int width, int height) override;
 
-        void clear(float r, float g, float b, float a) override;
+        void setClearColor(float r, float g, float b, float a) override;
+        void clear() override;
 
         void enableDepthTest(bool enable) override;
 
