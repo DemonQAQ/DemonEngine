@@ -7,7 +7,7 @@
 namespace assets::scene
 {
     CameraEntity::CameraEntity(const std::shared_ptr<base::UUID> &existingUuid,
-                               bool init,  std::shared_ptr<io::YamlConfiguration> &yml,
+                               bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                                const Camera &camera_, std::string name) :
             base::Object(existingUuid),
             IMetaAccessor(yml, init, existingUuid),
@@ -134,6 +134,16 @@ namespace assets::scene
         camera.zoom = pt.get<float>("camera.zoom");
 
         camera.updateCameraVectors();
+    }
+
+    glm::mat4 CameraEntity::getProjectionMatrix()
+    {
+        return camera.getProjectionMatrix();
+    }
+
+    glm::mat4 CameraEntity::getViewMatrix()
+    {
+        return camera.getViewMatrix();
     }
 
 }

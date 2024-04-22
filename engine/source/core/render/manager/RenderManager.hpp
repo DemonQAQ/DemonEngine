@@ -5,6 +5,7 @@
 #ifndef DEMONENGINE_RENDERMANAGER_HPP
 #define DEMONENGINE_RENDERMANAGER_HPP
 
+#include <core/assets/scene/CameraEntity.hpp>
 #include "glm/detail/type_mat4x4.hpp"
 #include "core/base/interface/Interface.hpp"
 #include "core/render/manager/Initializer.hpp"
@@ -51,6 +52,8 @@ namespace render
         [[nodiscard]] std::shared_ptr<T> getGraphApiAs() const;
 
         std::shared_ptr<OpenGLApi> getOpenGLApi();
+
+        void updateCameraInfo(const std::shared_ptr<assets::scene::CameraEntity> &mainCameraEntity);
 
         void render();
 

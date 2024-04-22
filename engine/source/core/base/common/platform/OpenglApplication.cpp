@@ -56,7 +56,7 @@ int base::OpenglApplication::initialize()
 {
     assets::AssetsDataMainManager::initialize();
 // 创建窗口
-    mainWindow = windowFactory.createWindow(800, 600, "Demo Application");
+    mainWindow = windowFactory.createWindow(960, 540, "Demon Engine");
 
     // 如果窗口创建失败，返回错误代码
     if (!mainWindow)
@@ -146,6 +146,7 @@ void base::OpenglApplication::onPhysicsUpdate()
 void base::OpenglApplication::onPreRender()
 {
     this->mainScene->beforeRendering({});
+    renderManager->updateCameraInfo(this->mainScene->getMainCameraEntity());
 }
 
 void base::OpenglApplication::onPostProcess()

@@ -18,9 +18,6 @@ namespace render
 
     void mouse_callback(GLFWwindow *window, double xPos, double yPos)
     {
-        //todo
-        std::cerr << "mouse_callback" << std::endl;
-
         auto state = static_cast<WindowState *>(glfwGetWindowUserPointer(window));
         float xPosF = static_cast<float>(xPos);
         float yPosF = static_cast<float>(yPos);

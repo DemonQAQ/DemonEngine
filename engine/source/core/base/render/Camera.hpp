@@ -25,7 +25,7 @@ namespace base
     const float PITCH = 0.0f;
     const float SPEED = 2.5f;
     const float SENSITIVITY = 0.1f;
-    const float ZOOM = 45.0f;
+    const float DEFAULT_ZOOM = 45.0f;
 
     class Camera
     {
@@ -37,14 +37,24 @@ namespace base
         float movementSpeed;
         float mouseSensitivity;
         float zoom;
+        float fov;
+        float aspectRatio = 16.0f / 9.0f;  // 默认纵横比
+        float nearPlane = 0.1f;  // 默认近裁剪面
+        float farPlane = 100.0f;  // 默认远裁剪面
 
-        Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+        Camera(glm::vec3 position = glm::vec3(0, 0, 3), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
                float yaw = YAW, float pitch = PITCH) : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED),
-                                                       mouseSensitivity(SENSITIVITY), zoom(ZOOM)
+                                                       mouseSensitivity(SENSITIVITY), zoom(DEFAULT_ZOOM),
+                                                       fov(DEFAULT_ZOOM)
         {
             transform.position = position;
             transform.rotation = glm::quat(glm::vec3(pitch, yaw, 0.0f));
             updateCameraVectors();
+        }
+
+        glm::mat4 getProjectionMatrix()
+        {
+            return glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);
         }
 
         glm::mat4 getViewMatrix()
@@ -65,25 +75,22 @@ namespace base
                 transform.position += right * velocity;
         }
 
-        void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
+        void processMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch = true)
         {
-            xoffset *= mouseSensitivity;
-            yoffset *= mouseSensitivity;
+            xOffset *= mouseSensitivity;
+            yOffset *= mouseSensitivity;
             glm::vec3 euler = glm::eulerAngles(transform.rotation) +
-                              glm::vec3(glm::radians(-yoffset), glm::radians(xoffset), 0.0f);
+                              glm::vec3(glm::radians(-yOffset), glm::radians(xOffset), 0.0f);
             euler.x = glm::clamp(euler.x, glm::radians(-89.0f), glm::radians(89.0f));
             transform.rotation = glm::quat(euler);
 
             updateCameraVectors();
         }
 
-        void processMouseScroll(float yoffset)
+        void processMouseScroll(float yOffset)
         {
-            zoom -= (float) yoffset;
-            if (zoom < 1.0f)
-                zoom = 1.0f;
-            if (zoom > 45.0f)
-                zoom = 45.0f;
+            zoom = std::max(1.0f, std::min(zoom - yOffset, 45.0f));
+            fov = DEFAULT_ZOOM / zoom;  // 根据缩放比例调整视场角
         }
 
         void updateCameraVectors()

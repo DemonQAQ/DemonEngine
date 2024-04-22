@@ -399,21 +399,21 @@ void OpenGLApi::executeDrawCall(std::shared_ptr<DrawCall> drawCall)
         }
     }
 
-// 创建一个默认的视图-投影矩阵
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-    glm::mat4 view = glm::lookAt(
-            glm::vec3(0, 0, 3), // 相机位置在Z轴上
-            glm::vec3(0, 0, 0), // 看向原点
-            glm::vec3(0, 1, 0)  // 头部朝向上方
-    );
-    glm::mat4 vp = projection * view;
+//// 创建一个默认的视图-投影矩阵
+//    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+//    glm::mat4 view = glm::lookAt(
+//            glm::vec3(0, 0, 3), // 相机位置在Z轴上
+//            glm::vec3(0, 0, 0), // 看向原点
+//            glm::vec3(0, 1, 0)  // 头部朝向上方
+//    );
+//    glm::mat4 vp = projection * view;
 
     // 传递 vp 矩阵 (视图-投影矩阵的乘积)
     GLint vpLocation = glGetUniformLocation(oglDrawCall->shader->ID, "vp");
     if (vpLocation != -1)
     {
-        //glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(render::vpMatrix));
-        glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(vp));
+        glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(render::vpMatrix));
+        //glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(vp));
     }
     else
     {

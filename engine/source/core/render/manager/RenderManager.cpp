@@ -137,6 +137,18 @@ namespace render
         return pipelineType;
     }
 
+    void RenderManager::updateCameraInfo(const std::shared_ptr<assets::scene::CameraEntity> &mainCameraEntity)
+    {
+        if (!mainCameraEntity)
+        {
+            std::cerr << "Error: mainCameraEntity is null." << std::endl;
+            return;
+        }
+        render::viewMatrix = mainCameraEntity->getViewMatrix();
+        render::projectionMatrix = mainCameraEntity->getProjectionMatrix();
+        render::vpMatrix = projectionMatrix * viewMatrix;
+    }
+
     template<DerivedFromBase T>
     std::shared_ptr<T> RenderManager::getGraphApiAs() const
     {

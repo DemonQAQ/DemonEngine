@@ -55,6 +55,10 @@ namespace assets::scene
 
         void setCameraZoom(float zoom);
 
+        glm::mat4 getProjectionMatrix();
+
+        glm::mat4 getViewMatrix();
+
         [[nodiscard]] glm::vec3 getCameraPosition() const;
 
         [[nodiscard]] glm::quat getCameraRotation() const;
