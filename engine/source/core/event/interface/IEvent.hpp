@@ -6,6 +6,7 @@
 #define DEMONENGINE_IEVENT_HPP
 
 #include <string>
+#include <chrono>
 #include "core/base/interface/Interface.hpp"
 
 namespace event
@@ -14,8 +15,20 @@ namespace event
     {
     private:
         bool isCancel_ = false;
+        long long timestamp;
     public:
-        virtual std::string getEventName() const = 0;
+        IEvent() : timestamp(std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count())
+        {
+
+        }
+
+        IEvent(long long timestamp_) : timestamp(timestamp_)
+        {
+
+        }
+
+        [[nodiscard]] virtual std::string getEventName() const = 0;
 
         [[nodiscard]] bool isCancel() const
         {
@@ -25,6 +38,11 @@ namespace event
         void setCancel(bool value)
         {
             isCancel_ = value;
+        }
+
+        [[nodiscard]] long long getTimestamp() const
+        {
+            return timestamp;
         }
     };
 }

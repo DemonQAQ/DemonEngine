@@ -2,6 +2,7 @@
 // Created by Demon on 2024/3/28.
 //
 
+#include <runtime/base/RuntimeApplication.hpp>
 #include "CameraEntity.hpp"
 
 namespace assets::scene
@@ -49,7 +50,7 @@ namespace assets::scene
 
     void CameraEntity::setCameraMovementSpeed(float speed)
     {
-        camera.movementSpeed = speed;
+        cameraSpeed = speed;
     }
 
     void CameraEntity::setCameraMouseSensitivity(float sensitivity)
@@ -144,6 +145,27 @@ namespace assets::scene
     glm::mat4 CameraEntity::getViewMatrix()
     {
         return camera.getViewMatrix();
+    }
+
+    void CameraEntity::update()
+    {
+        camera.updateState(base::Application::getDeltaTime());
+    }
+
+    void CameraEntity::processMouseMovement(float xOffset, float yOffset)
+    {
+        camera.processMouseMovement(xOffset, yOffset);
+    }
+
+    void CameraEntity::processKeyboard(CameraMovement direction, bool isPressed)
+    {
+        camera.processKeyboard(direction, isPressed);
+    }
+
+    void CameraEntity::setCameraMovementState(bool flag)
+    {
+        if (flag)camera.movementSpeed = cameraSpeed;
+        else camera.movementSpeed = 0.0f;
     }
 
 }

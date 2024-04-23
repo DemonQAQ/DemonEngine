@@ -18,7 +18,8 @@ namespace base
         FORWARD,
         BACKWARD,
         LEFT,
-        RIGHT
+        RIGHT,
+        NONE
     };
 
     const float YAW = -90.0f;
@@ -29,6 +30,14 @@ namespace base
 
     class Camera
     {
+    private:
+        bool movingForward = false;
+        bool movingBackward = false;
+        bool movingLeft = false;
+        bool movingRight = false;
+
+        float lastMouseXOffset = 0.0f;
+        float lastMouseYOffset = 0.0f;
     public:
         Transform transform;
         glm::vec3 front;
@@ -62,37 +71,6 @@ namespace base
             return glm::lookAt(transform.position, transform.position + front, up);
         }
 
-        void processKeyboard(CameraMovement direction, float deltaTime)
-        {
-            float velocity = movementSpeed * deltaTime;
-            if (direction == FORWARD)
-                transform.position += front * velocity;
-            if (direction == BACKWARD)
-                transform.position -= front * velocity;
-            if (direction == LEFT)
-                transform.position -= right * velocity;
-            if (direction == RIGHT)
-                transform.position += right * velocity;
-        }
-
-        void processMouseMovement(float xOffset, float yOffset, GLboolean constrainPitch = true)
-        {
-            xOffset *= mouseSensitivity;
-            yOffset *= mouseSensitivity;
-            glm::vec3 euler = glm::eulerAngles(transform.rotation) +
-                              glm::vec3(glm::radians(-yOffset), glm::radians(xOffset), 0.0f);
-            euler.x = glm::clamp(euler.x, glm::radians(-89.0f), glm::radians(89.0f));
-            transform.rotation = glm::quat(euler);
-
-            updateCameraVectors();
-        }
-
-        void processMouseScroll(float yOffset)
-        {
-            zoom = std::max(1.0f, std::min(zoom - yOffset, 45.0f));
-            fov = DEFAULT_ZOOM / zoom;  // 根据缩放比例调整视场角
-        }
-
         void updateCameraVectors()
         {
             glm::vec3 euler = glm::eulerAngles(transform.rotation);
@@ -102,6 +80,67 @@ namespace base
             front = glm::normalize(front);
             right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
             up = glm::normalize(glm::cross(right, front));
+        }
+
+        void updateState(float deltaTime)
+        {
+            if (movingForward)
+            {
+                transform.position += front * movementSpeed * deltaTime;
+            }
+            if (movingBackward)
+            {
+                transform.position -= front * movementSpeed * deltaTime;
+            }
+            if (movingLeft)
+            {
+                transform.position -= right * movementSpeed * deltaTime;
+            }
+            if (movingRight)
+            {
+                transform.position += right * movementSpeed * deltaTime;
+            }
+
+            // 处理鼠标移动引起的视角变化
+            if (lastMouseXOffset != 0.0f || lastMouseYOffset != 0.0f)
+            {
+                glm::vec3 euler = glm::eulerAngles(transform.rotation) +
+                                  glm::vec3(glm::radians(-lastMouseYOffset), glm::radians(lastMouseXOffset), 0.0f);
+                euler.x = glm::clamp(euler.x, glm::radians(-89.0f), glm::radians(89.0f));
+                transform.rotation = glm::quat(euler);
+
+                // 重置鼠标偏移量，以避免重复应用相同的旋转
+                lastMouseXOffset = 0.0f;
+                lastMouseYOffset = 0.0f;
+            }
+
+            // 更新摄像机的方向向量
+            updateCameraVectors();
+        }
+
+        void processMouseMovement(float xOffset, float yOffset)
+        {
+            lastMouseXOffset = xOffset * mouseSensitivity;
+            lastMouseYOffset = yOffset * mouseSensitivity;
+        }
+
+        void processKeyboard(CameraMovement direction, bool isPressed)
+        {
+            switch (direction)
+            {
+                case FORWARD:
+                    movingForward = isPressed;
+                    break;
+                case BACKWARD:
+                    movingBackward = isPressed;
+                    break;
+                case LEFT:
+                    movingLeft = isPressed;
+                    break;
+                case RIGHT:
+                    movingRight = isPressed;
+                    break;
+            }
         }
     };
 }

@@ -43,7 +43,16 @@ namespace event
     public:
         void subscribe(const std::shared_ptr<IEventListener> &listener)
         {
-            //todo 注册监听器
+            auto eventCallbacks = listener->getEventCallbacks();
+            for (const auto &eventCallback : eventCallbacks)
+            {
+                const std::string &eventName = eventCallback.first;
+                if (listeners.find(eventName) == listeners.end())
+                {
+                    listeners[eventName] = std::vector<std::shared_ptr<IEventListener>>();
+                }
+                listeners[eventName].push_back(listener);
+            }
         }
 
         void callEvent(const std::shared_ptr<IEvent> &event)

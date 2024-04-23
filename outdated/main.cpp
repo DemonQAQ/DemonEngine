@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 
     while (!app->isQuit())
     {
-        app->tick();
+        app->callBusEvents();
     }
 
     app->finalize();

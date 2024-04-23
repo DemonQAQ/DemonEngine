@@ -18,12 +18,11 @@ namespace base
     private:
         render::WindowFactory windowFactory;
         GLFWwindow *mainWindow;
-        std::shared_ptr<assets::scene::Scene> mainScene;
+        static double lastFrameTime;
     public:
-        OpenglApplication()
+        OpenglApplication() : Application()
         {
             mainWindow = nullptr;
-            renderManager = std::make_shared<render::RenderManager>();
         }
 
         int start() override;
@@ -63,6 +62,8 @@ namespace base
         void onPostProcess() override;
 
         void onPostRender() override;
+    private:
+        void processInput();
     };
 }
 

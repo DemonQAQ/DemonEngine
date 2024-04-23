@@ -14,26 +14,32 @@
 
 namespace event
 {
+    struct CallbackInfo
+    {
+        std::function<void(std::shared_ptr<IEvent> &)> callback;
+        long long id;
+
+        bool operator<(const CallbackInfo &other) const
+        {
+            return id < other.id;
+        }
+    };
+
     interface IEventListener
     {
     protected:
-        struct CallbackInfo
-        {
-            std::function<void(std::shared_ptr<IEvent>)> callback;
-            long long id;
-
-            bool operator<(const CallbackInfo &other) const
-            {
-                return id < other.id;
-            }
-        };
-
         std::unordered_map<std::string, std::set<CallbackInfo>> eventCallbacks;
         long long nextId = 0;
 
     public:
+        [[nodiscard]] std::unordered_map<std::string, std::set<CallbackInfo>> getEventCallbacks() const
+        {
+            return eventCallbacks;
+        }
+
         virtual void
-        registerEventCallback(const std::string &eventName, std::function<void(std::shared_ptr<IEvent>)> callback) final
+        registerEventCallback(const std::string &eventName,
+                              std::function<void(std::shared_ptr<IEvent> &)> callback) final
         {
             eventCallbacks[eventName].insert({callback, nextId++});
         }
@@ -68,6 +74,21 @@ namespace event
                 return 0;
             }
             return -1;
+        }
+
+        template<typename EventType, typename ListenerType>
+        void registerEvent(const std::string &eventName, void (ListenerType::*handler)(std::shared_ptr<EventType> &))
+        {
+            registerEventCallback(eventName, [this, handler](std::shared_ptr<IEvent> &event)
+            {
+                auto castedEvent = std::dynamic_pointer_cast<EventType>(event);
+                if (castedEvent)
+                {
+                    // Cast this pointer to ListenerType and call the member function
+                    auto *listener = static_cast<ListenerType *>(this);
+                    (listener->*handler)(castedEvent);
+                }
+            });
         }
     };
 }

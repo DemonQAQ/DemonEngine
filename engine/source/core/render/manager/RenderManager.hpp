@@ -53,6 +53,8 @@ namespace render
 
         std::shared_ptr<OpenGLApi> getOpenGLApi();
 
+        void setViewport(int x, int y, int width, int height);
+
         void updateCameraInfo(const std::shared_ptr<assets::scene::CameraEntity> &mainCameraEntity);
 
         void render();

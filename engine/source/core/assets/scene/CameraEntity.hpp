@@ -6,6 +6,7 @@
 #define DEMONENGINE_CAMERAENTITY_HPP
 
 #include <core/base/interface/IMetaAccessor.hpp>
+#include <core/base/interface/IUpdatable.hpp>
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
 #include "core/base/interface/INameable.hpp"
@@ -23,11 +24,13 @@ namespace assets::scene
               implements INameable,
               implements ITransformableUpdate,
               implements io::ISerializable,
-              implements IMetaAccessor
+              implements IMetaAccessor,
+              implements Updatable
     {
     private:
         std::string name;
         Camera camera;
+        float cameraSpeed = 2.5f;
     public:
         CameraEntity(const std::shared_ptr<base::UUID> &existingUuid,
                      bool init, std::shared_ptr<io::YamlConfiguration> &yml,
@@ -40,6 +43,8 @@ namespace assets::scene
         [[nodiscard]]  std::string Serialize() const override;
 
         void Deserialize(const std::string &data) override;
+
+        void update() override;
 
         void beforeRendering(const std::vector<std::any> &params) override;
 
@@ -55,9 +60,15 @@ namespace assets::scene
 
         void setCameraZoom(float zoom);
 
+        void processMouseMovement(float xOffset, float yOffset);
+
+        void processKeyboard(CameraMovement direction, bool isPressed);
+
         glm::mat4 getProjectionMatrix();
 
         glm::mat4 getViewMatrix();
+
+        void setCameraMovementState(bool flag);
 
         [[nodiscard]] glm::vec3 getCameraPosition() const;
 

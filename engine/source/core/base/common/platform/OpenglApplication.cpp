@@ -7,8 +7,11 @@
 #include <core/render/pipeline/ProgrammablePipeline.hpp>
 #include <thread>
 #include <chrono>
+#include <core/event/base/listener/OSInputEventListener.hpp>
 #include "GLFW/glfw3.h"
 #include "OpenglApplication.hpp"
+
+double base::OpenglApplication::lastFrameTime  = 0;
 
 int base::OpenglApplication::start()
 {
@@ -55,7 +58,7 @@ bool base::OpenglApplication::stop()
 int base::OpenglApplication::initialize()
 {
     assets::AssetsDataMainManager::initialize();
-// 创建窗口
+    // 创建窗口
     mainWindow = windowFactory.createWindow(960, 540, "Demon Engine");
 
     // 如果窗口创建失败，返回错误代码
@@ -72,6 +75,8 @@ int base::OpenglApplication::initialize()
 
     // 设置用户指针，以便在回调函数中访问应用程序状态
     glfwSetWindowUserPointer(mainWindow, this);
+
+    subscribe(std::make_shared<event::base::OSInputEventListener>());
     return 0;
 }
 
@@ -96,8 +101,14 @@ void base::OpenglApplication::unloadAssets()
 
 void base::OpenglApplication::tick()
 {
+    lastFrameTime = glfwGetTime();
+    double currentFrameTime = glfwGetTime();
+    deltaTime = currentFrameTime - lastFrameTime;
+    lastFrameTime = currentFrameTime;
+
     glfwPollEvents();
     onInput();       // 处理输入
+    eventBus->callBusEvents();
     onUpdate();      // 更新游戏逻辑
     onPhysicsUpdate(); // 更新物理
     onPreRender();   // 渲染前的准备
@@ -127,10 +138,54 @@ void base::OpenglApplication::onRender()
     renderManager->render();
 }
 
+void base::OpenglApplication::processInput()
+{
+    GLFWwindow *window = mainWindow;
+    static bool lastStateW = false;
+    static bool lastStateS = false;
+    static bool lastStateA = false;
+    static bool lastStateD = false;
+
+    bool currentStateW = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
+    bool currentStateS = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+    bool currentStateA = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
+    bool currentStateD = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    // Handle Key W
+    if (currentStateW && !lastStateW)
+        callEvent(std::make_shared<event::base::KeyDownEvent>(event::base::KeyType::KEY_W));
+    else if (!currentStateW && lastStateW)
+        callEvent(std::make_shared<event::base::KeyUpEvent>(event::base::KeyType::KEY_W));
+    lastStateW = currentStateW;
+
+    // Handle Key S
+    if (currentStateS && !lastStateS)
+        callEvent(std::make_shared<event::base::KeyDownEvent>(event::base::KeyType::KEY_S));
+    else if (!currentStateS && lastStateS)
+        callEvent(std::make_shared<event::base::KeyUpEvent>(event::base::KeyType::KEY_S));
+    lastStateS = currentStateS;
+
+    // Handle Key A
+    if (currentStateA && !lastStateA)
+        callEvent(std::make_shared<event::base::KeyDownEvent>(event::base::KeyType::KEY_A));
+    else if (!currentStateA && lastStateA)
+        callEvent(std::make_shared<event::base::KeyUpEvent>(event::base::KeyType::KEY_A));
+    lastStateA = currentStateA;
+
+    // Handle Key D
+    if (currentStateD && !lastStateD)
+        callEvent(std::make_shared<event::base::KeyDownEvent>(event::base::KeyType::KEY_D));
+    else if (!currentStateD && lastStateD)
+        callEvent(std::make_shared<event::base::KeyUpEvent>(event::base::KeyType::KEY_D));
+    lastStateD = currentStateD;
+}
+
 void base::OpenglApplication::onInput()
 {
-    if (glfwGetKey(mainWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(mainWindow, true);
+    processInput();
 }
 
 void base::OpenglApplication::onUpdate()

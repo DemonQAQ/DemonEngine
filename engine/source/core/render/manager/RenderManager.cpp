@@ -149,6 +149,11 @@ namespace render
         render::vpMatrix = projectionMatrix * viewMatrix;
     }
 
+    void RenderManager::setViewport(int x, int y, int width, int height)
+    {
+        graphApi->setViewport(x, y, width, height);
+    }
+
     template<DerivedFromBase T>
     std::shared_ptr<T> RenderManager::getGraphApiAs() const
     {

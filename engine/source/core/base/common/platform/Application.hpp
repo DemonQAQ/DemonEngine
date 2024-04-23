@@ -5,6 +5,8 @@
 #ifndef DEMONENGINE_APPLICATION_HPP
 #define DEMONENGINE_APPLICATION_HPP
 
+#include <core/assets/scene/Scene.hpp>
+#include <core/event/base/EventBus.hpp>
 #include "core/base/interface/Interface.hpp"
 #include "core/render/manager/RenderManager.hpp"
 
@@ -14,8 +16,17 @@ namespace base
     {
     protected:
         std::shared_ptr<render::RenderManager> renderManager;
+        std::shared_ptr<assets::scene::Scene> mainScene;
+        std::shared_ptr<event::base::EventBus> eventBus;
+        std::vector<std::shared_ptr<event::IEventListener>> listenerList;
+        static double deltaTime;
     public:
-        virtual ~Application() = default;
+        Application() : listenerList()
+        {
+            mainScene = nullptr;
+            renderManager = std::make_shared<render::RenderManager>();
+            eventBus = std::make_shared<event::base::EventBus>();
+        }
 
         virtual int start() = 0;
 
@@ -54,6 +65,22 @@ namespace base
         std::shared_ptr<render::RenderManager> &getRenderManager()
         {
             return renderManager;
+        }
+
+        void callEvent(const std::shared_ptr<event::IEvent> &event)
+        {
+            eventBus->callEvent(event);
+        }
+
+        void subscribe(const std::shared_ptr<event::IEventListener> &listener)
+        {
+            eventBus->subscribe(listener);
+            listenerList.push_back(listener);
+        }
+
+        static double getDeltaTime()
+        {
+            return deltaTime;
         }
     };
 }
