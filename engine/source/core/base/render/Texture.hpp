@@ -23,7 +23,11 @@ namespace base
         HEIGHT,
         AMBIENT_OCCLUSION,
         EMISSIVE,
-        UNKNOWN
+        SHININESS,
+        OPACITY,
+        DISPLACEMENT,
+        REFLECTION,
+        LIGHT,
     };
 
     inline const char *toString(base::TextureType type)
@@ -42,6 +46,16 @@ namespace base
                 return "_ambientOcclusion";
             case TextureType::EMISSIVE:
                 return "_emissive";
+            case TextureType::SHININESS:
+                return "_shininess";
+            case TextureType::OPACITY:
+                return "_opacity";
+            case TextureType::DISPLACEMENT:
+                return "_displacement";
+            case TextureType::REFLECTION:
+                return "_reflection";
+            case TextureType::LIGHT:
+                return "_light";
             default:
                 return "";
         }
@@ -55,7 +69,12 @@ namespace base
         else if (typeName == "_height") return base::TextureType::HEIGHT;
         else if (typeName == "_ambientOcclusion") return base::TextureType::AMBIENT_OCCLUSION;
         else if (typeName == "_emissive") return base::TextureType::EMISSIVE;
-        else return base::TextureType::UNKNOWN;
+        else if (typeName == "_shininess") return base::TextureType::SHININESS;
+        else if (typeName == "_opacity") return base::TextureType::OPACITY;
+        else if (typeName == "_displacement") return base::TextureType::DISPLACEMENT;
+        else if (typeName == "_reflection") return base::TextureType::REFLECTION;
+        else if (typeName == "_light") return base::TextureType::LIGHT;
+        else return base::TextureType::DIFFUSE;
     }
 
     class TextureBlockOperator : implements BlockOperator

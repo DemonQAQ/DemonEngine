@@ -29,18 +29,33 @@ namespace assets
                 return base::TextureType::EMISSIVE;
             case aiTextureType_NORMALS:
                 return base::TextureType::NORMAL;
+            case aiTextureType_SHININESS:
+                return base::TextureType::SHININESS;
+            case aiTextureType_OPACITY:
+                return base::TextureType::OPACITY;
+            case aiTextureType_DISPLACEMENT:
+                return base::TextureType::DISPLACEMENT;
+            case aiTextureType_REFLECTION:
+                return base::TextureType::REFLECTION;
+            case aiTextureType_LIGHTMAP:
+                return base::TextureType::LIGHT;
             default:
-                return base::TextureType::UNKNOWN;
+                return base::TextureType::DIFFUSE;
         }
     }
 
     static const std::vector<aiTextureType> supportedAiTextureTypes = {
-            aiTextureType_DIFFUSE,
-            aiTextureType_SPECULAR,
-            aiTextureType_HEIGHT,
-            aiTextureType_AMBIENT,
-            aiTextureType_EMISSIVE,
-            aiTextureType_NORMALS,
+            aiTextureType_DIFFUSE,           // 漫反射贴图
+            aiTextureType_SPECULAR,          // 高光贴图
+            aiTextureType_HEIGHT,            // 高度贴图，有时也称为位移贴图
+            aiTextureType_AMBIENT,           // 环境光遮蔽贴图
+            aiTextureType_EMISSIVE,          // 自发光贴图
+            aiTextureType_NORMALS,           // 法线贴图
+            aiTextureType_SHININESS,         // 光泽贴图
+            aiTextureType_OPACITY,           // 不透明度贴图
+            aiTextureType_DISPLACEMENT,      // 位移贴图
+            aiTextureType_REFLECTION,        // 反射贴图
+            aiTextureType_LIGHTMAP           // 光照贴图
     };
 
     class AssimpLoader : implements IFileLoader
@@ -56,7 +71,7 @@ namespace assets
         static void
         processNode(const std::shared_ptr<base::Node> &node, aiNode *aiNode, const aiScene *scene, int &meshIndex,
                     const std::string &directory, const base::Transform &parentTransform,
-                    const std::string &pathIdentifier,std::vector<std::shared_ptr<base::Material>> &materials);
+                    const std::string &pathIdentifier, std::vector<std::shared_ptr<base::Material>> &materials);
 
         static std::shared_ptr<base::Mesh> processMesh(aiMesh *mesh, const aiScene *scene, const std::string &meshName,
                                                        const std::string &rootPath,

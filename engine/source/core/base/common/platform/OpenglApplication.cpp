@@ -11,7 +11,9 @@
 #include "GLFW/glfw3.h"
 #include "OpenglApplication.hpp"
 
-double base::OpenglApplication::lastFrameTime  = 0;
+double base::OpenglApplication::lastFrameTime = 0;
+int base::OpenglApplication::width = 960;
+int base::OpenglApplication::height = 540;
 
 int base::OpenglApplication::start()
 {
@@ -24,15 +26,21 @@ int base::OpenglApplication::start()
 
         while (!isQuit())
         {
+            auto start_time = std::chrono::steady_clock::now();
             std::this_thread::sleep_until(next_tick);
 
-            //todo
-            std::cerr << "第" << i << "次tick准备" << std::endl;
             tick();
-            std::cerr << "第" << i << "次tick结束" << std::endl;
+            auto end_time = std::chrono::steady_clock::now();
+            std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+
+            std::cerr << "Frame " << i << ": Duration = " << frame_duration.count() << " ms" << std::endl;
             i++;
 
-            next_tick += std::chrono::milliseconds(200);
+            next_tick += std::chrono::milliseconds(16);
+            if (end_time > next_tick)
+            {
+                std::cerr << "Warning: Frame processing exceeded 16 ms" << std::endl;
+            }
         }
 
         stop();
@@ -59,7 +67,7 @@ int base::OpenglApplication::initialize()
 {
     assets::AssetsDataMainManager::initialize();
     // 创建窗口
-    mainWindow = windowFactory.createWindow(960, 540, "Demon Engine");
+    mainWindow = windowFactory.createWindow(width, height, "Demon Engine");
 
     // 如果窗口创建失败，返回错误代码
     if (!mainWindow)
@@ -101,7 +109,6 @@ void base::OpenglApplication::unloadAssets()
 
 void base::OpenglApplication::tick()
 {
-    lastFrameTime = glfwGetTime();
     double currentFrameTime = glfwGetTime();
     deltaTime = currentFrameTime - lastFrameTime;
     lastFrameTime = currentFrameTime;
@@ -130,7 +137,7 @@ void base::OpenglApplication::onStop()
 
 void base::OpenglApplication::onStart()
 {
-
+    lastFrameTime = glfwGetTime();
 }
 
 void base::OpenglApplication::onRender()
@@ -190,7 +197,8 @@ void base::OpenglApplication::onInput()
 
 void base::OpenglApplication::onUpdate()
 {
-
+    mainScene->update();
+    renderManager->updateCameraInfo(mainScene->getMainCameraEntity());
 }
 
 void base::OpenglApplication::onPhysicsUpdate()
@@ -222,6 +230,16 @@ void OpenglApplication::loadScene(const std::shared_ptr<assets::scene::Scene> &s
 std::shared_ptr<assets::scene::Scene> OpenglApplication::getScene()
 {
     return mainScene;
+}
+
+int OpenglApplication::getScreenWidth()
+{
+    return width;
+}
+
+int OpenglApplication::getScreenHeight()
+{
+    return height;
 }
 
 

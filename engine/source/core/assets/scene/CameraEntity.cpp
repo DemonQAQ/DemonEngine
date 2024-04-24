@@ -9,13 +9,14 @@ namespace assets::scene
 {
     CameraEntity::CameraEntity(const std::shared_ptr<base::UUID> &existingUuid,
                                bool init, std::shared_ptr<io::YamlConfiguration> &yml,
-                               const Camera &camera_, std::string name) :
+                               const Camera &camera_, std::string name, int width, int height) :
             base::Object(existingUuid),
             IMetaAccessor(yml, init, existingUuid),
             camera(camera_),
             name(std::move(name))
     {
-
+        lastX = width / 2.0f;
+        lastY = height / 2.0f;
     }
 
     void CameraEntity::setName(const std::string &name_)
@@ -152,8 +153,21 @@ namespace assets::scene
         camera.updateState(base::Application::getDeltaTime());
     }
 
-    void CameraEntity::processMouseMovement(float xOffset, float yOffset)
+    void CameraEntity::processMouseMovement(float currentX, float currentY)
     {
+        if (firstMouse)
+        {
+            lastX = currentX;
+            lastY = currentY;
+            firstMouse = false;
+        }
+
+        float xOffset = currentX - lastX;
+        float yOffset = lastY - currentY;
+
+        lastX = currentX;
+        lastY = currentY;
+
         camera.processMouseMovement(xOffset, yOffset);
     }
 

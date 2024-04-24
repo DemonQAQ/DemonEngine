@@ -36,28 +36,30 @@ namespace base
         bool movingLeft = false;
         bool movingRight = false;
 
-        float lastMouseXOffset = 0.0f;
-        float lastMouseYOffset = 0.0f;
+        bool constrainPitch = true;
     public:
         Transform transform;
         glm::vec3 front;
         glm::vec3 right;
         glm::vec3 up;
+        glm::vec3 worldUp;
         float movementSpeed;
         float mouseSensitivity;
+        float yaw;
+        float pitch;
         float zoom;
         float fov;
         float aspectRatio = 16.0f / 9.0f;  // 默认纵横比
         float nearPlane = 0.1f;  // 默认近裁剪面
         float farPlane = 100.0f;  // 默认远裁剪面
 
-        Camera(glm::vec3 position = glm::vec3(0, 0, 3), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
-               float yaw = YAW, float pitch = PITCH) : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED),
-                                                       mouseSensitivity(SENSITIVITY), zoom(DEFAULT_ZOOM),
-                                                       fov(DEFAULT_ZOOM)
+        Camera(glm::vec3 position = glm::vec3(0, 1, 2), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f),
+               float yaw_ = YAW, float pitch_ = PITCH) : front(glm::vec3(0.0f, 0.0f, -1.0f)), movementSpeed(SPEED),
+                                                         mouseSensitivity(SENSITIVITY), zoom(DEFAULT_ZOOM),
+                                                         fov(DEFAULT_ZOOM), yaw(yaw_), pitch(pitch_)
         {
             transform.position = position;
-            transform.rotation = glm::quat(glm::vec3(pitch, yaw, 0.0f));
+            worldUp = up;
             updateCameraVectors();
         }
 
@@ -73,55 +75,62 @@ namespace base
 
         void updateCameraVectors()
         {
-            glm::vec3 euler = glm::eulerAngles(transform.rotation);
-            front.x = cos(euler.y) * cos(euler.x);
-            front.y = sin(euler.x);
-            front.z = sin(euler.y) * cos(euler.x);
-            front = glm::normalize(front);
-            right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+            glm::vec3 front_;
+            front_.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+            front_.y = sin(glm::radians(pitch));
+            front_.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+            front = glm::normalize(front_);
+
+            right = glm::normalize(glm::cross(front, worldUp));
             up = glm::normalize(glm::cross(right, front));
         }
 
-        void updateState(float deltaTime)
+        void setConstrainPitch(bool constrainPitch_)
         {
+            constrainPitch = constrainPitch_;
+        }
+
+        void updateState(double deltaTime)
+        {
+            double velocity = movementSpeed * deltaTime;
             if (movingForward)
             {
-                transform.position += front * movementSpeed * deltaTime;
+                transform.position += front * (float) velocity;
             }
             if (movingBackward)
             {
-                transform.position -= front * movementSpeed * deltaTime;
+                transform.position -= front * (float) velocity;
             }
             if (movingLeft)
             {
-                transform.position -= right * movementSpeed * deltaTime;
+                transform.position -= right * (float) velocity;
             }
             if (movingRight)
             {
-                transform.position += right * movementSpeed * deltaTime;
+                transform.position += right * (float) velocity;
             }
 
-            // 处理鼠标移动引起的视角变化
-            if (lastMouseXOffset != 0.0f || lastMouseYOffset != 0.0f)
+            if (constrainPitch)
             {
-                glm::vec3 euler = glm::eulerAngles(transform.rotation) +
-                                  glm::vec3(glm::radians(-lastMouseYOffset), glm::radians(lastMouseXOffset), 0.0f);
-                euler.x = glm::clamp(euler.x, glm::radians(-89.0f), glm::radians(89.0f));
-                transform.rotation = glm::quat(euler);
-
-                // 重置鼠标偏移量，以避免重复应用相同的旋转
-                lastMouseXOffset = 0.0f;
-                lastMouseYOffset = 0.0f;
+                pitch = glm::clamp(pitch, -89.0f, 89.0f);
             }
-
-            // 更新摄像机的方向向量
             updateCameraVectors();
         }
 
         void processMouseMovement(float xOffset, float yOffset)
         {
-            lastMouseXOffset = xOffset * mouseSensitivity;
-            lastMouseYOffset = yOffset * mouseSensitivity;
+            xOffset *= mouseSensitivity;
+            yOffset *= mouseSensitivity;
+
+            yaw += xOffset;
+            pitch += yOffset;
+
+            if (constrainPitch)
+            {
+                pitch = glm::clamp(pitch, -89.0f, 89.0f);
+            }
+
+            updateCameraVectors();
         }
 
         void processKeyboard(CameraMovement direction, bool isPressed)
@@ -140,6 +149,17 @@ namespace base
                 case RIGHT:
                     movingRight = isPressed;
                     break;
+                case NONE:
+                    break;
+            }
+        }
+
+        void processScroll(float xOffset, float yOffset)
+        {
+            if (yOffset != 0)
+            {
+                fov -= yOffset * 0.05f;
+                fov = glm::clamp(fov, 1.0f, 90.0f);
             }
         }
     };

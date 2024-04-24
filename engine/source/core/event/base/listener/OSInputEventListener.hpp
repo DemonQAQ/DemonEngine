@@ -51,14 +51,18 @@ namespace event::base
             CameraMovement direction = getCameraMovement(e->getKeyType());
             if (direction == CameraMovement::NONE)return;
 
-            //todo 让相机进入update
             mainCameraEntity->processKeyboard(direction, false);
             mainCameraEntity->setCameraMovementState(false);
         }
 
         void onMouseMove(std::shared_ptr<MouseMoveEvent> &e)
         {
-            std::cout << "onMouseMove" << std::endl;
+            std::cout << "onMouseMove:" << e->getXPos()<< "," << e->getYPos() << std::endl;
+
+            auto scene = runtimeApp.getScene();
+            auto mainCameraEntity = scene->getMainCameraEntity();
+
+            mainCameraEntity->processMouseMovement(e->getXPos(), e->getYPos());
         }
 
         void onMouseScroll(std::shared_ptr<ScrollEvent> &e)

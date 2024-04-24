@@ -19,11 +19,17 @@ namespace base
         render::WindowFactory windowFactory;
         GLFWwindow *mainWindow;
         static double lastFrameTime;
+        static int width;
+        static int height;
     public:
         OpenglApplication() : Application()
         {
             mainWindow = nullptr;
         }
+
+        static int getScreenWidth();
+
+        static int getScreenHeight();
 
         int start() override;
 

@@ -31,10 +31,14 @@ namespace assets::scene
         std::string name;
         Camera camera;
         float cameraSpeed = 2.5f;
+        float lastX = 0;
+        float lastY = 0;
+        bool firstMouse = true;
     public:
         CameraEntity(const std::shared_ptr<base::UUID> &existingUuid,
                      bool init, std::shared_ptr<io::YamlConfiguration> &yml,
-                     const base::Camera &camera_ = {}, std::string name = "Normal Camera");
+                     const base::Camera &camera_ = {}, std::string name = "Normal Camera",
+                     int width = 1920, int height = 1080);
 
         void setName(const std::string &name_) override;
 
@@ -60,7 +64,7 @@ namespace assets::scene
 
         void setCameraZoom(float zoom);
 
-        void processMouseMovement(float xOffset, float yOffset);
+        void processMouseMovement(float currentX, float currentY);
 
         void processKeyboard(CameraMovement direction, bool isPressed);
 

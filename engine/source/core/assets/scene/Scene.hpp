@@ -98,6 +98,8 @@ namespace assets::scene
 
     private:
         void traverseAndUpdate(const std::shared_ptr<Object> &node, const std::vector<std::any> &params);
+
+        void updateNode(const std::shared_ptr<Object> &child);
     };
 
 }

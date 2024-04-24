@@ -4,6 +4,7 @@
 
 #include <core/base/utils/UUIDUtil.hpp>
 #include <core/base/common/manager/UUIDManager.hpp>
+#include <runtime/base/RuntimeApplication.hpp>
 #include "Scene.hpp"
 
 namespace assets::scene
@@ -15,9 +16,17 @@ namespace assets::scene
               name(std::move(name))
     {
         root = std::make_shared<SceneGroup>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
-        environmentLight = std::make_shared<LightEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
-        mainCameraEntity = std::make_shared<CameraEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
+        environmentLight = std::make_shared<LightEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false),
+                                                         false, yml);
+        mainCameraEntity = std::make_shared<CameraEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false),
+                                                          false, yml, Camera(), "testCamera",
+                                                          runtimeApp.getScreenWidth(), runtimeApp.getScreenHeight());
         skybox = std::make_shared<Skybox>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
+
+        root->addChild(environmentLight);
+        root->addChild(mainCameraEntity);
+
+        setMainCameraEntity(mainCameraEntity);
     }
 
     bool Scene::addChildToNode(const std::shared_ptr<base::UUID> &parentUuid, const std::shared_ptr<Object> &child)
@@ -114,7 +123,7 @@ namespace assets::scene
 
     void Scene::setSkybox(const std::shared_ptr<Skybox> &skybox_)
     {
-        Scene::skybox = skybox;
+        Scene::skybox = skybox_;
     }
 
     const std::shared_ptr<SceneGroup> &Scene::getRoot() const
@@ -124,7 +133,7 @@ namespace assets::scene
 
     void Scene::setRoot(const std::shared_ptr<SceneGroup> &root_)
     {
-        Scene::root = root;
+        Scene::root = root_;
     }
 
     const std::shared_ptr<LightEntity> &Scene::getEnvironmentLight() const
@@ -134,7 +143,7 @@ namespace assets::scene
 
     void Scene::setEnvironmentLight(const std::shared_ptr<LightEntity> &environmentLight_)
     {
-        Scene::environmentLight = environmentLight;
+        Scene::environmentLight = environmentLight_;
     }
 
     const std::shared_ptr<CameraEntity> &Scene::getMainCameraEntity() const
@@ -144,7 +153,7 @@ namespace assets::scene
 
     void Scene::setMainCameraEntity(const std::shared_ptr<CameraEntity> &mainCameraEntity_)
     {
-        Scene::mainCameraEntity = mainCameraEntity;
+        Scene::mainCameraEntity = mainCameraEntity_;
     }
 
     const std::vector<std::shared_ptr<CameraEntity>> &Scene::getCameraEntityList() const
@@ -154,12 +163,12 @@ namespace assets::scene
 
     void Scene::setCameraEntityList(const std::vector<std::shared_ptr<CameraEntity>> &cameraEntityList_)
     {
-        Scene::cameraEntityList = cameraEntityList;
+        Scene::cameraEntityList = cameraEntityList_;
     }
 
     void Scene::update()
     {
-
+        updateNode(root);
     }
 
     void Scene::setName(const std::string &name_)
@@ -224,6 +233,25 @@ namespace assets::scene
     void Scene::addChild(const std::shared_ptr<Object> &child)
     {
         root->addChild(child);
+    }
+
+    void Scene::updateNode(const std::shared_ptr<Object> &node)
+    {
+        std::shared_ptr<base::Updatable> updatable = std::dynamic_pointer_cast<base::Updatable>(node);
+        if (updatable)
+        {
+            updatable->update();
+        }
+
+        std::shared_ptr<SceneGroup> group = std::dynamic_pointer_cast<SceneGroup>(node);
+        if (group)
+        {
+            const auto &children = group->getChildren();
+            for (const auto &child: children)
+            {
+                updateNode(child);
+            }
+        }
     }
 
 } // assets
