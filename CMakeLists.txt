@@ -40,18 +40,33 @@ target_compile_definitions(DemonEngine PRIVATE LOG_ROOT_PATH="${CMAKE_SOURCE_DIR
 target_compile_definitions(DemonEngine PRIVATE SOURCE_ROOT_PATH="${ROOT_PATH}/assets")
 
 # 链接库
-target_link_libraries(DemonEngine ${ROOT_PATH}/lib/glfw3.lib)
-target_link_libraries(DemonEngine opengl32)
-target_link_libraries(DemonEngine ${ROOT_PATH}/lib/zlibstaticd.lib)
-target_link_libraries(DemonEngine ${ROOT_PATH}/lib/assimp-vc143-mtd.lib)
-target_link_libraries(DemonEngine ${ROOT_PATH}/lib/yaml-cppd.lib)
+#target_link_libraries(DemonEngine ${ROOT_PATH}/lib/glfw3.lib)
+#target_link_libraries(DemonEngine ${ROOT_PATH}/lib/zlibstaticd.lib)
+#target_link_libraries(DemonEngine ${ROOT_PATH}/lib/assimp-vc143-mtd.lib)
+#target_link_libraries(DemonEngine ${ROOT_PATH}/lib/yaml-cppd.lib)
+target_link_libraries(${PROJECT_NAME} opengl32)
 target_link_libraries(${PROJECT_NAME} Boost::filesystem)
 
-# 新增：将lib文件复制到输出目录（请确认这步是否真的需要）
+# 链接所有在lib目录下的.lib文件
+file(GLOB LIBRARY_FILES "${ROOT_PATH}/lib/*.lib")
+foreach(LIB_FILE ${LIBRARY_FILES})
+    target_link_libraries(DemonEngine "${LIB_FILE}")
+endforeach()
+
+# 将lib文件复制到输出目录
 file(GLOB LIB_FILES "${ROOT_PATH}/lib/*.lib")
 foreach(LIB_FILE ${LIB_FILES})
     add_custom_command(TARGET DemonEngine POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${LIB_FILE}"
+            $<TARGET_FILE_DIR:DemonEngine>)
+endforeach()
+
+# 将DLL文件复制到输出目录
+file(GLOB_RECURSE DLL_FILES "${ROOT_PATH}/lib/*.dll")
+foreach(DLL_FILE ${DLL_FILES})
+    add_custom_command(TARGET DemonEngine POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${DLL_FILE}"
             $<TARGET_FILE_DIR:DemonEngine>)
 endforeach()

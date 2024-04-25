@@ -1,8 +1,8 @@
 #version 410 core
 out vec4 FragColor;
 
-//in vec3 Normal;
-//in vec3 FragPos;
+in vec3 Normal;
+in vec3 FragPos;
 in vec2 TexCoords;
 
 uniform sampler2D texture_diffuse;
@@ -17,27 +17,37 @@ uniform bool has_texture_normal;
 uniform bool has_texture_ambientOcclusion;
 uniform bool has_texture_emissive;
 
-uniform vec3 lightPos;  // 假设有一个光源位置
-uniform vec3 viewPos;   // 相机位置
+//uniform vec3 lightPos;  // 假设有一个光源位置
+//uniform vec3 viewPos;   // 相机位置
 
 void main()
 {
-    //    vec3 norm = has_texture_normal ? texture(texture_normal, TexCoords).rgb : Normal;
-    //    vec3 diffuse = has_texture_diffuse ? texture(texture_diffuse, TexCoords).rgb : vec3(1.0, 1.0, 1.0);
-    //    vec3 specularColor = has_texture_specular ? texture(texture_specular, TexCoords).rgb : vec3(0.0, 0.0, 0.0);
-    //    vec3 ambientOcclusion = has_texture_ambientOcclusion ? texture(texture_ambientOcclusion, TexCoords).rgb : vec3(1.0, 1.0, 1.0);
-    //    vec3 emissive = has_texture_emissive ? texture(texture_emissive, TexCoords).rgb : vec3(0.0, 0.0, 0.0);
-    //
-    //    vec3 lightDir = normalize(lightPos - FragPos);
-    //    float diff = max(dot(norm, lightDir), 0.0);
-    //    vec3 reflectDir = reflect(-lightDir, norm);
-    //    vec3 viewDir = normalize(viewPos - FragPos);
-    //    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    //    vec3 specular = specularColor * spec;
-
-    //    vec3 result = emissive + (diffuse * diff + specular) * ambientOcclusion;
-    //    FragColor = vec4(result, 1.0);
-
-    //    vec3 result = diffuse * diff;
     FragColor = texture(texture_diffuse, TexCoords);
+
+//    vec3 norm = has_texture_normal ? texture(texture_normal, TexCoords).rgb : Normal;
+//    vec3 diffuse = has_texture_diffuse ? texture(texture_diffuse, TexCoords).rgb : vec3(1.0, 1.0, 1.0);
+//    vec3 specularColor = has_texture_specular ? texture(texture_specular, TexCoords).rgb : vec3(0.0, 0.0, 0.0);
+//    vec3 ambientOcclusion = has_texture_ambientOcclusion ? texture(texture_ambientOcclusion, TexCoords).rgb : vec3(1.0, 1.0, 1.0);
+//    vec3 emissive = has_texture_emissive ? texture(texture_emissive, TexCoords).rgb : vec3(0.0, 0.0, 0.0);
+//
+//    vec3 lightDir = normalize(lightPos - FragPos);
+//    float diff = max(dot(norm, lightDir), 0.0);
+//    vec3 reflectDir = reflect(-lightDir, norm);
+//    vec3 viewDir = normalize(viewPos - FragPos);
+//    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+//    vec3 specular = specularColor * spec;
+//
+//    vec3 result = emissive + (diffuse * diff + specular) * ambientOcclusion;
+//    FragColor = vec4(result, 1.0);
 }
+//#version 410 core
+//out vec4 FragColor;
+//
+//in vec2 TexCoords;
+//
+//uniform sampler2D texture_diffuse;
+//
+//void main()
+//{
+//    FragColor = texture(texture_diffuse, TexCoords);
+//}

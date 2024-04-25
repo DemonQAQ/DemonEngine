@@ -7,13 +7,13 @@
 
 #include "core/base/lib/pch.hpp"
 #include "GLFW/glfw3.h"
-#include "Initializer.hpp"
+#include "core/base/interface/Initializer.hpp"
 #include "iostream"
 
 
 namespace render
 {
-    class OpenGLInitializer : implements Initializer
+    class OpenGLInitializer : implements base::Initializer
     {
     public:
         bool init(const std::vector<std::any> &params) override

@@ -8,7 +8,7 @@
 #include <core/assets/scene/CameraEntity.hpp>
 #include "glm/detail/type_mat4x4.hpp"
 #include "core/base/interface/Interface.hpp"
-#include "core/render/manager/Initializer.hpp"
+#include "core/base/interface/Initializer.hpp"
 #include "core/render/graphApi/GraphApi.hpp"
 #include "core/render/manager/OpenGLInitializer.hpp"
 #include "core/render/graphApi/OpenGLApi.hpp"
@@ -30,7 +30,7 @@ namespace render
         DirectX
     };
 
-    class RenderManager : implements Initializer
+    class RenderManager : implements base::Initializer
     {
     private:
         RenderApiType renderApiType = RenderApiType::OpenGL;

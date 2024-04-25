@@ -380,52 +380,53 @@ void OpenGLApi::executeDrawCall(std::shared_ptr<DrawCall> drawCall)
 //        std::cerr << "Error: Unable to find 'viewPos' uniform location." << std::endl;
 //    }
 
-    auto texture = oglDrawCall->material->getRenderTexture(TextureType::DIFFUSE);
-    const char *textureName = base::toString(TextureType::DIFFUSE);
-    std::string textureNameStr = textureName;
-    std::string hasTextureUniformName = "has_texture" + textureNameStr;
-    std::string uniformName = "texture" + textureNameStr;
-
-    GLint hasTextureLocation = glGetUniformLocation(oglDrawCall->shader->ID, hasTextureUniformName.c_str());
-    GLint textureLocation = glGetUniformLocation(oglDrawCall->shader->ID, uniformName.c_str());
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture->id);
-    glUniform1i(textureLocation, 0);
+//    auto texture = oglDrawCall->material->getRenderTexture(TextureType::DIFFUSE);
+//    std::cout << "bind texture: " << texture->texturePath << std::endl;
+//    const char *textureName = base::toString(TextureType::DIFFUSE);
+//    std::string textureNameStr = textureName;
+//    //std::string hasTextureUniformName = "has_texture" + textureNameStr;
+//    std::string uniformName = "texture" + textureNameStr;
+//
+//    //GLint hasTextureLocation = glGetUniformLocation(oglDrawCall->shader->ID, hasTextureUniformName.c_str());
+//    GLint textureLocation = glGetUniformLocation(oglDrawCall->shader->ID, uniformName.c_str());
+//
+//    glActiveTexture(GL_TEXTURE0);
+//    glBindTexture(GL_TEXTURE_2D, texture->id);
+//    glUniform1i(textureLocation, 0);
 
     // 处理所有的贴图
-//    int textureUnit = 0; // 贴图单元索引
-//    for (const auto &texturePair: oglDrawCall->material->getTextures())
-//    {
-//        auto texture = oglDrawCall->material->getRenderTexture(texturePair.first);
-//        if (texture == nullptr)continue;
-//        const char *textureName = base::toString(texturePair.first);
-//        std::string textureNameStr = textureName;
-//
-//        std::string hasTextureUniformName = "has_texture" + textureNameStr;
-//        GLint hasTextureLocation = glGetUniformLocation(oglDrawCall->shader->ID, hasTextureUniformName.c_str());
-//
-//        std::string uniformName = "texture" + textureNameStr;
-//        GLint textureLocation = glGetUniformLocation(oglDrawCall->shader->ID, uniformName.c_str());
-//
-//        if (textureLocation != -1)
-//        {
-//            bool hasTexture = texture != nullptr;
-//            if (hasTexture)
-//            {
-//                glActiveTexture(GL_TEXTURE0 + textureUnit);
-//                glBindTexture(GL_TEXTURE_2D, texture->id);
-//                glUniform1i(textureLocation, textureUnit);
-//                textureUnit++;
-//            }
-//
-//            // 上传贴图存在状态
-//            if (hasTextureLocation != -1)
-//            {
-//                glUniform1i(hasTextureLocation, hasTexture ? 1 : 0);
-//            }
-//        }
-//    }
+    int textureUnit = 0; // 贴图单元索引
+    for (const auto &texturePair: oglDrawCall->material->getTextures())
+    {
+        auto texture = oglDrawCall->material->getRenderTexture(texturePair.first);
+        if (texture == nullptr)continue;
+        const char *textureName = base::toString(texturePair.first);
+        std::string textureNameStr = textureName;
+
+        std::string hasTextureUniformName = "has_texture" + textureNameStr;
+        GLint hasTextureLocation = glGetUniformLocation(oglDrawCall->shader->ID, hasTextureUniformName.c_str());
+
+        std::string uniformName = "texture" + textureNameStr;
+        GLint textureLocation = glGetUniformLocation(oglDrawCall->shader->ID, uniformName.c_str());
+
+        if (textureLocation != -1)
+        {
+            bool hasTexture = texture != nullptr;
+            if (hasTexture)
+            {
+                glActiveTexture(GL_TEXTURE0 + textureUnit);
+                glBindTexture(GL_TEXTURE_2D, texture->id);
+                glUniform1i(textureLocation, textureUnit);
+                textureUnit++;
+            }
+
+            // 上传贴图存在状态
+            if (hasTextureLocation != -1)
+            {
+                glUniform1i(hasTextureLocation, hasTexture ? 1 : 0);
+            }
+        }
+    }
 
     // 传递 vp 矩阵 (视图-投影矩阵的乘积)
     GLint vpLocation = glGetUniformLocation(oglDrawCall->shader->ID, "vp");

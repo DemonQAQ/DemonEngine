@@ -3,10 +3,10 @@
 //
 
 #include <runtime/base/RuntimeApplication.hpp>
-#include <core/assets/manager/type/ConfigLoader.hpp>
 #include "Entity.hpp"
 #include "core/base/common/platform/Application.hpp"
-#include <core/assets/manager/type/RenderObjectLoader.hpp>
+#include <core/assets/manager/loader/ConfigLoader.hpp>
+#include <core/assets/manager/loader/RenderObjectLoader.hpp>
 
 namespace assets::scene
 {
@@ -37,7 +37,7 @@ namespace assets::scene
     void Entity::beforeRendering(const std::vector<std::any> &params)
     {
         std::shared_ptr<base::IRenderable> iRenderable = renderableObject;
-        runtimeApp.getRenderManager()->submitEntity(iRenderable, render::RenderType::OPAQUE);
+        runtimeApp.getRenderManager()->submitEntity(iRenderable, render::RenderType::TRANSPARENT);
     }
 
     void Entity::afterRendering(const std::vector<std::any> &params)

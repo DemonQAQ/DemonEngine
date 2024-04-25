@@ -7,6 +7,8 @@
 
 #include "core/base/interface/Interface.hpp"
 #include "RenderPipeline.hpp"
+#include "core/assets/manager/data/ShaderManager.hpp"
+#include "core/assets/manager/data/MaterialsManager.hpp"
 
 namespace render
 {
@@ -42,6 +44,12 @@ namespace render
         void executeDrawCalls(const std::vector<std::shared_ptr<DrawCall>> &drawCallList);
 
         void setupRenderState(const std::shared_ptr<DrawCall> &drawCall);
+
+        void sortAndExecuteDrawCalls();
+
+        std::vector<std::shared_ptr<DrawCall>> createAndSubmitDrawCalls(const std::shared_ptr<base::IRenderable>& renderable,
+                                                                                              std::shared_ptr<assets::ShaderManager> &shaderManager,
+                                                                                              std::shared_ptr<assets::MaterialsManager> &materialsManager);
     };
 }
 

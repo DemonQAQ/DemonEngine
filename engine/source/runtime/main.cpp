@@ -5,15 +5,9 @@
 #include "base/RuntimeApplication.hpp"
 #include <iostream>
 #include <core/assets/scene/Entity.hpp>
-#include <core/assets/manager/type/ConfigLoader.hpp>
-#include <core/assets/manager/type/AssimpLoader.hpp>
-#include <core/assets/manager/type/ShaderLoader.hpp>
-#include "core/assets/manager/AssetsDataMainManager.hpp"
-#include "core/assets/manager/data/ModelManager.hpp"
-#include "core/assets/manager/data/ShaderManager.hpp"
-#include "core/assets/manager/data/ConfigManager.hpp"
-#include "core/assets/manager/data/TextureManager.hpp"
-#include "core/io/FileSystem.hpp"
+#include <core/assets/manager/loader/ConfigLoader.hpp>
+#include <core/assets/manager/loader/AssimpLoader.hpp>
+#include <core/assets/manager/loader/ShaderLoader.hpp>
 
 using namespace std;
 
@@ -26,7 +20,7 @@ int main()
     auto metaYml = assets::ConfigLoader::loadYml("/package0/scene/test.scene.meta", true);
     auto scene = std::make_shared<assets::scene::Scene>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), true, metaYml);
 
-    auto model = assets::AssimpLoader::loadModel("/package0/model/untitled.obj");
+    auto model = assets::AssimpLoader::loadModel("/package0/model/gFur_GBFRrwzx.obj");
 
     auto shader = assets::ShaderLoader::loadShader("testShader","/package0/shader" ,"/package0/shader/vsh/Shader.vsh",
                                                    "/package0/shader/fsh/Shader.fsh");

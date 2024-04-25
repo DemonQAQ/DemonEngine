@@ -139,7 +139,7 @@ void TextureManager::updateData(const std::vector<std::any> &params)
 unsigned int TextureManager::loadTextureFromFile(const char *filePath)
 {
     int width, height, nrComponents;
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(false);
     unsigned char *data = stbi_load(filePath, &width, &height, &nrComponents, 0);
     if (!data)
     {
