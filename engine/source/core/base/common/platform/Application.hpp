@@ -7,6 +7,7 @@
 
 #include <core/assets/scene/Scene.hpp>
 #include <core/event/base/EventBus.hpp>
+#include <core/script/pipline/SerialScriptPipLine.hpp>
 #include "core/base/interface/Interface.hpp"
 #include "core/render/manager/RenderManager.hpp"
 
@@ -18,6 +19,7 @@ namespace base
         std::shared_ptr<render::RenderManager> renderManager;
         std::shared_ptr<assets::scene::Scene> mainScene;
         std::shared_ptr<event::base::EventBus> eventBus;
+        std::shared_ptr<script::SerialScriptPipLine> serialScriptPipLine;
         std::vector<std::shared_ptr<event::IEventListener>> listenerList;
         static double deltaTime;
     public:
@@ -26,6 +28,7 @@ namespace base
             mainScene = nullptr;
             renderManager = std::make_shared<render::RenderManager>();
             eventBus = std::make_shared<event::base::EventBus>();
+            serialScriptPipLine = std::make_shared<script::SerialScriptPipLine>();
         }
 
         virtual int start() = 0;
@@ -61,6 +64,9 @@ namespace base
         virtual void onPostProcess() = 0;   // 后处理
 
         virtual void onPostRender() = 0;    // 渲染后的操作
+
+        //todo
+        //bool submitScript(std::shared_ptr<script::ScriptEntity> &scriptEntity)
 
         std::shared_ptr<render::RenderManager> &getRenderManager()
         {

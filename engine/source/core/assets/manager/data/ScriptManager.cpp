@@ -4,18 +4,30 @@
 
 #include <mono/metadata/appdomain.h>
 #include "ScriptManager.hpp"
+#include <mono/metadata/assembly.h>
+#include <core/base/lib/BoolDefine.hpp>
 
+std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<script::ScriptEntity>> assets::ScriptManager::loadScripts;
+
+/**
+ * @params[0] std::shared_ptr<base::UUID> &existingUuid         脚本实体uuid
+ * @params[1] std::string path                                  脚本路径
+ * @params[2] std::string name                                  脚本名称
+ * */
 bool assets::ScriptManager::loadData(const std::vector<std::any> &params)
 {
-    if (params.empty() || params[0].type() != typeid(std::string))
+    if (params.size() != 2)
     {
-        std::cerr << "ScriptManager::loadData - Expected parameter: std::string (path to script file)" << std::endl;
+        std::cerr << "ScriptManager::loadData - Expected parameter" << std::endl;
         return false;
     }
 
     try
     {
-        std::string scriptPath = std::any_cast<std::string>(params[0]);
+        std::shared_ptr<base::UUID> existingUuid = std::any_cast<std::shared_ptr<base::UUID>>(params[0]);
+        if (isDataLoaded({existingUuid}))return true;
+        std::string scriptPath = std::any_cast<std::string>(params[1]);
+        std::string name = std::any_cast<std::string>(params[2]);
         std::vector<char> scriptData = loadFile(scriptPath);
         if (scriptData.empty())
         {
@@ -30,12 +42,13 @@ bool assets::ScriptManager::loadData(const std::vector<std::any> &params)
             std::cerr << "Failed to load script image: " << scriptPath << std::endl;
             return false;
         }
-        MonoAssembly* assembly = mono_assembly_load_from(image, scriptPath.c_str(), &status);
-        mono_image_close(image); // Close image after loading the assembly
+        MonoAssembly *assembly = mono_assembly_load_from(image, scriptPath.c_str(), &status);
+        mono_image_close(image);
 
         if (assembly)
         {
-            scriptAssemblies.push_back(assembly);
+            auto scriptEntity = std::make_shared<script::ScriptEntity>(existingUuid, name, assembly);
+            loadScripts[existingUuid] = scriptEntity;
             return true;
         }
     } catch (const std::bad_any_cast &e)
@@ -62,12 +75,20 @@ void assets::ScriptManager::updateData(const std::vector<std::any> &params)
 
 assets::ScriptManager::ScriptManager()
 {
-    scriptDomain = mono_domain_create_appdomain("ScriptDomain", NULL);
+    char scriptDomainName[] = "ScriptDomain";
+    scriptDomain = mono_domain_create_appdomain(scriptDomainName, NULL);
     mono_domain_set(scriptDomain, false);
 }
 
 assets::ScriptManager::~ScriptManager()
 {
-
     mono_domain_unload(scriptDomain);
+}
+
+std::optional<std::shared_ptr<script::ScriptEntity>>
+assets::ScriptManager::getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr)
+{
+    auto it = loadScripts.find(uuid_ptr);
+    if (it != loadScripts.end())return it->second;
+    else return std::nullopt;
 }

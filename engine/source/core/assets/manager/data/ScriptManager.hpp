@@ -5,8 +5,9 @@
 #ifndef DEMONENGINE_SCRIPTMANAGER_HPP
 #define DEMONENGINE_SCRIPTMANAGER_HPP
 
-#include <mono/utils/mono-forward.h>
 #include <mono/metadata/image.h>
+#include <mono/utils/mono-forward.h>
+#include <core/script/ScriptEntity.hpp>
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/interface/IDataManager.hpp"
 
@@ -16,12 +17,14 @@ namespace assets
     {
     private:
         MonoDomain* scriptDomain;
-        std::vector<MonoAssembly*> scriptAssemblies;
+        static std::unordered_map<std::shared_ptr<base::UUID>,std::shared_ptr<script::ScriptEntity>> loadScripts;
     public:
         ScriptManager();
         ~ScriptManager() override;
+
         /**
-         * 传入一个参数，类型为std::string，含义为目标脚本的路径，尝试解析
+         * @params[0] std::shared_ptr<base::UUID> &existingUuid         脚本实体uuid
+         * @params[1] std::string path                                  脚本路径
          * */
         bool loadData(const std::vector<std::any> &params) override;
 
@@ -30,6 +33,8 @@ namespace assets
         [[nodiscard]] bool isDataLoaded(const std::vector<std::any> &params) const override;
 
         void updateData(const std::vector<std::any> &params) override;
+
+        std::optional<std::shared_ptr<script::ScriptEntity>> getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr);
     };
 }
 

@@ -20,7 +20,7 @@ int main()
     auto metaYml = assets::ConfigLoader::loadYml("/package0/scene/test.scene.meta", true);
     auto scene = std::make_shared<assets::scene::Scene>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), true, metaYml);
 
-    auto model = assets::AssimpLoader::loadModel("/package0/model/gFur_GBFRrwzx.obj");
+    auto model = assets::AssimpLoader::loadModel("/package0/model/untitled.obj");
 
     auto shader = assets::ShaderLoader::loadShader("testShader","/package0/shader" ,"/package0/shader/vsh/Shader.vsh",
                                                    "/package0/shader/fsh/Shader.fsh");

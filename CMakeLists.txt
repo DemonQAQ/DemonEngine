@@ -5,6 +5,7 @@ set(CMAKE_VERBOSE_MAKEFILE TRUE)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(ROOT_PATH "D:/Document/program/DemonEngine")
+set(MONO_PATH "C:/Program Files/Mono/lib")
 
 # 设置包含目录
 include_directories(${ROOT_PATH}/include)
@@ -39,13 +40,12 @@ endif ()
 target_compile_definitions(DemonEngine PRIVATE LOG_ROOT_PATH="${CMAKE_SOURCE_DIR}")
 target_compile_definitions(DemonEngine PRIVATE SOURCE_ROOT_PATH="${ROOT_PATH}/assets")
 
+link_directories(MONO_PATH)
+
 # 链接库
-#target_link_libraries(DemonEngine ${ROOT_PATH}/lib/glfw3.lib)
-#target_link_libraries(DemonEngine ${ROOT_PATH}/lib/zlibstaticd.lib)
-#target_link_libraries(DemonEngine ${ROOT_PATH}/lib/assimp-vc143-mtd.lib)
-#target_link_libraries(DemonEngine ${ROOT_PATH}/lib/yaml-cppd.lib)
 target_link_libraries(${PROJECT_NAME} opengl32)
 target_link_libraries(${PROJECT_NAME} Boost::filesystem)
+target_link_libraries(${PROJECT_NAME} ${MONO_PATH}/mono-2.0-sgen.lib)
 
 # 链接所有在lib目录下的.lib文件
 file(GLOB LIBRARY_FILES "${ROOT_PATH}/lib/*.lib")

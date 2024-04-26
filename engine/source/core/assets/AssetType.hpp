@@ -19,6 +19,7 @@ namespace assets
         TEXTURE,
         SHADER,
         CONFIG,
+        SCRIPT,
         NONE
     };
 
@@ -47,7 +48,8 @@ namespace assets
                     {".hlsl",  AssetType::SHADER},
                     {".json",  AssetType::CONFIG},
                     {".yml",  AssetType::CONFIG},
-                    {".xml",   AssetType::CONFIG}
+                    {".xml",   AssetType::CONFIG},
+                    {".cs",   AssetType::SCRIPT}
             };
 
             auto it = extensionToTypeMap.find(extension);
