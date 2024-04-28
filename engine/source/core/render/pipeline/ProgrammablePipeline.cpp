@@ -77,11 +77,6 @@ void render::ProgrammablePipeline::executeDrawCalls(const std::vector<std::share
     {
         if (graphApi->getUsingShader() != drawCall->shader) graphApi->useShader(drawCall->shader);
         setupRenderState(drawCall);
-
-        //todo
-        std::cout << "drawCall" << i++ << ":" << drawCall->material->getName() << std::endl;
-        //todo
-
         graphApi->executeDrawCall(drawCall);
     }
 }

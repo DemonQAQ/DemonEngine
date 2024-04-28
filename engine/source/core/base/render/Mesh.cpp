@@ -70,18 +70,6 @@ void Mesh::getRenderData(std::vector<RenderData> &renderDataList)
     renderData.globalTransform = getGlobalTransform();
     renderData.useShader = this->getShader();
     renderData.material = this->getMaterial();
-
-    //todo
-//    auto materialsManagerOpt = assets::AssetsDataMainManager::getManager(assets::AssetType::MATERIALS);
-//    auto materialsManager = std::dynamic_pointer_cast<assets::MaterialsManager>(materialsManagerOpt.value());
-//
-//    auto material = materialsManager->getResourceByUuid(this->getMaterial());
-//    std::cout << "Mesh Name: " << name << std::endl;
-//    std::cout << "bind material: " << material.value()->getName() << std::endl;
-//    std::cout << "Memory Address of RenderData: " << &renderData << std::endl;
-//    std::cout << "---" << std::endl;
-    //todo
-
     renderDataList.push_back(renderData);
 }
 

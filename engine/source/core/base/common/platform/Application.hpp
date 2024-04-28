@@ -31,11 +31,17 @@ namespace base
             serialScriptPipLine = std::make_shared<script::SerialScriptPipLine>();
         }
 
-        virtual int start() = 0;
-
-        virtual bool stop() = 0;
+        virtual int onInitialize() = 0;
 
         virtual int initialize() = 0;
+
+        virtual void onStart() = 0;
+
+        virtual int start() = 0;
+
+        virtual void onStop() = 0;
+
+        virtual bool stop() = 0;
 
         virtual int loadAssets() = 0;
 
@@ -46,10 +52,6 @@ namespace base
         virtual void tick() = 0;
 
         virtual bool isQuit() = 0;
-
-        virtual void onStart() = 0;
-
-        virtual void onStop() = 0;
 
         virtual void onInput() = 0;         // 输入处理
 
@@ -65,8 +67,15 @@ namespace base
 
         virtual void onPostRender() = 0;    // 渲染后的操作
 
-        //todo
-        //bool submitScript(std::shared_ptr<script::ScriptEntity> &scriptEntity)
+        bool submitScript(std::shared_ptr<script::ScriptEntity> &scriptEntity)
+        {
+            return serialScriptPipLine->submitScript(scriptEntity);
+        }
+
+        void removeScript(std::shared_ptr<UUID> &uuid)
+        {
+            serialScriptPipLine->removeScript(uuid);
+        }
 
         std::shared_ptr<render::RenderManager> &getRenderManager()
         {
