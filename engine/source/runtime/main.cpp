@@ -24,6 +24,8 @@ int main()
 
     auto model = assets::AssimpLoader::loadModel("/package0/model/untitled.obj");
 
+    //auto model1 = assets::AssimpLoader::loadModel("/package2/model/T1.obj");
+
     auto shader = assets::ShaderLoader::loadShader("testShader", "/package0/shader", "/package0/shader/vsh/Shader.vsh",
                                                    "/package0/shader/fsh/Shader.fsh");
     //auto script = assets::ScriptLoader::loadScript("/package0/script/test.cs");
@@ -31,12 +33,16 @@ int main()
     model->bindShader(shader->getUUID());
     model->updateAllMeshShader();
 
+    //model1->bindShader(shader->getUUID());
+    //model1->updateAllMeshShader();
+
     auto entityMetaYml = assets::ConfigLoader::loadYml("/package0/scene/test.entity.meta", true);
     std::shared_ptr<assets::scene::Entity> entity = std::make_shared<assets::scene::Entity>(
             base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), true,
             entityMetaYml,
             "testEntity");
     entity->addModel(model);
+    //entity->addModel(model1);
     scene->addChild(entity);
 
     runtimeApp.loadScene(scene);

@@ -25,7 +25,7 @@ namespace assets
         MANAGERS.insert({AssetType::SHADER, std::make_shared<ShaderManager>()});
         MANAGERS.insert({AssetType::MEDIA, std::make_shared<MediaManager>()});
         MANAGERS.insert({AssetType::RENDERABLE_OBJECT, std::make_shared<RenderableObjectManager>()});
-        //MANAGERS.insert({AssetType::SCRIPT, std::make_shared<ScriptManager>()});
+        MANAGERS.insert({AssetType::SCRIPT, std::make_shared<ScriptManager>()});
     }
 
     void AssetsDataMainManager::finalizeManager()

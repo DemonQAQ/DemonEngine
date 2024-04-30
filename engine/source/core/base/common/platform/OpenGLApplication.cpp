@@ -8,6 +8,7 @@
 #include <thread>
 #include <chrono>
 #include <core/event/base/listener/OSInputEventListener.hpp>
+#include <core/script/ScriptInitializer.hpp>
 #include "GLFW/glfw3.h"
 #include "OpenGLApplication.hpp"
 
@@ -65,6 +66,7 @@ bool base::OpenGLApplication::stop()
 
 int base::OpenGLApplication::initialize()
 {
+    script::ScriptInitializer().init({});
     assets::AssetsDataMainManager::initialize();
     // 创建窗口
     mainWindow = windowFactory.createWindow(width, height, "Demon Engine");

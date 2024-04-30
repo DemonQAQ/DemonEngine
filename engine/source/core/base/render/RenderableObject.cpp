@@ -32,6 +32,7 @@ void RenderableObject::getRenderData(std::vector<RenderData> &renderDataList)
 {
     for (std::shared_ptr<Model> &model: models)
     {
+        std::cerr << "model name:" << model->getName() << std::endl;
         model->getRenderData(renderDataList);
     }
 }
