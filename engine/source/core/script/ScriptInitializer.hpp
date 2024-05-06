@@ -8,8 +8,10 @@
 #include "core/base/interface/Interface.hpp"
 #include "core/base/interface/Initializer.hpp"
 #include "mono/metadata/assembly.h"
+#include "mono/metadata/appdomain.h"
 #include "mono/utils/mono-forward.h"
 #include "mono/jit/jit.h"
+#include "mono/metadata/mono-config.h"
 
 static char const * monoLibraryPath = MONO_LIBRARY_PATH;
 static char const * monoEtcPath = MONO_ETC_PATH;
@@ -31,7 +33,12 @@ namespace script
     private:
         static void initMono()
         {
+            std::cout << "Setting Mono directories..." << std::endl;
+            std::cout << "Library path: " << monoLibraryPath << std::endl;
+            std::cout << "Configuration path: " << monoEtcPath << std::endl;
             mono_set_dirs(monoLibraryPath, monoEtcPath);
+            mono_config_parse(NULL);
+            mono_jit_init("DemonEngineRuntime");
         }
     };
 }

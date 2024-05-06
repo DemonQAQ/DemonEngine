@@ -22,6 +22,8 @@ namespace io
 
         void save() const override;
 
+        std::shared_ptr<char[]> toCharList() const override;
+
         bool isEmpty() const override;
 
         [[nodiscard]] std::optional<std::any> get(const std::string &key) const override;

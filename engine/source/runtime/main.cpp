@@ -28,7 +28,7 @@ int main()
 
     auto shader = assets::ShaderLoader::loadShader("testShader", "/package0/shader", "/package0/shader/vsh/Shader.vsh",
                                                    "/package0/shader/fsh/Shader.fsh");
-    //auto script = assets::ScriptLoader::loadScript("/package0/script/test.cs");
+    auto script = assets::ScriptLoader::loadScript("/package0/script/test.cs");
 
     model->bindShader(shader->getUUID());
     model->updateAllMeshShader();

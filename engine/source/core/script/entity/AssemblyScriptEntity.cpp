@@ -2,24 +2,20 @@
 // Created by Demon on 2024/4/26.
 //
 
-#include "ScriptEntity.hpp"
-#include "ScriptMethodType.hpp"
+#include "AssemblyScriptEntity.hpp"
+#include "core/script/ScriptMethodType.hpp"
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/object.h"
 
-script::ScriptEntity::ScriptEntity(const std::shared_ptr<base::UUID> &existingUuid, std::string name,
-                                   MonoAssembly *script, int priority_) : base::Object(existingUuid),
-                                                                          name(std::move(name)),
-                                                                          scriptAssembly(script), priority(priority_)
+script::AssemblyScriptEntity::AssemblyScriptEntity(const std::shared_ptr<base::UUID> &existingUuid, const std::string& name,
+                                                   MonoAssembly *script, MonoImage *scriptImage, int priority_) :
+        IScriptEntity(existingUuid,name),
+        scriptAssembly(script), scriptImage(scriptImage), priority(priority_)
 {
-    if (scriptAssembly)
-    {
-        scriptImage = mono_assembly_get_image(scriptAssembly);
-        init();
-    }
+
 }
 
-bool script::ScriptEntity::hasMethod(std::string &methodName)
+bool script::AssemblyScriptEntity::hasMethod(std::string &methodName)
 {
     if (methodCache.find(methodName) != methodCache.end()) return true;
 
@@ -29,7 +25,7 @@ bool script::ScriptEntity::hasMethod(std::string &methodName)
     return method != nullptr;
 }
 
-bool script::ScriptEntity::runMethod(std::string &methodName)
+bool script::AssemblyScriptEntity::runMethod(std::string &methodName)
 {
     MonoMethod *method = nullptr;
     auto it = methodCache.find(methodName);
@@ -64,7 +60,7 @@ bool script::ScriptEntity::runMethod(std::string &methodName)
     return true;
 }
 
-void script::ScriptEntity::unload()
+void script::AssemblyScriptEntity::unload()
 {
     if (scriptAssembly)
     {
@@ -74,7 +70,7 @@ void script::ScriptEntity::unload()
     }
 }
 
-void script::ScriptEntity::init()
+void script::AssemblyScriptEntity::init()
 {
     for (int i = ScriptMethodType::ON_UPDATE; i <= ScriptMethodType::ON_PHYSICS; i++)
     {
@@ -89,37 +85,17 @@ void script::ScriptEntity::init()
     }
 }
 
-void script::ScriptEntity::setName(const std::string &name_)
-{
-    this->name = name_;
-}
-
-std::string script::ScriptEntity::getName() const
-{
-    return name;
-}
-
-int script::ScriptEntity::getPriority() const
-{
-    return priority;
-}
-
-void script::ScriptEntity::setPriority(int newPriority_)
-{
-    this->priority = newPriority_;
-}
-
-bool script::ScriptEntity::operator<(const ScriptEntity &other) const
+bool script::AssemblyScriptEntity::operator<(const AssemblyScriptEntity &other) const
 {
     return priority < other.priority;
 }
 
-bool script::ScriptEntity::operator>(const ScriptEntity &other) const
+bool script::AssemblyScriptEntity::operator>(const AssemblyScriptEntity &other) const
 {
     return priority > other.priority;
 }
 
-bool script::ScriptEntity::operator==(const ScriptEntity &other) const
+bool script::AssemblyScriptEntity::operator==(const AssemblyScriptEntity &other) const
 {
     return priority == other.priority;
 }

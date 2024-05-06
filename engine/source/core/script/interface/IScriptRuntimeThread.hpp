@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <any>
+#include <functional>
 #include "core/base/interface/Interface.hpp"
 
 namespace script
@@ -24,6 +25,8 @@ namespace script
         virtual void initializeDomain(const std::vector<std::any> &params) = 0;
 
         virtual void destroyDomain() = 0;
+
+        virtual void submitTask(std::function<void()> task) = 0;
     };
 };
 

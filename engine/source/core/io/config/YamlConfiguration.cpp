@@ -457,5 +457,10 @@ namespace io
         return configRoot.IsNull() || (configRoot.IsMap() && configRoot.size() == 0);
     }
 
+    std::shared_ptr<char[]> YamlConfiguration::toCharList() const
+    {
+        return nullptr;
+    }
+
 }
 

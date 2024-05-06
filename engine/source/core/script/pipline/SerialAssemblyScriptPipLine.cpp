@@ -2,22 +2,22 @@
 // Created by Demon on 2024/4/26.
 //
 
-#include "SerialScriptPipLine.hpp"
+#include "SerialAssemblyScriptPipLine.hpp"
 #include "core/script/ScriptMethodType.hpp"
 
-bool script::SerialScriptPipLine::submitScript(std::shared_ptr<ScriptEntity> &scriptEntity)
+bool script::SerialAssemblyScriptPipLine::submitScript(std::shared_ptr<IScriptEntity> &scriptEntity)
 {
     pendingAdditions.push_back(scriptEntity);
     return true;
 }
 
-bool script::SerialScriptPipLine::removeScript(std::shared_ptr<base::UUID> &uuid)
+bool script::SerialAssemblyScriptPipLine::removeScript(std::shared_ptr<base::UUID> &uuid)
 {
     pendingRemovals.push_back(*uuid);
     return true;
 }
 
-void script::SerialScriptPipLine::onUpdate()
+void script::SerialAssemblyScriptPipLine::onUpdate()
 {
     checkScript();
     for (auto &[uuid, script]: scripts)
@@ -29,7 +29,7 @@ void script::SerialScriptPipLine::onUpdate()
     }
 }
 
-void script::SerialScriptPipLine::onPhysics()
+void script::SerialAssemblyScriptPipLine::onPhysics()
 {
     checkScript();
     for (auto &[uuid, script]: scripts)
@@ -41,7 +41,7 @@ void script::SerialScriptPipLine::onPhysics()
     }
 }
 
-void script::SerialScriptPipLine::checkScript()
+void script::SerialAssemblyScriptPipLine::checkScript()
 {
     for (const auto &uuid: pendingRemovals)
     {
@@ -55,4 +55,10 @@ void script::SerialScriptPipLine::checkScript()
     }
     pendingAdditions.clear();
 
+}
+
+script::SerialAssemblyScriptPipLine::SerialAssemblyScriptPipLine()
+{
+    thread = std::make_shared<MonoThread>("SerialScriptPipLineDomain");
+    thread->start();
 }

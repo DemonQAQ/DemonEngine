@@ -9,9 +9,9 @@
 #include <core/base/common/manager/UUIDManager.hpp>
 #include "ScriptLoader.hpp"
 
-std::shared_ptr<script::ScriptEntity> assets::ScriptLoader::loadScript(const std::string &path)
+std::shared_ptr<script::AssemblyScriptEntity> assets::ScriptLoader::loadScript(const std::string &path)
 {
-    auto scriptManagerManagerOpt = AssetsDataMainManager::getManager(AssetType::RENDERABLE_OBJECT);
+    auto scriptManagerManagerOpt = AssetsDataMainManager::getManager(AssetType::SCRIPT);
     if (!scriptManagerManagerOpt.has_value()) return nullptr;
 
     auto scriptManagerManger = std::dynamic_pointer_cast<ScriptManager>(scriptManagerManagerOpt.value());
@@ -21,11 +21,11 @@ std::shared_ptr<script::ScriptEntity> assets::ScriptLoader::loadScript(const std
 
     if (scriptManagerManger->loadData({existingUuid, path, path}))
     {
-        auto renderableObjectOpt = scriptManagerManger->getResourceByUuid(existingUuid);
-        if (!renderableObjectOpt.has_value()) return nullptr;
+        auto scriptEntityOpt = scriptManagerManger->getResourceByUuid(existingUuid);
+        if (!scriptEntityOpt.has_value()) return nullptr;
 
-        auto renderableObject = std::dynamic_pointer_cast<script::ScriptEntity>(renderableObjectOpt.value());
-        return renderableObject;
+        auto scriptEntity = std::dynamic_pointer_cast<script::AssemblyScriptEntity>(scriptEntityOpt.value());
+        return scriptEntity;
     }
     else return nullptr;
 }

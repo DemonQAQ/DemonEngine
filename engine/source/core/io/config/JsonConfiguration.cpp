@@ -274,6 +274,11 @@ namespace io
         return tree.empty();
     }
 
+    std::shared_ptr<char[]> JsonConfiguration::toCharList() const
+    {
+        return nullptr;
+    }
+
 }
 
 

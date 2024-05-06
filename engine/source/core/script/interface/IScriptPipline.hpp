@@ -6,7 +6,7 @@
 #define DEMONENGINE_ISCRIPTPIPLINE_HPP
 
 #include "core/base/interface/Interface.hpp"
-#include "core/script/ScriptEntity.hpp"
+#include "core/script/entity/AssemblyScriptEntity.hpp"
 #include "core/script/ScriptMethodType.hpp"
 
 namespace script
@@ -17,7 +17,7 @@ namespace script
         std::string onUpdateMethodName = toString(ScriptMethodType::ON_UPDATE);
         std::string onPhysicsMethodName = toString(ScriptMethodType::ON_PHYSICS);
     public:
-        virtual bool submitScript(std::shared_ptr<ScriptEntity> &scriptEntity) = 0;
+        virtual bool submitScript(std::shared_ptr<IScriptEntity> &scriptEntity) = 0;
 
         virtual bool removeScript(std::shared_ptr<base::UUID> &uuid) = 0;
 

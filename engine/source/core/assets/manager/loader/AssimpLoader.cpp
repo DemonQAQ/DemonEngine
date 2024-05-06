@@ -64,18 +64,18 @@ assets::AssimpLoader::loadModel(const std::string &directory, const std::string 
             auto material = loadMaterialFromAssimp(aiMat, metaYml, directory);
             if (material)
             {
-                // 输出材质的基本信息
-                std::cout << "Material Name: " << material->getName() << std::endl;
-                std::cout << "Diffuse Color: (" << material->getDiffuse().x << ", " << material->getDiffuse().y << ", " << material->getDiffuse().z << ")" << std::endl;
-                std::cout << "Specular Color: (" << material->getSpecular().x << ", " << material->getSpecular().y << ", " << material->getSpecular().z << ")" << std::endl;
-                std::cout << "Ambient Color: (" << material->getAmbient().x << ", " << material->getAmbient().y << ", " << material->getAmbient().z << ")" << std::endl;
-                std::cout << "Emissive Color: (" << material->getEmissive().x << ", " << material->getEmissive().y << ", " << material->getEmissive().z << ")" << std::endl;
-                std::cout << "Shininess: " << material->getShininess() << std::endl;
-                std::cout << "Opacity: " << material->getOpacity() << std::endl;
-                std::cout << "Roughness: " << material->getRoughness() << std::endl;
-                std::cout << "Metallic: " << material->getMetallic() << std::endl;
-                std::cout << "Reflectivity: " << material->getReflectivity() << std::endl;
-                std::cout << "---\n"<< std::endl;
+//                // 输出材质的基本信息
+//                std::cout << "Material Name: " << material->getName() << std::endl;
+//                std::cout << "Diffuse Color: (" << material->getDiffuse().x << ", " << material->getDiffuse().y << ", " << material->getDiffuse().z << ")" << std::endl;
+//                std::cout << "Specular Color: (" << material->getSpecular().x << ", " << material->getSpecular().y << ", " << material->getSpecular().z << ")" << std::endl;
+//                std::cout << "Ambient Color: (" << material->getAmbient().x << ", " << material->getAmbient().y << ", " << material->getAmbient().z << ")" << std::endl;
+//                std::cout << "Emissive Color: (" << material->getEmissive().x << ", " << material->getEmissive().y << ", " << material->getEmissive().z << ")" << std::endl;
+//                std::cout << "Shininess: " << material->getShininess() << std::endl;
+//                std::cout << "Opacity: " << material->getOpacity() << std::endl;
+//                std::cout << "Roughness: " << material->getRoughness() << std::endl;
+//                std::cout << "Metallic: " << material->getMetallic() << std::endl;
+//                std::cout << "Reflectivity: " << material->getReflectivity() << std::endl;
+//                std::cout << "---\n"<< std::endl;
 
                 materials.push_back(material);
             }
@@ -121,18 +121,18 @@ void assets::AssimpLoader::processNode(const std::shared_ptr<base::Node> &node, 
             newMesh->bindMaterial(firstMaterial->getUUID());
 
             // 输出材料的基本信息
-            std::cout << "Mesh Name: " << meshName << std::endl;
-            std::cout << "Material Name: " << firstMaterial->getName() << std::endl;
-            std::cout << "Diffuse Color: (" << firstMaterial->getDiffuse().x << ", " << firstMaterial->getDiffuse().y << ", " << firstMaterial->getDiffuse().z << ")" << std::endl;
-            std::cout << "Specular Color: (" << firstMaterial->getSpecular().x << ", " << firstMaterial->getSpecular().y << ", " << firstMaterial->getSpecular().z << ")" << std::endl;
-            std::cout << "Ambient Color: (" << firstMaterial->getAmbient().x << ", " << firstMaterial->getAmbient().y << ", " << firstMaterial->getAmbient().z << ")" << std::endl;
-            std::cout << "Emissive Color: (" << firstMaterial->getEmissive().x << ", " << firstMaterial->getEmissive().y << ", " << firstMaterial->getEmissive().z << ")" << std::endl;
-            std::cout << "Shininess: " << firstMaterial->getShininess() << std::endl;
-            std::cout << "Opacity: " << firstMaterial->getOpacity() << std::endl;
-            std::cout << "Roughness: " << firstMaterial->getRoughness() << std::endl;
-            std::cout << "Metallic: " << firstMaterial->getMetallic() << std::endl;
-            std::cout << "Reflectivity: " << firstMaterial->getReflectivity() << std::endl;
-            std::cout << "---\n"<< std::endl;
+//            std::cout << "Mesh Name: " << meshName << std::endl;
+//            std::cout << "Material Name: " << firstMaterial->getName() << std::endl;
+//            std::cout << "Diffuse Color: (" << firstMaterial->getDiffuse().x << ", " << firstMaterial->getDiffuse().y << ", " << firstMaterial->getDiffuse().z << ")" << std::endl;
+//            std::cout << "Specular Color: (" << firstMaterial->getSpecular().x << ", " << firstMaterial->getSpecular().y << ", " << firstMaterial->getSpecular().z << ")" << std::endl;
+//            std::cout << "Ambient Color: (" << firstMaterial->getAmbient().x << ", " << firstMaterial->getAmbient().y << ", " << firstMaterial->getAmbient().z << ")" << std::endl;
+//            std::cout << "Emissive Color: (" << firstMaterial->getEmissive().x << ", " << firstMaterial->getEmissive().y << ", " << firstMaterial->getEmissive().z << ")" << std::endl;
+//            std::cout << "Shininess: " << firstMaterial->getShininess() << std::endl;
+//            std::cout << "Opacity: " << firstMaterial->getOpacity() << std::endl;
+//            std::cout << "Roughness: " << firstMaterial->getRoughness() << std::endl;
+//            std::cout << "Metallic: " << firstMaterial->getMetallic() << std::endl;
+//            std::cout << "Reflectivity: " << firstMaterial->getReflectivity() << std::endl;
+//            std::cout << "---\n"<< std::endl;
         }
 
         node->meshes.push_back(newMesh);

@@ -9,14 +9,14 @@
 #include <memory>
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/interface/IFileLoader.hpp"
-#include "core/script/ScriptEntity.hpp"
+#include "core/script/entity/AssemblyScriptEntity.hpp"
 
 namespace assets
 {
     class ScriptLoader: implements IFileLoader
     {
     public:
-        static std::shared_ptr<script::ScriptEntity> loadScript(const std::string& name);
+        static std::shared_ptr<script::AssemblyScriptEntity> loadScript(const std::string& name);
     };
 }
 

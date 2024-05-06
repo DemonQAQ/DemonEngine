@@ -7,7 +7,8 @@
 
 #include <mono/metadata/image.h>
 #include <mono/utils/mono-forward.h>
-#include <core/script/ScriptEntity.hpp>
+#include <core/script/entity/AssemblyScriptEntity.hpp>
+#include <core/script/thread/MonoAssemblyCompileThread.hpp>
 #include "core/base/interface/Interface.hpp"
 #include "core/assets/interface/IDataManager.hpp"
 
@@ -16,8 +17,8 @@ namespace assets
     class ScriptManager : implements IDataManager
     {
     private:
-        MonoDomain* scriptDomain;
-        static std::unordered_map<std::shared_ptr<base::UUID>,std::shared_ptr<script::ScriptEntity>> loadScripts;
+        std::shared_ptr<script::MonoAssemblyCompileThread> thread;
+        static std::unordered_map<std::shared_ptr<base::UUID>,std::shared_ptr<script::IScriptEntity>> loadScripts;
     public:
         ScriptManager();
         ~ScriptManager() override;
@@ -34,7 +35,7 @@ namespace assets
 
         void updateData(const std::vector<std::any> &params) override;
 
-        std::optional<std::shared_ptr<script::ScriptEntity>> getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr);
+        std::optional<std::shared_ptr<script::IScriptEntity>> getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr);
     };
 }
 

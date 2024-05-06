@@ -25,6 +25,8 @@ namespace io
         virtual void save() const = 0;
 
         virtual bool isEmpty() const = 0;
+
+        virtual std::shared_ptr<char[]> toCharList() const = 0;
     };
 }
 #endif //DEMONENGINE_IFILE_HPP

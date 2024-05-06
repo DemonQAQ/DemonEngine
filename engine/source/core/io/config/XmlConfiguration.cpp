@@ -271,6 +271,16 @@ namespace io
     {
         return tree.empty();
     }
+
+    std::shared_ptr<char[]> XmlConfiguration::toCharList() const
+    {
+        std::ostringstream buffer;
+        boost::property_tree::write_xml(buffer, tree);
+        std::string str = buffer.str();
+        std::shared_ptr<char[]> cstr(new char[str.length() + 1], std::default_delete<char[]>());
+        strcpy_s(cstr.get(), str.length() + 1, str.c_str());
+        return cstr;
+    }
 }
 
 

@@ -199,14 +199,14 @@ void base::OpenGLApplication::onInput()
 
 void base::OpenGLApplication::onUpdate()
 {
-    serialScriptPipLine->onUpdate();
+    //serialScriptPipLine->onUpdate();
     mainScene->update();
     renderManager->updateCameraInfo(mainScene->getMainCameraEntity());
 }
 
 void base::OpenGLApplication::onPhysicsUpdate()
 {
-    serialScriptPipLine->onPhysics();
+    //serialScriptPipLine->onPhysics();
 }
 
 void base::OpenGLApplication::onPreRender()
@@ -247,7 +247,11 @@ int OpenGLApplication::getScreenHeight()
 
 int OpenGLApplication::onInitialize()
 {
+    //serialScriptPipLine = std::make_shared<script::SerialAssemblyScriptPipLine>();
+    serialScriptPipLine = nullptr;
+
     subscribe(std::make_shared<event::base::OSInputEventListener>());
+
     return 0;
 }
 
