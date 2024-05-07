@@ -31,10 +31,11 @@ int base::OpenGLApplication::start()
             std::this_thread::sleep_until(next_tick);
 
             tick();
+
             auto end_time = std::chrono::steady_clock::now();
             std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
-
             std::cerr << "Frame " << i << ": Duration = " << frame_duration.count() << " ms" << std::endl;
+
             i++;
 
             next_tick += std::chrono::milliseconds(16);
@@ -42,6 +43,8 @@ int base::OpenGLApplication::start()
             {
                 std::cerr << "Warning: Frame processing exceeded 16 ms" << std::endl;
             }
+
+            std::cerr << "\n" << std::endl;
         }
 
         stop();
@@ -106,7 +109,7 @@ int base::OpenGLApplication::loadAssets()
 
 void base::OpenGLApplication::unloadAssets()
 {
-
+    assets::AssetsDataMainManager::finalize();
 }
 
 void base::OpenGLApplication::tick()
@@ -144,7 +147,15 @@ void base::OpenGLApplication::onStart()
 
 void base::OpenGLApplication::onRender()
 {
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onRender start"<< std::endl;
+
     renderManager->render();
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onRender Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onRender end\n"<< std::endl;
 }
 
 void base::OpenGLApplication::processInput()
@@ -194,25 +205,59 @@ void base::OpenGLApplication::processInput()
 
 void base::OpenGLApplication::onInput()
 {
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onInput start"<< std::endl;
+
     processInput();
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onInput Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onInput end\n"<< std::endl;
 }
 
 void base::OpenGLApplication::onUpdate()
 {
-    //serialScriptPipLine->onUpdate();
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onUpdate start"<< std::endl;
+
+    asyncScriptPipLine->onUpdate();
+    serialScriptPipLine->onUpdate();
     mainScene->update();
     renderManager->updateCameraInfo(mainScene->getMainCameraEntity());
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onUpdate Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onUpdate end\n"<< std::endl;
 }
 
 void base::OpenGLApplication::onPhysicsUpdate()
 {
-    //serialScriptPipLine->onPhysics();
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onPhysicsUpdate start"<< std::endl;
+
+    asyncScriptPipLine->onPhysics();
+    serialScriptPipLine->onPhysics();
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onPhysicsUpdate Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onPhysicsUpdate end\n"<< std::endl;
 }
 
 void base::OpenGLApplication::onPreRender()
 {
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onPreRender start"<< std::endl;
+
     this->mainScene->beforeRendering({});
     renderManager->updateCameraInfo(this->mainScene->getMainCameraEntity());
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onPreRender Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onPreRender end\n"<< std::endl;
 }
 
 void base::OpenGLApplication::onPostProcess()
@@ -222,7 +267,15 @@ void base::OpenGLApplication::onPostProcess()
 
 void base::OpenGLApplication::onPostRender()
 {
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onPostRender start"<< std::endl;
+
     this->mainScene->afterRendering({});
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onPostRender Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onPostRender end\n"<< std::endl;
 }
 
 void OpenGLApplication::loadScene(const std::shared_ptr<assets::scene::Scene> &scene)
@@ -247,8 +300,8 @@ int OpenGLApplication::getScreenHeight()
 
 int OpenGLApplication::onInitialize()
 {
-    //serialScriptPipLine = std::make_shared<script::SerialAssemblyScriptPipLine>();
-    serialScriptPipLine = nullptr;
+    asyncScriptPipLine = std::make_shared<script::AsyncAssemblyScriptPipLine>();
+    serialScriptPipLine = std::make_shared<script::SerialAssemblyScriptPipLine>();
 
     subscribe(std::make_shared<event::base::OSInputEventListener>());
 

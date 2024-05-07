@@ -20,7 +20,7 @@ namespace script
             case ScriptMethodType::ON_UPDATE:
                 return "onUpdate";
             case ScriptMethodType::ON_PHYSICS:
-                return "onUpdate";
+                return "onPhysicsUpdate";
             default:
                 return "";
         }

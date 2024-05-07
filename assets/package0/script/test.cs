@@ -1,15 +1,16 @@
 ﻿using System;
 
-class HelloWorld
+public class HelloWorld
 {
-    static void Main()  // 添加了 Main 方法作为程序的入口点
+    public void onUpdate()
     {
-        onUpdate();  // 调用 onUpdate 方法来显示信息
+        Console.WriteLine("Hello, World0!");
+        Console.WriteLine("Current date and time is: " + DateTime.Now);
     }
 
-    static void onUpdate()
+    public void onPhysicsUpdate()
     {
-        Console.WriteLine("Hello, World!");
+        Console.WriteLine("Hello, World1!");
         Console.WriteLine("Current date and time is: " + DateTime.Now);
     }
 }

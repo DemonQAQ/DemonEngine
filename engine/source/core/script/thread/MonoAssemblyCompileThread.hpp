@@ -37,9 +37,10 @@ namespace script
                 std::cerr << "start compiler " << std::endl;
                 if (scriptPath.size() >= 3 && scriptPath.substr(scriptPath.size() - 3) == ".cs")
                 {
+                    std::cerr << ".cs compiler start" << std::endl;
                     // 编译.cs文件到.dll
                     std::string assemblyPath = scriptPath.substr(0, scriptPath.size() - 3) + ".dll";
-                    std::string compileCommand = "mcs -out:" + assemblyPath + " " + scriptPath;
+                    std::string compileCommand = "mcs /target:library -out:" + assemblyPath + " " + scriptPath;
                     system(compileCommand.c_str());
 
                     // 加载编译后的程序集
@@ -57,9 +58,11 @@ namespace script
                         return;
                     }
                     resultEntity = std::make_shared<AssemblyScriptEntity>(existingUuid, name, assembly, image);
+                    std::cerr << ".cs compiler end" << std::endl;
                 }
                 else
                 {
+                    std::cerr << "dll/exe compiler start" << std::endl;
                     MonoImageOpenStatus status;
                     MonoImage *image = mono_image_open_from_data_with_name(scriptData.data(), scriptData.size(), TRUE,
                                                                            &status, FALSE, scriptPath.c_str());
@@ -75,6 +78,7 @@ namespace script
                     {
                         resultEntity = std::make_shared<AssemblyScriptEntity>(existingUuid, name, assembly, image);
                     }
+                    std::cerr << "dll/exe compiler end" << std::endl;
                 }
                 std::cerr << "end compiler " << std::endl;
             };

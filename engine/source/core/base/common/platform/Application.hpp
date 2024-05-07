@@ -7,6 +7,7 @@
 
 #include <core/assets/scene/Scene.hpp>
 #include <core/event/base/EventBus.hpp>
+#include <core/script/pipline/AsyncAssemblyScriptPipLine.hpp>
 #include <core/script/pipline/SerialAssemblyScriptPipLine.hpp>
 #include "core/base/interface/Interface.hpp"
 #include "core/render/manager/RenderManager.hpp"
@@ -19,6 +20,7 @@ namespace base
         std::shared_ptr<render::RenderManager> renderManager;
         std::shared_ptr<assets::scene::Scene> mainScene;
         std::shared_ptr<event::base::EventBus> eventBus;
+        std::shared_ptr<script::AsyncAssemblyScriptPipLine> asyncScriptPipLine;
         std::shared_ptr<script::SerialAssemblyScriptPipLine> serialScriptPipLine;
         std::vector<std::shared_ptr<event::IEventListener>> listenerList;
         static double deltaTime;
@@ -28,6 +30,7 @@ namespace base
             mainScene = nullptr;
             renderManager = std::make_shared<render::RenderManager>();
             eventBus = std::make_shared<event::base::EventBus>();
+            asyncScriptPipLine = nullptr;
             serialScriptPipLine = nullptr;
         }
 
@@ -67,36 +70,17 @@ namespace base
 
         virtual void onPostRender() = 0;    // 渲染后的操作
 
-        bool submitScript(std::shared_ptr<script::IScriptEntity> &scriptEntity)
-        {
-            return serialScriptPipLine->submitScript(scriptEntity);
-        }
+        bool submitScript(std::shared_ptr<script::IScriptEntity> scriptEntity, bool async);
 
-        void removeScript(std::shared_ptr<UUID> &uuid)
-        {
-            serialScriptPipLine->removeScript(uuid);
-        }
+        void removeScript(std::shared_ptr<UUID> &uuid, bool async);
 
-        std::shared_ptr<render::RenderManager> &getRenderManager()
-        {
-            return renderManager;
-        }
+        std::shared_ptr<render::RenderManager> &getRenderManager();
 
-        void callEvent(const std::shared_ptr<event::IEvent> &event)
-        {
-            eventBus->callEvent(event);
-        }
+        void callEvent(const std::shared_ptr<event::IEvent> &event);
 
-        void subscribe(const std::shared_ptr<event::IEventListener> &listener)
-        {
-            eventBus->subscribe(listener);
-            listenerList.push_back(listener);
-        }
+        void subscribe(const std::shared_ptr<event::IEventListener> &listener);
 
-        static double getDeltaTime()
-        {
-            return deltaTime;
-        }
+        static double getDeltaTime();
     };
 }
 

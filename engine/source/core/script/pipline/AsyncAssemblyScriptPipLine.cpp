@@ -3,28 +3,62 @@
 //
 
 #include "AsyncAssemblyScriptPipLine.hpp"
+#include "core/script/ScriptMethodType.hpp"
 
 bool script::AsyncAssemblyScriptPipLine::submitScript(std::shared_ptr<IScriptEntity> &scriptEntity)
 {
-    return false;
+    pendingAdditions.push_back(scriptEntity);
+    return true;
 }
 
 bool script::AsyncAssemblyScriptPipLine::removeScript(std::shared_ptr<base::UUID> &uuid)
 {
-    return false;
+    pendingRemovals.push_back(*uuid);
+    return true;
 }
 
 void script::AsyncAssemblyScriptPipLine::onUpdate()
 {
-
+    checkScript();
+    for (auto &[uuid, script]: scripts)
+    {
+        if (script->hasMethod(onUpdateMethodName))
+        {
+            script->runMethod(onUpdateMethodName);
+        }
+    }
 }
 
 void script::AsyncAssemblyScriptPipLine::onPhysics()
 {
-
+    checkScript();
+    for (auto &[uuid, script]: scripts)
+    {
+        if (script->hasMethod(onPhysicsMethodName))
+        {
+            script->runMethod(onPhysicsMethodName);
+        }
+    }
 }
 
 void script::AsyncAssemblyScriptPipLine::checkScript()
 {
+    for (const auto &uuid: pendingRemovals)
+    {
+        scripts.erase(uuid);
+    }
+    pendingRemovals.clear();
 
+    for (const auto &script: pendingAdditions)
+    {
+        scripts[*(script->getUUID())] = script;
+    }
+    pendingAdditions.clear();
+
+}
+
+script::AsyncAssemblyScriptPipLine::AsyncAssemblyScriptPipLine()
+{
+    thread = std::make_shared<MonoThread>("SerialScriptPipLineDomain");
+    thread->start();
 }

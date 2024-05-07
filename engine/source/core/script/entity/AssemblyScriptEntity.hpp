@@ -17,12 +17,13 @@ namespace script
         int priority = 1;
         MonoAssembly *scriptAssembly;
         MonoImage *scriptImage;
+        MonoObject *instance;
         std::unordered_map<std::string, MonoMethod *> methodCache;
+        std::string className;
     public:
         AssemblyScriptEntity(const std::shared_ptr<base::UUID> &existingUuid, const std::string &name,
                              MonoAssembly *script, MonoImage *scriptImage, int priority_ = 1);
 
-        //todo 为hasMethod和runMethod函数生成另一个版本
         bool hasMethod(std::string &methodName) override;
 
         bool runMethod(std::string &methodName) override;
@@ -36,6 +37,8 @@ namespace script
         bool operator>(const AssemblyScriptEntity &other) const;
 
         bool operator==(const AssemblyScriptEntity &other) const;
+    private:
+        std::string getFirstClassName(MonoImage *image);
     };
 }
 

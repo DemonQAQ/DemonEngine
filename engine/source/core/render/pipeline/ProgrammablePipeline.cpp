@@ -72,6 +72,9 @@ void ProgrammablePipeline::render()
 
 void render::ProgrammablePipeline::executeDrawCalls(const std::vector<std::shared_ptr<DrawCall>> &drawCallList)
 {
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onRender.pipeline.render.executeDrawCalls start"<< std::endl;
+
     int i = 0;
     for (const auto &drawCall: drawCallList)
     {
@@ -79,6 +82,11 @@ void render::ProgrammablePipeline::executeDrawCalls(const std::vector<std::share
         setupRenderState(drawCall);
         graphApi->executeDrawCall(drawCall);
     }
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onRender.pipeline.render.executeDrawCalls Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onRender.pipeline.render.executeDrawCalls end\n"<< std::endl;
 }
 
 void ProgrammablePipeline::setupRenderState(const std::shared_ptr<DrawCall> &drawCall)
@@ -92,6 +100,9 @@ void ProgrammablePipeline::setupRenderState(const std::shared_ptr<DrawCall> &dra
 
 void ProgrammablePipeline::prepare()
 {
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onRender.pipeline.render.prepare start"<< std::endl;
+
     auto shaderManager = assets::AssetsDataMainManager::getManagerAs<assets::ShaderManager>(assets::AssetType::SHADER);
     auto materialsManager = assets::AssetsDataMainManager::getManagerAs<assets::MaterialsManager>(
             assets::AssetType::MATERIALS);
@@ -126,6 +137,11 @@ void ProgrammablePipeline::prepare()
     }
 
     sortAndExecuteDrawCalls();
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onRender.pipeline.render.prepare Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onRender.pipeline.render.prepare end\n"<< std::endl;
 }
 
 void ProgrammablePipeline::sortAndExecuteDrawCalls()

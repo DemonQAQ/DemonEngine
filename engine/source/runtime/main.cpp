@@ -46,7 +46,7 @@ int main()
     scene->addChild(entity);
 
     runtimeApp.loadScene(scene);
-    //runtimeApp.submitScript(script);
+    runtimeApp.submitScript(std::dynamic_pointer_cast<script::IScriptEntity>(script), false);
     runtimeApp.start();
 
     return 0;

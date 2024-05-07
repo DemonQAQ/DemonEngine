@@ -67,7 +67,7 @@ assets::ScriptManager::ScriptManager()
 
 assets::ScriptManager::~ScriptManager()
 {
-
+    thread->stop();
 }
 
 std::optional<std::shared_ptr<script::IScriptEntity>>
