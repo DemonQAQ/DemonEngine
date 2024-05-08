@@ -31,6 +31,10 @@ namespace assets
         void updateData(const std::vector<std::any>& params) override;
 
         std::optional<std::shared_ptr<io::IFile>> getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr);
+
+        void onStart() override;
+
+        void onStop() override;
     };
 }
 

@@ -29,6 +29,21 @@ namespace base
             return {};
         }
 
+        template <typename T>
+        [[nodiscard]] T getValueOrDefault(const std::string &key, const T &defaultValue) const
+        {
+            auto it = data.find(key);
+            if (it != data.end())
+            {
+                try {
+                    return std::any_cast<T>(it->second);
+                } catch (const std::bad_any_cast &) {
+                    throw std::bad_cast();
+                }
+            }
+            return defaultValue;
+        }
+
         void setValue(const std::string &key, const std::any &value)
         {
             data[key] = value;

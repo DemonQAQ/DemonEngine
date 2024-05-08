@@ -45,7 +45,7 @@ namespace base
 
     class ModelBlockOperator : implements BlockOperator
     {
-        void writeToBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        void writeToBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
         {
             auto materialsMap = std::any_cast<std::map<std::shared_ptr<UUID>, std::shared_ptr<UUID>>>(metadata->getValue("materials"));
             std::map<std::string, std::string> materials;
@@ -55,7 +55,7 @@ namespace base
             yml->set("ModelBlockOperator.materials", materials);
         }
 
-        void readFromBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        void readFromBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
         {
             auto materialsNode = yml->getNode("ModelBlockOperator.materials");
             std::map<std::shared_ptr<UUID>, std::shared_ptr<UUID>> materialsUUIDMap;

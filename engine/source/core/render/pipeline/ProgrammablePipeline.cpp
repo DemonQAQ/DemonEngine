@@ -146,6 +146,9 @@ void ProgrammablePipeline::prepare()
 
 void ProgrammablePipeline::sortAndExecuteDrawCalls()
 {
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onRender.pipeline.render.prepare.sortAndExecuteDrawCalls start"<< std::endl;
+
     auto sortFunc = [](const std::shared_ptr<DrawCall> &a, const std::shared_ptr<DrawCall> &b) -> bool
     {
         return a->shader->getUUID() < b->shader->getUUID() ||
@@ -161,6 +164,11 @@ void ProgrammablePipeline::sortAndExecuteDrawCalls()
         drawCall->preExecute();
 
     graphApi->clear();
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onRender.pipeline.render.prepare.sortAndExecuteDrawCalls Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onRender.pipeline.render.prepare.sortAndExecuteDrawCalls end\n"<< std::endl;
 }
 
 std::vector<std::shared_ptr<DrawCall>>
@@ -168,6 +176,9 @@ ProgrammablePipeline::createAndSubmitDrawCalls(const std::shared_ptr<base::IRend
                                                std::shared_ptr<assets::ShaderManager> &shaderManager,
                                                std::shared_ptr<assets::MaterialsManager> &materialsManager)
 {
+    auto start_time = std::chrono::steady_clock::now();
+    std::cerr << "onRender.pipeline.render.prepare.createAndSubmitDrawCalls start"<< std::endl;
+
     std::vector<base::RenderData> renderDataList;
     renderable->getRenderData(renderDataList);
     std::vector<std::shared_ptr<DrawCall>> drawCalls;
@@ -213,6 +224,11 @@ ProgrammablePipeline::createAndSubmitDrawCalls(const std::shared_ptr<base::IRend
     {
         drawCalls.push_back(entry.second);
     }
+
+    auto end_time = std::chrono::steady_clock::now();
+    std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
+    std::cerr << "onRender.pipeline.render.prepare.createAndSubmitDrawCalls Duration = " << frame_duration.count() << " ms" << std::endl;
+    std::cerr << "onRender.pipeline.render.prepare.createAndSubmitDrawCalls end\n"<< std::endl;
 
     return drawCalls;
 }

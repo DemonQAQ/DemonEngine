@@ -51,6 +51,10 @@ namespace assets
 
         void updateModelRelation(const std::shared_ptr<base::UUID> &uuid_ptr);
 
+        void onStart() override;
+
+        void onStop() override;
+
     private:
         static base::Transform convertAiMatrixToTransform(const aiMatrix4x4 &aiMatrix);
     };

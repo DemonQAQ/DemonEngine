@@ -5,6 +5,7 @@
 #include <mono/metadata/appdomain.h>
 #include <core/base/lib/BoolDefine.hpp>
 #include <mono/metadata/threads.h>
+#include <mono/jit/jit.h>
 #include "MonoThread.hpp"
 
 using namespace script;
@@ -24,6 +25,7 @@ script::MonoThread::~MonoThread()
     if (domain)
     {
         mono_domain_unload(domain);
+        mono_jit_cleanup(domain);
         domain = nullptr;
     }
 }
@@ -50,27 +52,35 @@ bool script::MonoThread::isRunning() const
     return thread && thread->joinable();
 }
 
+
 void script::MonoThread::threadFunction()
 {
     mono_thread_attach(domain);
-    while (isRunning())
+    try
     {
-        std::function < void() > task;
+        while (isRunning())
         {
-            std::cout << "start exe" << std::endl;
-            std::unique_lock<std::mutex> lock(queueMutex);
-            std::cout << "try to get lock" << std::endl;
-            cv.wait(lock, [&]
-            { return !tasks.empty(); });
-            std::cout << "try to get task" << std::endl;
-            task = tasks.front();
-            tasks.pop();
-            std::cout << "end exe" << std::endl;
+            std::function < void() > task;
+            {
+                std::unique_lock<std::mutex> lock(queueMutex);
+                cv.wait(lock, [this]
+                {
+                    return !tasks.empty() || !isRunning();
+                });
+                if (!isRunning() && tasks.empty())break;
+                task = tasks.front();
+                tasks.pop();
+            }
+            if (task)task();
         }
-        task();
+    } catch (const boost::thread_interrupted &)
+    {
+        std::cout << "Thread was interrupted" << std::endl;
     }
+
     mono_thread_detach(mono_thread_current());
 }
+
 
 void script::MonoThread::initializeDomain(const std::vector<std::any> &params)
 {

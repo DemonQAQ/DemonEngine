@@ -56,6 +56,10 @@ namespace assets
         void updateMaterialRelation(const std::shared_ptr<base::UUID> &uuid_ptr);
 
         static std::string generateUniqueMaterialName(const aiMaterial *aiMat);
+
+        void onStart() override;
+
+        void onStop() override;
     };
 }
 

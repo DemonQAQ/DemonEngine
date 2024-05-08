@@ -88,3 +88,15 @@ std::optional<std::shared_ptr<base::RenderableObject>> RenderableObjectManager::
     if (it != loadedRenderableObjects.end())return it->second;
     else return std::nullopt;
 }
+
+void RenderableObjectManager::onStart()
+{
+
+}
+
+void RenderableObjectManager::onStop()
+{
+    std::cerr << "RenderableObjectManager onStop start" << std::endl;
+    std::cerr << "RenderableObjectManager onStop end" << std::endl;
+
+}

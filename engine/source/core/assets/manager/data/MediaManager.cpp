@@ -24,3 +24,15 @@ void MediaManager::updateData(const std::vector<std::any> &params)
 {
 
 }
+
+void MediaManager::onStart()
+{
+
+}
+
+void MediaManager::onStop()
+{
+    std::cerr << "MediaManager onStop start" << std::endl;
+    std::cerr << "MediaManager onStop end" << std::endl;
+
+}

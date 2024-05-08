@@ -18,34 +18,167 @@ namespace base
 {
     class MaterialBlockOperator : implements BlockOperator
     {
-        void writeToBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        void writeToBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
         {
-            auto materialsUUID = std::any_cast<std::vector<std::shared_ptr<UUID>>>(metadata->getValue("textures"));
-            std::vector<std::string> materials;
-            materials.reserve(materialsUUID.size());
-            yml->set("MaterialBlockOperator.textures", materials);
+            try
+            {
+                auto materialsUUID = std::any_cast<std::vector<std::shared_ptr<UUID>>>(metadata->getValue("textures"));
+                std::vector<std::string> materials;
+                for (const auto &uuid: materialsUUID)
+                {
+                    materials.push_back(uuid->toString());
+                }
+                yml->set("MaterialBlockOperator.textures", materials);
+            } catch (const std::bad_any_cast &)
+            {
+                yml->set("MaterialBlockOperator.textures", std::vector<std::string>{});
+            }
+
+            auto getVec3 = [&](const std::string &key, const glm::vec3 &defaultValue) -> glm::vec3
+            {
+                try
+                {
+                    return std::any_cast<glm::vec3>(metadata->getValue(key));
+                } catch (const std::bad_any_cast &)
+                {
+                    return defaultValue;
+                }
+            };
+
+            glm::vec3 diffuse = getVec3("diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+            glm::vec3 specular = getVec3("specular", glm::vec3(1.0f, 1.0f, 1.0f));
+            glm::vec3 ambient = getVec3("ambient", glm::vec3(1.0f, 1.0f, 1.0f));
+            glm::vec3 emissive = getVec3("emissive", glm::vec3(1.0f, 1.0f, 1.0f));
+
+            yml->set("MaterialBlockOperator.diffuse.x", diffuse.x);
+            yml->set("MaterialBlockOperator.diffuse.y", diffuse.y);
+            yml->set("MaterialBlockOperator.diffuse.z", diffuse.z);
+            yml->set("MaterialBlockOperator.specular.x", specular.x);
+            yml->set("MaterialBlockOperator.specular.y", specular.y);
+            yml->set("MaterialBlockOperator.specular.z", specular.z);
+            yml->set("MaterialBlockOperator.ambient.x", ambient.x);
+            yml->set("MaterialBlockOperator.ambient.y", ambient.y);
+            yml->set("MaterialBlockOperator.ambient.z", ambient.z);
+            yml->set("MaterialBlockOperator.emissive.x", emissive.x);
+            yml->set("MaterialBlockOperator.emissive.y", emissive.y);
+            yml->set("MaterialBlockOperator.emissive.z", emissive.z);
+
+            auto getFloat = [&](const std::string &key, float defaultValue) -> float
+            {
+                try
+                {
+                    return std::any_cast<float>(metadata->getValue(key));
+                } catch (const std::bad_any_cast &)
+                {
+                    return defaultValue;
+                }
+            };
+
+            yml->set("MaterialBlockOperator.shininess", getFloat("shininess", 0.5f));
+            yml->set("MaterialBlockOperator.opacity", getFloat("opacity", 1.0f));
+            yml->set("MaterialBlockOperator.roughness", getFloat("roughness", 0.5f));
+            yml->set("MaterialBlockOperator.metallic", getFloat("metallic", 0.5f));
+            yml->set("MaterialBlockOperator.reflectivity", getFloat("reflectivity", 0.5f));
         }
 
-        void readFromBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        void readFromBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
         {
             auto materialsVec = yml->getStringList("MaterialBlockOperator.textures");
             std::vector<std::shared_ptr<UUID>> materialsUUID;
             materialsUUID.reserve(materialsVec.size());
-            for (const auto &material: materialsVec) materialsUUID.push_back(UUIDManager::getUUID(material));
+            for (const auto &materialStr: materialsVec)
+            {
+                materialsUUID.push_back(UUIDManager::getUUID(materialStr));
+            }
             metadata->setValue("textures", materialsUUID);
+
+            glm::vec3 defaultColor(0.0f, 0.0f, 0.0f);
+            float defaultFloat = 0.0f;
+
+            glm::vec3 diffuse(
+                    yml->getFloat("MaterialBlockOperator.diffuse.x", defaultColor.x),
+                    yml->getFloat("MaterialBlockOperator.diffuse.y", defaultColor.y),
+                    yml->getFloat("MaterialBlockOperator.diffuse.z", defaultColor.z)
+            );
+            glm::vec3 specular(
+                    yml->getFloat("MaterialBlockOperator.specular.x", defaultColor.x),
+                    yml->getFloat("MaterialBlockOperator.specular.y", defaultColor.y),
+                    yml->getFloat("MaterialBlockOperator.specular.z", defaultColor.z)
+            );
+            glm::vec3 ambient(
+                    yml->getFloat("MaterialBlockOperator.ambient.x", defaultColor.x),
+                    yml->getFloat("MaterialBlockOperator.ambient.y", defaultColor.y),
+                    yml->getFloat("MaterialBlockOperator.ambient.z", defaultColor.z)
+            );
+            glm::vec3 emissive(
+                    yml->getFloat("MaterialBlockOperator.emissive.x", defaultColor.x),
+                    yml->getFloat("MaterialBlockOperator.emissive.y", defaultColor.y),
+                    yml->getFloat("MaterialBlockOperator.emissive.z", defaultColor.z)
+            );
+
+            metadata->setValue("diffuse", diffuse);
+            metadata->setValue("specular", specular);
+            metadata->setValue("ambient", ambient);
+            metadata->setValue("emissive", emissive);
+
+            metadata->setValue("shininess", yml->getFloat("MaterialBlockOperator.shininess", defaultFloat));
+            metadata->setValue("opacity", yml->getFloat("MaterialBlockOperator.opacity", 1.0f));
+            metadata->setValue("roughness", yml->getFloat("MaterialBlockOperator.roughness", defaultFloat));
+            metadata->setValue("metallic", yml->getFloat("MaterialBlockOperator.metallic", defaultFloat));
+            metadata->setValue("reflectivity", yml->getFloat("MaterialBlockOperator.reflectivity", defaultFloat));
         }
 
         void initBlock(std::shared_ptr<Metadata> &metadata, const std::vector<std::any> &params)
         {
-            if (!params.empty() && params[0].type() == typeid(std::vector<std::string>))
+            glm::vec3 defaultColor(0.5f, 0.5f, 0.5f);
+            float defaultFloat = 0.5f;
+            std::vector<std::string> defaultTextures;
+
+            if (params.size() > 0 && params[0].type() == typeid(std::vector<std::string>))
             {
                 std::vector<std::string> materials = std::any_cast<std::vector<std::string>>(params[0]);
-                std::vector<std::shared_ptr<UUID>> materialsUUID = {};
+                std::vector<std::shared_ptr<UUID>> materialsUUID;
                 materialsUUID.reserve(materials.size());
-                for (const auto &material: materials)materialsUUID.push_back(UUIDManager::getUUID(material));
+                for (const auto &material: materials)
+                {
+                    materialsUUID.push_back(UUIDManager::getUUID(material));
+                }
                 metadata->setValue("textures", materialsUUID);
             }
-            else metadata->setValue("textures", std::vector<std::string>{});
+            else metadata->setValue("textures", defaultTextures);
+
+            // Check and set vec3 properties
+            glm::vec3 diffuse = params.size() > 1 && params[1].type() == typeid(glm::vec3) ? std::any_cast<glm::vec3>(params[1])
+                                                                                           : defaultColor;
+            glm::vec3 specular = params.size() > 2 && params[2].type() == typeid(glm::vec3) ? std::any_cast<glm::vec3>(params[2])
+                                                                                            : defaultColor;
+            glm::vec3 ambient = params.size() > 3 && params[3].type() == typeid(glm::vec3) ? std::any_cast<glm::vec3>(params[3])
+                                                                                           : defaultColor;
+            glm::vec3 emissive = params.size() > 4 && params[4].type() == typeid(glm::vec3) ? std::any_cast<glm::vec3>(params[4])
+                                                                                            : defaultColor;
+
+            metadata->setValue("diffuse", diffuse);
+            metadata->setValue("specular", specular);
+            metadata->setValue("ambient", ambient);
+            metadata->setValue("emissive", emissive);
+
+            float shininess = params.size() > 5 && params[5].type() == typeid(float) ? std::any_cast<float>(params[5])
+                                                                                     : defaultFloat;
+            float opacity = params.size() > 6 && params[6].type() == typeid(float) ? std::any_cast<float>(params[6])
+                                                                                   : 1.0f;
+            float roughness = params.size() > 7 && params[7].type() == typeid(float) ? std::any_cast<float>(params[7])
+                                                                                     : defaultFloat;
+            float metallic = params.size() > 8 && params[8].type() == typeid(float) ? std::any_cast<float>(params[8])
+                                                                                    : defaultFloat;
+            float reflectivity =
+                    params.size() > 9 && params[9].type() == typeid(float) ? std::any_cast<float>(params[9])
+                                                                           : defaultFloat;
+
+            metadata->setValue("shininess", shininess);
+            metadata->setValue("opacity", opacity);
+            metadata->setValue("roughness", roughness);
+            metadata->setValue("metallic", metallic);
+            metadata->setValue("reflectivity", reflectivity);
         }
     };
 

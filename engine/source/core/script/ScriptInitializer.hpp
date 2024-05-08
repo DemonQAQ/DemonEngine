@@ -13,8 +13,8 @@
 #include "mono/jit/jit.h"
 #include "mono/metadata/mono-config.h"
 
-static char const * monoLibraryPath = MONO_LIBRARY_PATH;
-static char const * monoEtcPath = MONO_ETC_PATH;
+static char const *monoLibraryPath = MONO_LIBRARY_PATH;
+static char const *monoEtcPath = MONO_ETC_PATH;
 
 namespace script
 {
@@ -30,6 +30,16 @@ namespace script
             setInit(true);
             return true;
         }
+
+        void finalize() override
+        {
+            if (isInit())
+            {
+                std::cout << "Finalizing Mono..." << std::endl;
+                setInit(false);
+            }
+        }
+
     private:
         static void initMono()
         {

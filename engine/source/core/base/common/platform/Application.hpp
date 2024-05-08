@@ -19,9 +19,9 @@ namespace base
     protected:
         std::shared_ptr<render::RenderManager> renderManager;
         std::shared_ptr<assets::scene::Scene> mainScene;
-        std::shared_ptr<event::base::EventBus> eventBus;
-        std::shared_ptr<script::AsyncAssemblyScriptPipLine> asyncScriptPipLine;
-        std::shared_ptr<script::SerialAssemblyScriptPipLine> serialScriptPipLine;
+        std::unique_ptr<event::base::EventBus> eventBus;
+        std::unique_ptr<script::AsyncAssemblyScriptPipLine> asyncScriptPipLine;
+        std::unique_ptr<script::SerialAssemblyScriptPipLine> serialScriptPipLine;
         std::vector<std::shared_ptr<event::IEventListener>> listenerList;
         static double deltaTime;
     public:
@@ -29,7 +29,7 @@ namespace base
         {
             mainScene = nullptr;
             renderManager = std::make_shared<render::RenderManager>();
-            eventBus = std::make_shared<event::base::EventBus>();
+            eventBus = std::make_unique<event::base::EventBus>();
             asyncScriptPipLine = nullptr;
             serialScriptPipLine = nullptr;
         }

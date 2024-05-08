@@ -79,19 +79,27 @@ namespace base
 
     class TextureBlockOperator : implements BlockOperator
     {
-        void writeToBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        void writeToBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
         {
-
+            yml->set("TextureBlockOperator.textureType", metadata->getValue("textureType"));
         }
 
-        void readFromBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        void readFromBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
         {
-
+            metadata->setValue("textureType", yml->getString("TextureBlockOperator.textureType"));
         }
 
         void initBlock(std::shared_ptr<Metadata> &metadata, const std::vector<std::any> &params)
         {
-
+            if (!params.empty() && params[0].type() == typeid(TextureType))
+            {
+                auto textureType_ = std::any_cast<TextureType>(params[0]);
+                metadata->setValue("textureType", toString(textureType_));
+            }
+            else
+            {
+                metadata->setValue("textureType", toString(TextureType::DIFFUSE));
+            }
         }
     };
 

@@ -201,3 +201,16 @@ void MaterialsManager::updateMaterialRelation(const std::shared_ptr<base::UUID> 
     }
 }
 
+void MaterialsManager::onStart()
+{
+
+}
+
+void MaterialsManager::onStop()
+{
+    std::cerr << "MaterialsManager onStop start" << std::endl;
+    for (const auto& material: loadedMaterial)material.second->saveMetadata();
+    std::cerr << "MaterialsManager onStop end" << std::endl;
+
+}
+

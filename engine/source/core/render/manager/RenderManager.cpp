@@ -154,6 +154,11 @@ namespace render
         graphApi->setViewport(x, y, width, height);
     }
 
+    void RenderManager::finalize()
+    {
+
+    }
+
     template<DerivedFromBase T>
     std::shared_ptr<T> RenderManager::getGraphApiAs() const
     {

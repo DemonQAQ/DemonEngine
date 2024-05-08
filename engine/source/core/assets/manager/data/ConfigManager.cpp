@@ -102,3 +102,15 @@ std::optional<std::shared_ptr<io::IFile>> ConfigManager::getResourceByUuid(const
     if (it != loadedConfig.end()) return {it->second};
     else return {};
 }
+
+void ConfigManager::onStart()
+{
+
+}
+
+void ConfigManager::onStop()
+{
+    std::cerr << "ConfigManager onStop start" << std::endl;
+    for (const auto& file: loadedConfig)file.second->save();
+    std::cerr << "ConfigManager onStop end" << std::endl;
+}

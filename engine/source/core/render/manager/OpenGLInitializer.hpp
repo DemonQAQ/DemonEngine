@@ -36,6 +36,11 @@ namespace render
             return result;
         }
 
+        void finalize() override
+        {
+
+        }
+
     private:
         static bool initializeOpenGL(GLFWwindow *window)
         {

@@ -16,13 +16,14 @@ namespace base
     class NormalBlockOperators : implements BlockOperator
     {
     public:
-        void writeToBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml) override
+        void
+        writeToBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml) override
         {
             yml->set("uuid", metadata->getValue("uuid"));
         }
 
         void
-        readFromBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml) override
+        readFromBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml) override
         {
             metadata->setValue("uuid", yml->getString("uuid"));
         }
@@ -53,9 +54,17 @@ namespace base
     protected:
         static NormalBlockOperators normalBlockOperators;
         std::vector<std::shared_ptr<BlockOperator>> operators = {};
+        std::shared_ptr<io::YamlConfiguration> yml;
     public:
+        void saveMetadata()
+        {
+            normalBlockOperators.writeToBlock(metadata, yml);
+            for (auto operatorEntity: operators)operatorEntity->writeToBlock(metadata, yml);
+            yml->save();
+        }
+
         IMetaAccessor(std::shared_ptr<io::YamlConfiguration> &yml, bool needInit,
-                      const std::shared_ptr<base::UUID> &uuid = nullptr)
+                      const std::shared_ptr<base::UUID> &uuid = nullptr) : yml(yml)
         {
             metadata = std::make_shared<Metadata>();
             init();
@@ -76,7 +85,8 @@ namespace base
             }
         }
 
-        void init(){}
+        void init()
+        {}
 
         bool addOperator(const std::shared_ptr<BlockOperator> &newOperator)
         {

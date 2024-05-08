@@ -133,4 +133,17 @@ ShaderManager::getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr)
     else return std::nullopt;
 }
 
+void ShaderManager::onStart()
+{
+
+}
+
+void ShaderManager::onStop()
+{
+    std::cerr << "ShaderManager onStop start" << std::endl;
+    for (const auto& shader: loadedShaders)shader.second->saveMetadata();
+    std::cerr << "ShaderManager onStop end" << std::endl;
+
+}
+
 

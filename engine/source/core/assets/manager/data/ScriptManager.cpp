@@ -61,7 +61,7 @@ void assets::ScriptManager::updateData(const std::vector<std::any> &params)
 
 assets::ScriptManager::ScriptManager()
 {
-    thread = std::make_shared<script::MonoAssemblyCompileThread>("MonoAssemblyCompileThread");
+    thread = std::make_unique<script::MonoAssemblyCompileThread>("MonoAssemblyCompileThread");
     thread->start();
 }
 
@@ -76,4 +76,17 @@ assets::ScriptManager::getResourceByUuid(const std::shared_ptr<base::UUID> &uuid
     auto it = loadScripts.find(uuid_ptr);
     if (it != loadScripts.end())return it->second;
     else return std::nullopt;
+}
+
+void assets::ScriptManager::onStart()
+{
+
+}
+
+void assets::ScriptManager::onStop()
+{
+    std::cerr << "ScriptManager onStop start" << std::endl;
+    thread->stop();
+    thread = nullptr;
+    std::cerr << "ScriptManager onStop end" << std::endl;
 }

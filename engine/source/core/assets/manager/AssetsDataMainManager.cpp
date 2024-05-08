@@ -30,7 +30,7 @@ namespace assets
 
     void AssetsDataMainManager::finalizeManager()
     {
-
+        for (auto manager: MANAGERS)manager.second->onStop();
     }
 
     std::string AssetsDataMainManager::getManagerClassName(AssetType assetType)

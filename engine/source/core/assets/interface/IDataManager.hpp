@@ -19,13 +19,20 @@ namespace assets
     public:
         virtual ~IDataManager() = default;
 
-        virtual bool loadData(const std::vector<std::any>& params) = 0;
-        virtual void unloadData(const std::vector<std::any>& params) = 0;
-        [[nodiscard]] virtual bool isDataLoaded(const std::vector<std::any>& params) const = 0;
-        virtual void updateData(const std::vector<std::any>& params) = 0;
+        virtual bool loadData(const std::vector<std::any> &params) = 0;
+
+        virtual void unloadData(const std::vector<std::any> &params) = 0;
+
+        [[nodiscard]] virtual bool isDataLoaded(const std::vector<std::any> &params) const = 0;
+
+        virtual void updateData(const std::vector<std::any> &params) = 0;
+
+        virtual void onStart() = 0;
+
+        virtual void onStop() = 0;
 
     protected:
-        static std::vector<char> loadFile(const std::string& path)
+        static std::vector<char> loadFile(const std::string &path)
         {
             std::ifstream file(path, std::ios::binary | std::ios::ate);
             if (!file)
@@ -47,7 +54,7 @@ namespace assets
             return buffer;
         }
 
-        static void saveFile(const std::string& path, const std::vector<char>& data)
+        static void saveFile(const std::string &path, const std::vector<char> &data)
         {
             std::ofstream file(path, std::ios::binary);
             if (!file)

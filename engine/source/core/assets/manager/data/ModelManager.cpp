@@ -150,3 +150,16 @@ void ModelManager::updateModelRelation(const std::shared_ptr<base::UUID> &uuid_p
     };
     updateMeshMaterial(model.value()->getRootNode());
 }
+
+void ModelManager::onStart()
+{
+
+}
+
+void ModelManager::onStop()
+{
+    std::cerr << "ModelManager onStop start" << std::endl;
+    for (const auto& model: loadedModels)model.second->saveMetadata();
+    std::cerr << "ModelManager onStop end" << std::endl;
+
+}

@@ -17,7 +17,7 @@ namespace assets
     class ScriptManager : implements IDataManager
     {
     private:
-        std::shared_ptr<script::MonoAssemblyCompileThread> thread;
+        std::unique_ptr<script::MonoAssemblyCompileThread> thread;
         static std::unordered_map<std::shared_ptr<base::UUID>,std::shared_ptr<script::IScriptEntity>> loadScripts;
     public:
         ScriptManager();
@@ -36,6 +36,10 @@ namespace assets
         void updateData(const std::vector<std::any> &params) override;
 
         std::optional<std::shared_ptr<script::IScriptEntity>> getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr);
+
+        void onStart() override;
+
+        void onStop() override;
     };
 }
 

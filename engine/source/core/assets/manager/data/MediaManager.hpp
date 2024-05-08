@@ -20,6 +20,10 @@ namespace assets
         [[nodiscard]] bool isDataLoaded(const std::vector<std::any>& params) const override;
 
         void updateData(const std::vector<std::any>& params) override;
+
+        void onStart() override;
+
+        void onStop() override;
     };
 }
 

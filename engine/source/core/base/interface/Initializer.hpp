@@ -21,6 +21,8 @@ namespace base
 
         virtual bool init(const std::vector<std::any> &params) = 0;
 
+        virtual void finalize() = 0;
+
         [[nodiscard]] bool isInit() const
         {
             return inited;

@@ -46,6 +46,9 @@ namespace assets
 
         void updateData(const std::vector<std::any>& params) override;
 
+        void onStart() override;
+
+        void onStop() override;
     private:
         static unsigned int loadTextureFromFile(const char *filePath);
     };

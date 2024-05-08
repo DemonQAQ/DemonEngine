@@ -170,3 +170,16 @@ unsigned int TextureManager::loadTextureFromFile(const char *filePath)
     stbi_image_free(data);
     return textureID;
 }
+
+void TextureManager::onStart()
+{
+
+}
+
+void TextureManager::onStop()
+{
+    std::cerr << "TextureManager onStop start" << std::endl;
+    for (const auto& texture: loadedTextures)texture.second->saveMetadata();
+    std::cerr << "TextureManager onStop end" << std::endl;
+
+}

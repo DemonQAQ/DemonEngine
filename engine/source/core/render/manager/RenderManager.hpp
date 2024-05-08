@@ -42,6 +42,8 @@ namespace render
 
         bool init(const std::vector<std::any> &params) override;
 
+        void finalize() override;
+
         [[nodiscard]] RenderApiType getCurrentRenderApiType() const;
 
         [[nodiscard]] std::string getGraphApiClassName() const;

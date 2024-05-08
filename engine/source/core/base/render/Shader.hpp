@@ -20,44 +20,74 @@ namespace base
 {
     class ShaderBlockOperator : implements BlockOperator
     {
-        void writeToBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        void writeToBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml) override
         {
-            auto vertexPath = std::any_cast<std::string>(metadata->getValue("vertexPath"));
-            auto fragmentPath = std::any_cast<std::string>(metadata->getValue("fragmentPath"));
+            try
+            {
+                auto vertexPath = std::any_cast<std::string>(metadata->getValueOrDefault("vertexPath", std::string("none")));
+                auto fragmentPath = std::any_cast<std::string>(metadata->getValueOrDefault("fragmentPath", std::string("none")));
+                auto name = std::any_cast<std::string>(metadata->getValueOrDefault("name", std::string("normal shader")));
 
-            yml->set("ShaderBlockOperator.vertexPath", vertexPath);
-            yml->set("ShaderBlockOperator.fragmentPath", fragmentPath);
+                yml->set("ShaderBlockOperator.vertexPath", vertexPath);
+                yml->set("ShaderBlockOperator.fragmentPath", fragmentPath);
+                yml->set("ShaderBlockOperator.name", name);
+            } catch (const std::bad_any_cast &)
+            {
+                // Handle or log error
+            }
         }
 
-        void readFromBlock(std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml)
+        void readFromBlock(const std::shared_ptr<Metadata> &metadata, std::shared_ptr<io::YamlConfiguration> &yml) override
         {
-            auto vertexPath = yml->getString("ShaderBlockOperator.vertexPath");
+            const std::string defaultVertexPath = "none";
+            const std::string defaultFragmentPath = "none";
+            const std::string defaultName = "normal shader";
+
+            std::string vertexPath = yml->getString("ShaderBlockOperator.vertexPath");
+            if (vertexPath.empty())
+            {
+                vertexPath = defaultVertexPath;
+            }
+
+            std::string fragmentPath = yml->getString("ShaderBlockOperator.fragmentPath");
+            if (fragmentPath.empty())
+            {
+                fragmentPath = defaultFragmentPath;
+            }
+
+            std::string name = yml->getString("ShaderBlockOperator.name");
+            if (name.empty())
+            {
+                name = defaultName;
+            }
+
             metadata->setValue("vertexPath", vertexPath);
-
-            auto fragmentPath = yml->getString("ShaderBlockOperator.fragmentPath");
-            metadata->setValue("vertexPath", fragmentPath);
+            metadata->setValue("fragmentPath", fragmentPath);
+            metadata->setValue("name", name);
         }
 
-        void initBlock(std::shared_ptr<Metadata> &metadata, const std::vector<std::any> &params)
+        void initBlock(std::shared_ptr<Metadata> &metadata, const std::vector<std::any> &params) override
         {
-            if (!params.empty() && params[0].type() == typeid(std::string))
+            if (params.size() > 0 && params[0].type() == typeid(std::string))
             {
                 auto vertexPath = std::any_cast<std::string>(params[0]);
                 metadata->setValue("vertexPath", vertexPath);
             }
-            else
+            else metadata->setValue("vertexPath", "none");
+
+            if (params.size() > 1 && params[1].type() == typeid(std::string))
             {
-                metadata->setValue("vertexPath", "");
+                auto fragmentPath = std::any_cast<std::string>(params[1]);
+                metadata->setValue("fragmentPath", fragmentPath);
             }
-            if (!params.empty() && params.size() >= 2 && params[0].type() == typeid(std::string))
+            else metadata->setValue("fragmentPath", "none");
+
+            if (params.size() > 2 && params[2].type() == typeid(std::string))
             {
-                auto vertexPath = std::any_cast<std::string>(params[0]);
-                metadata->setValue("fragmentPath", vertexPath);
+                auto name = std::any_cast<std::string>(params[2]);
+                metadata->setValue("name", name);
             }
-            else
-            {
-                metadata->setValue("fragmentPath", "");
-            }
+            else metadata->setValue("name", "normal shader");
         }
     };
 
