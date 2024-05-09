@@ -21,6 +21,8 @@ namespace script
     public:
         AsyncAssemblyScriptPipLine();
 
+        ~AsyncAssemblyScriptPipLine();
+
         bool submitScript(std::shared_ptr<IScriptEntity> &scriptEntity) override;
 
         bool removeScript(std::shared_ptr<base::UUID> &uuid) override;

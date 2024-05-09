@@ -34,6 +34,8 @@ namespace script
 
         virtual void init() = 0;
 
+        virtual void cleanupResources() = 0;
+
         [[nodiscard]] int getPriority() const
         {
             return priority;

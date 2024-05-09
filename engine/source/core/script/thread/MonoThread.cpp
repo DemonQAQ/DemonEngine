@@ -10,18 +10,21 @@
 
 using namespace script;
 
-script::MonoThread::MonoThread(const std::string &domainName_, const std::shared_ptr<io::XmlConfiguration> &config_)
-        : domainName(domainName_), config(config_)
+script::MonoThread::MonoThread(const std::string &domainName_, const std::string &threadName,
+                               const std::shared_ptr<io::XmlConfiguration> &config_)
+        : domainName(domainName_), config(config_), name(threadName)
 {
     initializeDomain({});
 }
 
 script::MonoThread::~MonoThread()
 {
+    threadRunning = false;
     if (thread && thread->joinable())
     {
         thread->join();
     }
+    if (thread)thread = nullptr;
     if (domain)
     {
         mono_domain_unload(domain);
@@ -32,24 +35,32 @@ script::MonoThread::~MonoThread()
 
 void script::MonoThread::start()
 {
+    std::cout << "MonoThread start" << threadRunning << std::endl;
     if (!thread || !thread->joinable())
     {
+        threadRunning = true;
         thread = std::make_unique<boost::thread>(&MonoThread::threadFunction, this);
     }
 }
 
 void script::MonoThread::stop()
 {
-    if (thread && thread->joinable())
+    if (threadRunning)
     {
-        thread->interrupt();
-        thread->join();
+        threadRunning = false;
+        cv.notify_all();
+        if (thread && thread->joinable())
+        {
+            thread->interrupt();
+            thread->join();
+        }
     }
+    std::cout << "threadRunning:" << threadRunning << std::endl;
 }
 
 bool script::MonoThread::isRunning() const
 {
-    return thread && thread->joinable();
+    return thread && thread->joinable() && threadRunning;
 }
 
 
@@ -60,18 +71,33 @@ void script::MonoThread::threadFunction()
     {
         while (isRunning())
         {
+            std::cout << name << " threadRunning:" << threadRunning << std::endl;
             std::function < void() > task;
             {
                 std::unique_lock<std::mutex> lock(queueMutex);
-                cv.wait(lock, [this]
+                if (!cv.wait_for(lock, std::chrono::seconds(1), [this]
+                { return !tasks.empty() || !isRunning(); }))
                 {
-                    return !tasks.empty() || !isRunning();
-                });
-                if (!isRunning() && tasks.empty())break;
-                task = tasks.front();
-                tasks.pop();
+                    std::cout << name << " Wait timeout or condition met." << std::endl;
+                }
+
+                if (!isRunning())
+                {
+                    std::cout << name << "Exiting loop as isRunning() returned false." << std::endl;
+                    break;
+                }
+
+                if (!tasks.empty())
+                {
+                    task = tasks.front();
+                    tasks.pop();
+                }
             }
-            if (task)task();
+            if (task)
+            {
+                std::cout << "Executing task." << std::endl;
+                task();
+            }
         }
     } catch (const boost::thread_interrupted &)
     {
@@ -111,4 +137,14 @@ void script::MonoThread::submitTask(std::function<void()> task)
         tasks.push(std::move(task));
     }
     cv.notify_one();
+}
+
+void script::MonoThread::setName(const std::string &name_)
+{
+    name = name_;
+}
+
+std::string script::MonoThread::getName() const
+{
+    return name;
 }

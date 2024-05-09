@@ -12,10 +12,11 @@
 #include <boost/thread.hpp>
 #include <core/io/config/XmlConfiguration.hpp>
 #include <queue>
+#include <core/base/interface/INameable.hpp>
 
 namespace script
 {
-    class MonoThread : implements IScriptRuntimeThread
+    class MonoThread : implements IScriptRuntimeThread ,implements base::INameable
     {
     private:
         std::shared_ptr<boost::thread> thread;
@@ -23,11 +24,14 @@ namespace script
         std::shared_ptr<io::XmlConfiguration> config;
         std::queue<std::function<void()>> tasks;
         std::mutex queueMutex;
+        std::mutex startStopMutex;
         std::condition_variable cv;
+        std::atomic<bool> threadRunning;
+        std::string name;
     protected:
         MonoDomain *domain = nullptr;
     public:
-        explicit MonoThread(const std::string &domainName_, const std::shared_ptr<io::XmlConfiguration> &config_ = nullptr);
+        explicit MonoThread(const std::string &domainName_, const std::string &threadName, const std::shared_ptr<io::XmlConfiguration> &config_ = nullptr);
 
         ~MonoThread() override;
 
@@ -44,6 +48,10 @@ namespace script
         void threadFunction();
 
         void submitTask(std::function<void()> task) override;
+
+        void setName(const std::string &name_) override;
+
+        [[nodiscard]] std::string getName() const override;
     };
 }
 

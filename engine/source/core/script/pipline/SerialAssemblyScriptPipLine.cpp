@@ -61,4 +61,10 @@ namespace script
         }
         pendingAdditions.clear();
     }
+
+    SerialAssemblyScriptPipLine::~SerialAssemblyScriptPipLine()
+    {
+        scripts.clear();
+        pendingAdditions.clear();
+    }
 }

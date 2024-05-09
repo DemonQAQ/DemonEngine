@@ -16,10 +16,9 @@ namespace script
     class MonoAssemblyCompileThread : implements MonoThread
     {
     public:
-        MonoAssemblyCompileThread(const std::string &domainName_,
-                                  const std::shared_ptr<io::XmlConfiguration> &config_ = nullptr) : MonoThread(
-                domainName_,
-                config_)
+        MonoAssemblyCompileThread(const std::string &domainName_, const std::string &threadName,
+                                  const std::shared_ptr<io::XmlConfiguration> &config_ = nullptr) :
+                MonoThread(domainName_, threadName, config_)
         {
 
         }

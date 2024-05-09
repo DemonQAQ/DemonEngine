@@ -7,6 +7,7 @@
 #include "core/script/ScriptMethodType.hpp"
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/object.h"
+#include "mono/metadata/mono-gc.h"
 
 script::AssemblyScriptEntity::AssemblyScriptEntity(const std::shared_ptr<base::UUID> &existingUuid,
                                                    const std::string &name,
@@ -138,4 +139,37 @@ bool script::AssemblyScriptEntity::operator>(const AssemblyScriptEntity &other) 
 bool script::AssemblyScriptEntity::operator==(const AssemblyScriptEntity &other) const
 {
     return priority == other.priority;
+}
+
+script::AssemblyScriptEntity::~AssemblyScriptEntity()
+{
+    cleanupResources();
+}
+
+void script::AssemblyScriptEntity::cleanupResources()
+{
+    if (instance)
+    {
+        auto handle = mono_gchandle_new(instance, false);
+        mono_gchandle_free(handle);
+        instance = nullptr;
+    }
+
+    for (auto &pair: methodCache)
+    {
+        pair.second = nullptr;
+    }
+    methodCache.clear();
+
+    if (scriptImage)
+    {
+        mono_image_close(scriptImage);
+        scriptImage = nullptr;
+    }
+
+    if (scriptAssembly)
+    {
+        scriptAssembly = nullptr;
+    }
+
 }

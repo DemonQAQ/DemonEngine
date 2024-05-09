@@ -24,6 +24,10 @@ namespace script
         AssemblyScriptEntity(const std::shared_ptr<base::UUID> &existingUuid, const std::string &name,
                              MonoAssembly *script, MonoImage *scriptImage, int priority_ = 1);
 
+        ~ AssemblyScriptEntity() override;
+
+        void cleanupResources() override;
+
         bool hasMethod(std::string &methodName) override;
 
         bool runMethod(std::string &methodName) override;

@@ -59,6 +59,13 @@ void script::AsyncAssemblyScriptPipLine::checkScript()
 
 script::AsyncAssemblyScriptPipLine::AsyncAssemblyScriptPipLine()
 {
-    thread = std::make_shared<MonoThread>("SerialScriptPipLineDomain");
+    thread = std::make_shared<MonoThread>("AsyncAssemblyScriptDomain", "AsyncAssemblyScriptThread");
     thread->start();
+}
+
+script::AsyncAssemblyScriptPipLine::~AsyncAssemblyScriptPipLine()
+{
+    scripts.clear();
+    pendingAdditions.clear();
+    thread->stop();
 }

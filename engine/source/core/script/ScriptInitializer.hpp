@@ -37,6 +37,11 @@ namespace script
             {
                 std::cout << "Finalizing Mono..." << std::endl;
                 setInit(false);
+                MonoDomain *domain = mono_domain_get();
+                if (domain != nullptr)
+                {
+                    mono_jit_cleanup(domain);
+                }
             }
         }
 

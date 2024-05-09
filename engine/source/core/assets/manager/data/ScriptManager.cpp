@@ -27,7 +27,7 @@ bool assets::ScriptManager::loadData(const std::vector<std::any> &params)
         if (isDataLoaded({existingUuid}))return true;
         std::string scriptPath = std::any_cast<std::string>(params[1]);
         std::string name = std::any_cast<std::string>(params[2]);
-        std::string fullScriptPath = FileSystem::combinePaths(SOURCE_ROOT_PATH,scriptPath);
+        std::string fullScriptPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, scriptPath);
         std::vector<char> scriptData = loadFile(fullScriptPath);
         if (scriptData.empty())
         {
@@ -61,13 +61,13 @@ void assets::ScriptManager::updateData(const std::vector<std::any> &params)
 
 assets::ScriptManager::ScriptManager()
 {
-    thread = std::make_unique<script::MonoAssemblyCompileThread>("MonoAssemblyCompileThread");
+    thread = std::make_unique<script::MonoAssemblyCompileThread>("MonoAssemblyCompileDomain", "MonoAssemblyCompileThread");
     thread->start();
 }
 
 assets::ScriptManager::~ScriptManager()
 {
-    thread->stop();
+
 }
 
 std::optional<std::shared_ptr<script::IScriptEntity>>
@@ -86,7 +86,8 @@ void assets::ScriptManager::onStart()
 void assets::ScriptManager::onStop()
 {
     std::cerr << "ScriptManager onStop start" << std::endl;
+    for (const auto& scriptEntity: loadScripts)scriptEntity.second->cleanupResources();
+    loadScripts.clear();
     thread->stop();
-    thread = nullptr;
     std::cerr << "ScriptManager onStop end" << std::endl;
 }
