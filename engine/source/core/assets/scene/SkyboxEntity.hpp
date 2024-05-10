@@ -2,8 +2,8 @@
 // Created by Demon on 2024/3/27.
 //
 
-#ifndef DEMONENGINE_SKYBOX_HPP
-#define DEMONENGINE_SKYBOX_HPP
+#ifndef DEMONENGINE_SKYBOXENTITY_HPP
+#define DEMONENGINE_SKYBOXENTITY_HPP
 
 #include <core/base/interface/IMetaAccessor.hpp>
 #include "core/base/interface/Interface.hpp"
@@ -15,14 +15,14 @@ using namespace base;
 
 namespace assets::scene
 {
-    class Skybox : implements Object, implements INameable, implements io::ISerializable, implements IMetaAccessor
+    class SkyboxEntity : implements Object, implements INameable, implements io::ISerializable, implements IMetaAccessor
     {
     private:
         std::string name;
     public:
-        explicit Skybox(const std::shared_ptr<base::UUID> &existingUuid,
+        explicit SkyboxEntity(const std::shared_ptr<base::UUID> &existingUuid,
                         bool init, std::shared_ptr<io::YamlConfiguration> &yml,
-                        std::string name = "Skybox");
+                        std::string name = "SkyboxEntity");
 
         void setName(const std::string &name_) override;
 
@@ -35,4 +35,4 @@ namespace assets::scene
 }
 
 
-#endif //DEMONENGINE_SKYBOX_HPP
+#endif //DEMONENGINE_SKYBOXENTITY_HPP

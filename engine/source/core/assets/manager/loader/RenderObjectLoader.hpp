@@ -16,14 +16,14 @@ namespace assets
     {
     public:
         static std::shared_ptr<base::RenderableObject>
-        loadObject(const std::shared_ptr<base::UUID> &existingUuid, bool init, const std::string& name,
-                         std::shared_ptr<io::YamlConfiguration> &yml,
-                         const std::vector<std::shared_ptr<base::Model>> &models = {},
-                         const base::Transform &initialTransform = base::Transform(),
-                         const std::shared_ptr<base::UUID> &shaderUUID = nullptr,
-                         const std::shared_ptr<base::UUID> &materialUUID = nullptr);
+        loadObject(const std::shared_ptr<base::UUID> &existingUuid, bool init, const std::string &name,
+                   std::shared_ptr<io::YamlConfiguration> &yml,
+                   const std::vector<std::shared_ptr<base::Model>> &models = {},
+                   const base::Transform &initialTransform = base::Transform(),
+                   const std::shared_ptr<base::UUID> &shaderUUID = nullptr,
+                   const std::shared_ptr<base::UUID> &materialUUID = nullptr, bool isAssets = false);
 
-        static std::shared_ptr<base::RenderableObject> loadObject(std::shared_ptr<io::YamlConfiguration> &yml);
+        static std::shared_ptr<base::RenderableObject> loadObject(std::shared_ptr<io::YamlConfiguration> &yml, bool isAssets = false);
     };
 }
 

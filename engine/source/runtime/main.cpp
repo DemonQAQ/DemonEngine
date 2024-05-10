@@ -28,7 +28,7 @@ int main()
 
     auto shader = assets::ShaderLoader::loadShader("testShader", "/package0/shader", "/package0/shader/vsh/Shader.vsh",
                                                    "/package0/shader/fsh/Shader.fsh");
-    auto script = assets::ScriptLoader::loadScript("/package0/script/test.cs");
+    //auto script = assets::ScriptLoader::loadScript("/package0/script/test.cs");
 
     model->bindShader(shader->getUUID());
     model->updateAllMeshShader();
@@ -46,7 +46,7 @@ int main()
     scene->addChild(entity);
 
     runtimeApp.loadScene(scene);
-    runtimeApp.submitScript(std::dynamic_pointer_cast<script::IScriptEntity>(script), false);
+    //runtimeApp.submitScript(std::dynamic_pointer_cast<script::IScriptEntity>(script), false);
     runtimeApp.start();
 
     return 0;

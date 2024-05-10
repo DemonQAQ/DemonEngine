@@ -21,7 +21,7 @@ namespace assets::scene
         mainCameraEntity = std::make_shared<CameraEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false),
                                                           false, yml, Camera(), "testCamera",
                                                           runtimeApp.getScreenWidth(), runtimeApp.getScreenHeight());
-        skybox = std::make_shared<Skybox>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
+        skybox = std::make_shared<SkyboxEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
 
         root->addChild(environmentLight);
         root->addChild(mainCameraEntity);

@@ -5,7 +5,7 @@
 #ifndef DEMONENGINE_SCENE_HPP
 #define DEMONENGINE_SCENE_HPP
 
-#include "Skybox.hpp"
+#include "SkyboxEntity.hpp"
 #include "core/base/interface/Interface.hpp"
 #include "core/base/common/Object.hpp"
 #include "core/base/interface/INameable.hpp"
@@ -31,7 +31,7 @@ namespace assets::scene
     {
     private:
         std::string name;
-        std::shared_ptr<Skybox> skybox;
+        std::shared_ptr<SkyboxEntity> skybox;
         std::shared_ptr<SceneGroup> root;
         std::shared_ptr<LightEntity> environmentLight;
         std::shared_ptr<CameraEntity> mainCameraEntity;

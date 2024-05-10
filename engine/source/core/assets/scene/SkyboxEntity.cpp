@@ -2,11 +2,11 @@
 // Created by Demon on 2024/3/27.
 //
 
-#include "Skybox.hpp"
+#include "SkyboxEntity.hpp"
 
 namespace assets::scene
 {
-    Skybox::Skybox(const std::shared_ptr<base::UUID> &existingUuid,
+    SkyboxEntity::SkyboxEntity(const std::shared_ptr<base::UUID> &existingUuid,
                    bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                    std::string name) :
             base::Object(existingUuid),
@@ -16,22 +16,22 @@ namespace assets::scene
 
     }
 
-    void Skybox::setName(const std::string &name_)
+    void SkyboxEntity::setName(const std::string &name_)
     {
         name = name_;
     }
 
-    std::string Skybox::getName() const
+    std::string SkyboxEntity::getName() const
     {
         return name;
     }
 
-    std::string Skybox::Serialize() const
+    std::string SkyboxEntity::Serialize() const
     {
         return std::string();
     }
 
-    void Skybox::Deserialize(const std::string &data)
+    void SkyboxEntity::Deserialize(const std::string &data)
     {
 
     }

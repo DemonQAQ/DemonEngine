@@ -10,7 +10,7 @@
 #include "ConfigLoader.hpp"
 
 std::shared_ptr<io::YamlConfiguration>
-assets::ConfigLoader::loadYml(const std::string &path, bool isYml, bool isFullPath)
+assets::ConfigLoader::loadYml(const std::string &path, bool isYml, bool isFullPath, bool isAssets)
 {
     io::FileType fileType;
     if (isYml) fileType = io::FileType::YAML;
@@ -29,7 +29,7 @@ assets::ConfigLoader::loadYml(const std::string &path, bool isYml, bool isFullPa
     auto configManager = std::dynamic_pointer_cast<ConfigManager>(configManagerOpt.value());
     if (!configManager) return nullptr;
 
-    std::string fullPath = isFullPath ? path : FileSystem::combinePaths(SOURCE_ROOT_PATH, path);
+    std::string fullPath = isFullPath ? path : FileSystem::combinePaths(isAssets ? ASSETS_ROOT_PATH : RESOURCE_PACK_ROOT_PATH, path);
 
     if (configManager->loadData({existingUuid, fullPath, fileType}))
     {
@@ -43,7 +43,7 @@ assets::ConfigLoader::loadYml(const std::string &path, bool isYml, bool isFullPa
 }
 
 std::shared_ptr<io::XmlConfiguration>
-assets::ConfigLoader::loadXml(const std::string &path, bool isXml, bool isFullPath)
+assets::ConfigLoader::loadXml(const std::string &path, bool isXml, bool isFullPath, bool isAssets)
 {
     io::FileType fileType;
     if (isXml) fileType = io::FileType::XML;
@@ -62,7 +62,7 @@ assets::ConfigLoader::loadXml(const std::string &path, bool isXml, bool isFullPa
     auto configManager = std::dynamic_pointer_cast<ConfigManager>(configManagerOpt.value());
     if (!configManager) return nullptr;
 
-    std::string fullPath = isFullPath ? path : FileSystem::combinePaths(SOURCE_ROOT_PATH, path);
+    std::string fullPath = isFullPath ? path : FileSystem::combinePaths(isAssets ? ASSETS_ROOT_PATH : RESOURCE_PACK_ROOT_PATH, path);
 
     if (configManager->loadData({existingUuid, fullPath, fileType}))
     {
@@ -76,7 +76,7 @@ assets::ConfigLoader::loadXml(const std::string &path, bool isXml, bool isFullPa
 }
 
 std::shared_ptr<io::JsonConfiguration>
-assets::ConfigLoader::loadJson(const std::string &path, bool isJson, bool isFullPath)
+assets::ConfigLoader::loadJson(const std::string &path, bool isJson, bool isFullPath, bool isAssets)
 {
     io::FileType fileType;
     if (isJson) fileType = io::FileType::JSON;
@@ -95,7 +95,7 @@ assets::ConfigLoader::loadJson(const std::string &path, bool isJson, bool isFull
     auto configManager = std::dynamic_pointer_cast<ConfigManager>(configManagerOpt.value());
     if (!configManager) return nullptr;
 
-    std::string fullPath = isFullPath ? path : FileSystem::combinePaths(SOURCE_ROOT_PATH, path);
+    std::string fullPath = isFullPath ? path : FileSystem::combinePaths(isAssets ? ASSETS_ROOT_PATH : RESOURCE_PACK_ROOT_PATH, path);
 
     if (configManager->loadData({existingUuid, fullPath, fileType}))
     {

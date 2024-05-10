@@ -19,9 +19,9 @@ namespace assets
     public:
         virtual ~IDataManager() = default;
 
-        virtual bool loadData(const std::vector<std::any> &params) = 0;
+        virtual bool loadData(const std::vector<std::any> &params, bool isAssets = false) = 0;
 
-        virtual void unloadData(const std::vector<std::any> &params) = 0;
+        virtual void unloadData(const std::vector<std::any> &params, bool isAssets = false) = 0;
 
         [[nodiscard]] virtual bool isDataLoaded(const std::vector<std::any> &params) const = 0;
 

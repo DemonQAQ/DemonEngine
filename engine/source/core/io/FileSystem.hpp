@@ -8,7 +8,8 @@
 #include <string>
 #include <cstdlib>
 static char const * logRoot = LOG_ROOT_PATH;
-static char const * sourceRootPath = SOURCE_ROOT_PATH;
+static char const * assetsRootPath = ASSETS_ROOT_PATH;
+static char const * resourcePackRootPath = RESOURCE_PACK_ROOT_PATH;
 
 class FileSystem
 {
@@ -27,9 +28,15 @@ public:
         return filePath.substr(0, filePath.find_last_of('/'));
     }
 
-    static std::string getFullPath(const std::string& path)
+    static std::string getAssetsFullPath(const std::string& path)
     {
-        std::string fullPath = std::string(sourceRootPath) + path;
+        std::string fullPath = std::string(assetsRootPath) + path;
+        return fullPath;
+    }
+
+    static std::string getResourcePackFullPath(const std::string& path)
+    {
+        std::string fullPath = std::string(resourcePackRootPath) + path;
         return fullPath;
     }
 

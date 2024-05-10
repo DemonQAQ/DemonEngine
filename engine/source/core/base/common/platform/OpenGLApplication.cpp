@@ -63,6 +63,7 @@ int base::OpenGLApplication::start()
 bool base::OpenGLApplication::stop()
 {
     onStop();
+    unloadAssets();
     finalize();
     return false;
 }
@@ -95,10 +96,6 @@ int base::OpenGLApplication::initialize()
 
 void base::OpenGLApplication::finalize()
 {
-    //todo 预先释放资源，所有mono关联资源释放后再析构
-    serialScriptPipLine = nullptr;
-    asyncScriptPipLine = nullptr;
-    unloadAssets();
     scriptInitializer.finalize();
     renderManager->finalize();
     if (mainWindow)
@@ -115,6 +112,8 @@ int base::OpenGLApplication::loadAssets()
 
 void base::OpenGLApplication::unloadAssets()
 {
+    serialScriptPipLine = nullptr;
+    asyncScriptPipLine = nullptr;
     assets::AssetsDataMainManager::finalize();
 }
 

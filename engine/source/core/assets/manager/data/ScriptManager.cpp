@@ -13,7 +13,7 @@ std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<script::IScriptE
  * @params[1] std::string path                                  脚本路径
  * @params[2] std::string name                                  脚本名称
  * */
-bool assets::ScriptManager::loadData(const std::vector<std::any> &params)
+bool assets::ScriptManager::loadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.size() != 3)
     {
@@ -27,7 +27,7 @@ bool assets::ScriptManager::loadData(const std::vector<std::any> &params)
         if (isDataLoaded({existingUuid}))return true;
         std::string scriptPath = std::any_cast<std::string>(params[1]);
         std::string name = std::any_cast<std::string>(params[2]);
-        std::string fullScriptPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, scriptPath);
+        std::string fullScriptPath = FileSystem::combinePaths(isAssets ? ASSETS_ROOT_PATH : RESOURCE_PACK_ROOT_PATH, scriptPath);
         std::vector<char> scriptData = loadFile(fullScriptPath);
         if (scriptData.empty())
         {
@@ -44,7 +44,7 @@ bool assets::ScriptManager::loadData(const std::vector<std::any> &params)
     return false;
 }
 
-void assets::ScriptManager::unloadData(const std::vector<std::any> &params)
+void assets::ScriptManager::unloadData(const std::vector<std::any> &params, bool isAssets)
 {
 
 }

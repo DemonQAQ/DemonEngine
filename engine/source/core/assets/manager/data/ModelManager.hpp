@@ -39,9 +39,9 @@ namespace assets
          * @params[6] const std::shared_ptr<base::UUID> &shaderUUID     使用的shader的uuid
          * @params[7] const std::shared_ptr<base::UUID> &materialUUID   使用的材质的uuid
          * */
-        bool loadData(const std::vector<std::any> &params) override;
+        bool loadData(const std::vector<std::any> &params, bool isAssets = false) override;
 
-        void unloadData(const std::vector<std::any> &params) override;
+        void unloadData(const std::vector<std::any> &params, bool isAssets = false) override;
 
         [[nodiscard]] bool isDataLoaded(const std::vector<std::any> &params) const override;
 

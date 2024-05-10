@@ -14,11 +14,11 @@
 
 using namespace base;
 
-std::shared_ptr<base::Model> assets::AssimpLoader::loadModel(const std::string &path)
+std::shared_ptr<base::Model> assets::AssimpLoader::loadModel(const std::string &path, bool isAssets)
 {
     std::string directory = path.substr(0, path.find_last_of('/'));
     std::string modelName = path.substr(path.find_last_of('/') + 1);
-    directory = FileSystem::combinePaths(SOURCE_ROOT_PATH, directory);
+    directory = FileSystem::combinePaths(isAssets ? ASSETS_ROOT_PATH : RESOURCE_PACK_ROOT_PATH, directory);
     std::string metaYmlPath = path + ".mat.meta";
 
     auto metaYml = ConfigLoader::loadYml(metaYmlPath, true, false);

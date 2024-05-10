@@ -9,7 +9,7 @@
 #include <core/base/common/manager/UUIDManager.hpp>
 #include "ScriptLoader.hpp"
 
-std::shared_ptr<script::AssemblyScriptEntity> assets::ScriptLoader::loadScript(const std::string &path)
+std::shared_ptr<script::AssemblyScriptEntity> assets::ScriptLoader::loadScript(const std::string &path, bool isAssets)
 {
     auto scriptManagerManagerOpt = AssetsDataMainManager::getManager(AssetType::SCRIPT);
     if (!scriptManagerManagerOpt.has_value()) return nullptr;

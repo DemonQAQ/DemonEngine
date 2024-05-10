@@ -40,7 +40,8 @@ endif ()
 
 # 添加宏定义
 target_compile_definitions(${PROJECT_NAME} PRIVATE LOG_ROOT_PATH="${CMAKE_SOURCE_DIR}")
-target_compile_definitions(${PROJECT_NAME} PRIVATE SOURCE_ROOT_PATH="${ROOT_PATH}/assets")
+target_compile_definitions(${PROJECT_NAME} PRIVATE ASSETS_ROOT_PATH="${ROOT_PATH}/assets")
+target_compile_definitions(${PROJECT_NAME} PRIVATE RESOURCE_PACK_ROOT_PATH="${ROOT_PATH}/resourcePack")
 target_compile_definitions(${PROJECT_NAME} PRIVATE MONO_LIBRARY_PATH="${MONO_PATH}/lib")
 target_compile_definitions(${PROJECT_NAME} PRIVATE MONO_ETC_PATH="${MONO_PATH}/etc")
 

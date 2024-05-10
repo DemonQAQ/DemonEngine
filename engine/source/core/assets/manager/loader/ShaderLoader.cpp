@@ -12,9 +12,9 @@
 
 std::shared_ptr<base::Shader>
 assets::ShaderLoader::loadShader(const std::string &name, const std::string &metaPath, const std::string &vertexPath,
-                                 const std::string &fragmentPath)
+                                 const std::string &fragmentPath, bool isAssets)
 {
-    std::string dirPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, metaPath);
+    std::string dirPath = FileSystem::combinePaths(isAssets ? ASSETS_ROOT_PATH : RESOURCE_PACK_ROOT_PATH, metaPath);
     std::string metadataPath = dirPath.append(name + ".meta");
 
     bool init;

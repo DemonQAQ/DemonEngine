@@ -26,7 +26,7 @@ ShaderManager::ShaderManager()
  * @params[4] std::string                                   片元着色器的文件路径
  * @params[5] std::shared_ptr<io::YamlConfiguration> &yml   meta文件
  * */
-bool ShaderManager::loadData(const std::vector<std::any> &params)
+bool ShaderManager::loadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.size() < 5)
     {
@@ -53,8 +53,8 @@ bool ShaderManager::loadData(const std::vector<std::any> &params)
         fragmentPath = std::any_cast<std::string>(params[4]);
         yml = std::any_cast<std::shared_ptr<io::YamlConfiguration>>(params[5]);
 
-        vertexPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, vertexPath);
-        fragmentPath = FileSystem::combinePaths(SOURCE_ROOT_PATH, fragmentPath);
+        vertexPath = FileSystem::combinePaths(isAssets ? ASSETS_ROOT_PATH : RESOURCE_PACK_ROOT_PATH, vertexPath);
+        fragmentPath = FileSystem::combinePaths(isAssets ? ASSETS_ROOT_PATH : RESOURCE_PACK_ROOT_PATH, fragmentPath);
     } catch (const std::bad_any_cast &e)
     {
         std::cerr << "ShaderManager::loadData - Bad any_cast: " << e.what() << std::endl;
@@ -70,7 +70,7 @@ bool ShaderManager::loadData(const std::vector<std::any> &params)
     else return false;
 }
 
-void ShaderManager::unloadData(const std::vector<std::any> &params)
+void ShaderManager::unloadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.empty() || !params[0].has_value()) return;
     try

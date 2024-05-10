@@ -27,9 +27,9 @@ namespace assets
          * @params[0] std::shared_ptr<base::UUID> &existingUuid         脚本实体uuid
          * @params[1] std::string path                                  脚本路径
          * */
-        bool loadData(const std::vector<std::any> &params) override;
+        bool loadData(const std::vector<std::any> &params, bool isAssets = false) override;
 
-        void unloadData(const std::vector<std::any> &params) override;
+        void unloadData(const std::vector<std::any> &params, bool isAssets = false) override;
 
         [[nodiscard]] bool isDataLoaded(const std::vector<std::any> &params) const override;
 

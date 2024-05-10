@@ -18,7 +18,7 @@ std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<io::IFile>> Conf
  * @params[1] std::string                                       文件路径
  * @parmas[2] io::FileType                                      文件类型
  * */
-bool assets::ConfigManager::loadData(const std::vector<std::any> &params)
+bool assets::ConfigManager::loadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.size() < 3)
     {
@@ -71,7 +71,7 @@ bool assets::ConfigManager::loadData(const std::vector<std::any> &params)
     return false;
 }
 
-void ConfigManager::unloadData(const std::vector<std::any> &params)
+void ConfigManager::unloadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.empty() || params[0].type() != typeid(base::UUID))return;
 

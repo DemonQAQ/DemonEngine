@@ -20,6 +20,7 @@ namespace script
         MonoObject *instance;
         std::unordered_map<std::string, MonoMethod *> methodCache;
         std::string className;
+        bool cleanUp = false;
     public:
         AssemblyScriptEntity(const std::shared_ptr<base::UUID> &existingUuid, const std::string &name,
                              MonoAssembly *script, MonoImage *scriptImage, int priority_ = 1);

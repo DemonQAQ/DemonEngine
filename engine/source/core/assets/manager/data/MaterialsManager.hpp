@@ -40,9 +40,9 @@ namespace assets
          * @params[12] float reflectivity_                              反射率
          * @params[13] std::map<TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>> &textures_ 材质使用的贴图
          * */
-        bool loadData(const std::vector<std::any> &params) override;
+        bool loadData(const std::vector<std::any> &params, bool isAssets = false) override;
 
-        void unloadData(const std::vector<std::any> &params) override;
+        void unloadData(const std::vector<std::any> &params, bool isAssets = false) override;
         /**
          *
          * @params[0] const std::shared_ptr<base::UUID> &existingUuid   材质的uuid

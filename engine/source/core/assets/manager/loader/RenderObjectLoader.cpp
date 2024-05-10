@@ -8,11 +8,11 @@
 
 std::shared_ptr<base::RenderableObject>
 assets::RenderObjectLoader::loadObject(const std::shared_ptr<base::UUID> &existingUuid, bool init,
-                                             const std::string &name, std::shared_ptr<io::YamlConfiguration> &yml,
-                                             const std::vector<std::shared_ptr<base::Model>> &models,
-                                             const base::Transform &initialTransform,
-                                             const std::shared_ptr<base::UUID> &shaderUUID,
-                                             const std::shared_ptr<base::UUID> &materialUUID)
+                                       const std::string &name, std::shared_ptr<io::YamlConfiguration> &yml,
+                                       const std::vector<std::shared_ptr<base::Model>> &models,
+                                       const base::Transform &initialTransform,
+                                       const std::shared_ptr<base::UUID> &shaderUUID,
+                                       const std::shared_ptr<base::UUID> &materialUUID, bool isAssets)
 {
     auto renderObjectManagerOpt = AssetsDataMainManager::getManager(AssetType::RENDERABLE_OBJECT);
     if (!renderObjectManagerOpt.has_value()) return nullptr;
@@ -33,7 +33,7 @@ assets::RenderObjectLoader::loadObject(const std::shared_ptr<base::UUID> &existi
 }
 
 std::shared_ptr<base::RenderableObject>
-assets::RenderObjectLoader::loadObject(std::shared_ptr<io::YamlConfiguration> &yml)
+assets::RenderObjectLoader::loadObject(std::shared_ptr<io::YamlConfiguration> &yml, bool isAssets)
 {
     return nullptr;
 }

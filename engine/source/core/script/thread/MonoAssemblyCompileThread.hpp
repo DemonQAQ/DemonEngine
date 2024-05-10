@@ -71,7 +71,6 @@ namespace script
                         return;
                     }
                     MonoAssembly *assembly = mono_assembly_load_from(image, scriptPath.c_str(), &status);
-                    mono_image_close(image);
 
                     if (assembly)
                     {

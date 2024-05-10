@@ -13,9 +13,9 @@ namespace assets
     class MediaManager : implements IDataManager
     {
     public:
-        bool loadData(const std::vector<std::any>& params) override;
+        bool loadData(const std::vector<std::any>& params, bool isAssets = false) override;
 
-        void unloadData(const std::vector<std::any>& params) override;
+        void unloadData(const std::vector<std::any>& params, bool isAssets = false) override;
 
         [[nodiscard]] bool isDataLoaded(const std::vector<std::any>& params) const override;
 

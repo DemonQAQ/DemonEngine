@@ -22,9 +22,9 @@ namespace assets
          * @params[1] std::string                                       文件路径
          * @parmas[2] io::FileType                                      文件类型
          * */
-        bool loadData(const std::vector<std::any>& params) override;
+        bool loadData(const std::vector<std::any>& params, bool isAssets = false) override;
 
-        void unloadData(const std::vector<std::any>& params) override;
+        void unloadData(const std::vector<std::any>& params, bool isAssets = false) override;
 
         [[nodiscard]] bool isDataLoaded(const std::vector<std::any>& params) const override;
 

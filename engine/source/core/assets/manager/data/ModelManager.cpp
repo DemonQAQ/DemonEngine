@@ -25,7 +25,7 @@ std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Model>> Mo
  * @params[6] const std::shared_ptr<base::UUID> &shaderUUID     使用的shader的uuid
  * @params[7] const std::shared_ptr<base::UUID> &materialUUID   使用的材质的uuid
  * */
-bool ModelManager::loadData(const std::vector<std::any> &params)
+bool ModelManager::loadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.size() < 5)
     {
@@ -74,7 +74,7 @@ bool ModelManager::loadData(const std::vector<std::any> &params)
     return true;
 }
 
-void ModelManager::unloadData(const std::vector<std::any> &params)
+void ModelManager::unloadData(const std::vector<std::any> &params, bool isAssets)
 {
     // Implementation of unloadData
 }

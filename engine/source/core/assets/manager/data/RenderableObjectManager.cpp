@@ -18,7 +18,7 @@ std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::Renderable
  * @params[6] std::shared_ptr<base::UUID> &shaderUUID           使用的shader的uuid
  * @params[7] std::shared_ptr<base::UUID> &materialUUID         使用的材质的uuid
  * */
-bool RenderableObjectManager::loadData(const std::vector<std::any> &params)
+bool RenderableObjectManager::loadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.size() < 4)
     {
@@ -67,7 +67,7 @@ bool RenderableObjectManager::loadData(const std::vector<std::any> &params)
     return true;
 }
 
-void RenderableObjectManager::unloadData(const std::vector<std::any> &params)
+void RenderableObjectManager::unloadData(const std::vector<std::any> &params, bool isAssets)
 {
 
 }

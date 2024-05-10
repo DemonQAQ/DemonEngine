@@ -61,7 +61,7 @@ namespace assets
     class AssimpLoader : implements IFileLoader
     {
     public:
-        static std::shared_ptr<base::Model> loadModel(const std::string &path);
+        static std::shared_ptr<base::Model> loadModel(const std::string &path, bool isAssets = false);
 
     private:
         static std::shared_ptr<base::Model> loadModel(const std::string &directory, const std::string &modelName,

@@ -65,7 +65,7 @@ script::AsyncAssemblyScriptPipLine::AsyncAssemblyScriptPipLine()
 
 script::AsyncAssemblyScriptPipLine::~AsyncAssemblyScriptPipLine()
 {
+    thread->stop();
     scripts.clear();
     pendingAdditions.clear();
-    thread->stop();
 }

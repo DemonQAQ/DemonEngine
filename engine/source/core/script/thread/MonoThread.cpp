@@ -24,11 +24,12 @@ script::MonoThread::~MonoThread()
     {
         thread->join();
     }
-    if (thread)thread = nullptr;
+
+    thread.reset();
+
     if (domain)
     {
         mono_domain_unload(domain);
-        mono_jit_cleanup(domain);
         domain = nullptr;
     }
 }

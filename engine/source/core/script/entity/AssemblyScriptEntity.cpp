@@ -7,7 +7,6 @@
 #include "core/script/ScriptMethodType.hpp"
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/object.h"
-#include "mono/metadata/mono-gc.h"
 
 script::AssemblyScriptEntity::AssemblyScriptEntity(const std::shared_ptr<base::UUID> &existingUuid,
                                                    const std::string &name,
@@ -44,6 +43,7 @@ script::AssemblyScriptEntity::AssemblyScriptEntity(const std::shared_ptr<base::U
 
 bool script::AssemblyScriptEntity::hasMethod(std::string &methodName)
 {
+    if (cleanUp)return false;
     if (methodCache.find(methodName) != methodCache.end()) return true;
 
     MonoMethodDesc *desc = mono_method_desc_new((className + "::" + methodName).c_str(), true);
@@ -54,6 +54,7 @@ bool script::AssemblyScriptEntity::hasMethod(std::string &methodName)
 
 bool script::AssemblyScriptEntity::runMethod(std::string &methodName)
 {
+    if (cleanUp)return false;
     MonoMethod *method = nullptr;
     auto it = methodCache.find(methodName);
     if (it != methodCache.end())
@@ -114,6 +115,7 @@ void script::AssemblyScriptEntity::init()
 
 std::string script::AssemblyScriptEntity::getFirstClassName(MonoImage *image)
 {
+    if (cleanUp)return "";
     const MonoTableInfo *table_info = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
     int rows = mono_table_info_get_rows(table_info);
     for (int i = 1; i < rows; i++)
@@ -171,5 +173,5 @@ void script::AssemblyScriptEntity::cleanupResources()
     {
         scriptAssembly = nullptr;
     }
-
+    cleanUp = true;
 }

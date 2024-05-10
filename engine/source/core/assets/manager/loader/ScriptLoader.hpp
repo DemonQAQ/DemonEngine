@@ -16,7 +16,7 @@ namespace assets
     class ScriptLoader: implements IFileLoader
     {
     public:
-        static std::shared_ptr<script::AssemblyScriptEntity> loadScript(const std::string& name);
+        static std::shared_ptr<script::AssemblyScriptEntity> loadScript(const std::string& name, bool isAssets = false);
     };
 }
 

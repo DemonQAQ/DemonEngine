@@ -28,7 +28,7 @@ TextureManager::TextureManager()
  * @params[3] TextureType type                                  贴图类型
  * @params[4] const std::string &path                           贴图路径
  * */
-bool TextureManager::loadData(const std::vector<std::any> &params)
+bool TextureManager::loadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.size() < 5)
     {
@@ -81,7 +81,7 @@ TextureManager::getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr)
     else return std::nullopt;
 }
 
-void TextureManager::unloadData(const std::vector<std::any> &params)
+void TextureManager::unloadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.empty())
     {

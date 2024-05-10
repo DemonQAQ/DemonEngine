@@ -32,11 +32,11 @@ namespace assets
          * @params[3] TextureType type                                  贴图类型
          * @params[4] const std::string &path                           贴图路径
          * */
-        bool loadData(const std::vector<std::any> &params) override;
+        bool loadData(const std::vector<std::any> &params, bool isAssets = false) override;
 
         std::optional<std::shared_ptr<base::Texture>> getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr);
 
-        void unloadData(const std::vector<std::any> &params) override;
+        void unloadData(const std::vector<std::any> &params, bool isAssets = false) override;
 
         /**
          *

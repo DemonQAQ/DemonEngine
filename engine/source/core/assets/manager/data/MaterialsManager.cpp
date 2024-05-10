@@ -38,7 +38,7 @@ MaterialsManager::MaterialsManager()
  * @params[12] float reflectivity_                              反射率
  * @params[13] std::map<TextureType, std::map<std::shared_ptr<base::UUID>, std::shared_ptr<Texture>>> &textures_ 材质使用的贴图
  * */
-bool MaterialsManager::loadData(const std::vector<std::any> &params)
+bool MaterialsManager::loadData(const std::vector<std::any> &params, bool isAssets)
 {
     if (params.size() < 3) return false;
 
@@ -130,7 +130,7 @@ bool MaterialsManager::loadData(const std::vector<std::any> &params)
     else return false;
 }
 
-void MaterialsManager::unloadData(const std::vector<std::any> &params)
+void MaterialsManager::unloadData(const std::vector<std::any> &params, bool isAssets)
 {
 
 }

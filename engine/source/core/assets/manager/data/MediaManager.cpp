@@ -5,12 +5,12 @@
 
 using namespace assets;
 
-bool MediaManager::loadData(const std::vector<std::any> &params)
+bool MediaManager::loadData(const std::vector<std::any> &params, bool isAssets)
 {
     return false;
 }
 
-void MediaManager::unloadData(const std::vector<std::any> &params)
+void MediaManager::unloadData(const std::vector<std::any> &params, bool isAssets)
 {
 
 }

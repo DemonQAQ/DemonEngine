@@ -15,7 +15,7 @@ namespace assets
     class ShaderLoader : implements IFileLoader
     {
     public:
-        static std::shared_ptr<base::Shader> loadShader(const std::string& name, const std::string &metaPath, const std::string &vertexPath, const std::string &fragmentPath);
+        static std::shared_ptr<base::Shader> loadShader(const std::string& name, const std::string &metaPath, const std::string &vertexPath, const std::string &fragmentPath, bool isAssets = false);
     };
 }
 
