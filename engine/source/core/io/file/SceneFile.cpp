@@ -24,12 +24,12 @@ void SceneFile::saveScene(const assets::scene::Scene &scene, const std::string &
 
 }
 
-std::string SceneFile::Serialize() const
+std::string SceneFile::serialize() const
 {
     return std::string();
 }
 
-void SceneFile::Deserialize(const std::string &data)
+void SceneFile::deserialize(const std::string &data)
 {
 
 }

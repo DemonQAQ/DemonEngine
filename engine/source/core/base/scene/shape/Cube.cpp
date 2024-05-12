@@ -4,5 +4,5 @@
 
 #include "Cube.hpp"
 
-bool scene::render::Cube::isInit = false;
+bool base::Cube::isInit = false;
 std::shared_ptr<base::Model> base::Cube::MODEL_TEMPLATE = nullptr;

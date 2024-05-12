@@ -36,12 +36,12 @@ namespace assets::scene
 
     }
 
-    std::string Effect::Serialize() const
+    std::string Effect::serialize() const
     {
         return std::string();
     }
 
-    void Effect::Deserialize(const std::string &data)
+    void Effect::deserialize(const std::string &data)
     {
 
     }

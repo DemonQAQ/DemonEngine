@@ -31,7 +31,7 @@ assets::ShaderLoader::loadShader(const std::string &name, const std::string &met
     std::string uuidStr = utils::uuidUtil::getReappearUUID(name + vertexPath + fragmentPath);
     const std::shared_ptr<base::UUID> existingUuid = base::UUIDManager::getUUID(uuidStr, true);
 
-    if (shaderManager->loadData({existingUuid, init, name, vertexPath, fragmentPath, metaYml}))
+    if (shaderManager->loadData({existingUuid, init, name, vertexPath, fragmentPath, metaYml}, isAssets))
     {
         auto shaderOpt = shaderManager->getResourceByUuid(existingUuid);
         if (!shaderOpt.has_value()) return nullptr;

@@ -18,9 +18,9 @@ namespace io
     public:
         virtual ~ISerializable() = default;
 
-        [[nodiscard]] virtual std::string Serialize() const = 0;
+        [[nodiscard]] virtual std::string serialize() const = 0;
 
-        virtual void Deserialize(const std::string &data) = 0;
+        virtual void deserialize(const std::string &data) = 0;
     };
 }
 

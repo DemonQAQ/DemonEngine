@@ -131,7 +131,7 @@ namespace assets::scene
         return glm::degrees(glm::acos(light.outerCutOff));
     }
 
-    std::string LightEntity::Serialize() const
+    std::string LightEntity::serialize() const
     {
         boost::property_tree::ptree pt;
 
@@ -163,7 +163,7 @@ namespace assets::scene
         return buf.str();
     }
 
-    void LightEntity::Deserialize(const std::string &data)
+    void LightEntity::deserialize(const std::string &data)
     {
         std::istringstream is(data);
         boost::property_tree::ptree pt;

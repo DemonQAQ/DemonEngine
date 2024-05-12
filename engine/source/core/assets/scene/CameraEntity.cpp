@@ -89,7 +89,7 @@ namespace assets::scene
         return camera.zoom;
     }
 
-    std::string CameraEntity::Serialize() const
+    std::string CameraEntity::serialize() const
     {
         boost::property_tree::ptree pt;
 
@@ -116,7 +116,7 @@ namespace assets::scene
         return buf.str();
     }
 
-    void CameraEntity::Deserialize(const std::string &data)
+    void CameraEntity::deserialize(const std::string &data)
     {
         std::istringstream is(data);
         boost::property_tree::ptree pt;

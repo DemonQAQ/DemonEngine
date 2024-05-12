@@ -22,9 +22,9 @@ namespace io
 
         void saveScene(const assets::scene::Scene &scene, const std::string &path);
 
-        [[nodiscard]] std::string Serialize() const override;
+        [[nodiscard]] std::string serialize() const override;
 
-        void Deserialize(const std::string &data) override;
+        void deserialize(const std::string &data) override;
 
         void load() override;
 

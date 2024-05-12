@@ -45,12 +45,12 @@ namespace assets::scene
 
     }
 
-    std::string Entity::Serialize() const
+    std::string Entity::serialize() const
     {
         return std::string();
     }
 
-    void Entity::Deserialize(const std::string &data)
+    void Entity::deserialize(const std::string &data)
     {
 
     }
@@ -59,5 +59,10 @@ namespace assets::scene
     void Entity::addModel(const std::shared_ptr<Model> &model)
     {
         renderableObject->addModel(model);
+    }
+
+    Entity::~Entity()
+    {
+        renderableObject = nullptr;
     }
 }

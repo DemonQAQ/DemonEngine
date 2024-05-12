@@ -41,9 +41,9 @@ namespace assets::scene
 
         void afterRendering(const std::vector<std::any> &params) override;
 
-        [[nodiscard]]  std::string Serialize() const override;
+        [[nodiscard]]  std::string serialize() const override;
 
-        void Deserialize(const std::string &data) override;
+        void deserialize(const std::string &data) override;
 
         void setLightType(base::LightType type);
 

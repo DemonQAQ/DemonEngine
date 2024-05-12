@@ -66,7 +66,7 @@ namespace assets
     private:
         static std::shared_ptr<base::Model> loadModel(const std::string &directory, const std::string &modelName,
                                                       const std::shared_ptr<base::UUID> &existingUuid,
-                                                      bool init, std::shared_ptr<io::YamlConfiguration> &yml);
+                                                      bool init, std::shared_ptr<io::YamlConfiguration> &yml,bool isAssets = false);
 
         static void
         processNode(const std::shared_ptr<base::Node> &node, aiNode *aiNode, const aiScene *scene, int &meshIndex,
@@ -79,10 +79,10 @@ namespace assets
 
         static std::shared_ptr<base::Material>
         loadMaterialFromAssimp(const aiMaterial *aiMat, std::shared_ptr<io::YamlConfiguration> &metaYml,
-                               const std::string &directory);
+                               const std::string &directory,bool isAssets = false);
 
         static std::shared_ptr<base::Texture>
-        loadTextureFromAssimp(const aiTextureType &aiType, const std::string &texturePath);
+        loadTextureFromAssimp(const aiTextureType &aiType, const std::string &texturePath,bool isAssets = false);
 
         static base::Transform convertAiMatrixToTransform(const aiMatrix4x4 &aiMatrix);
     };

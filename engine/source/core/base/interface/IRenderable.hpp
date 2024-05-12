@@ -31,11 +31,21 @@ namespace base
         std::shared_ptr<base::UUID> useShader;
         std::shared_ptr<base::UUID> material;
 
+    protected:
+        virtual void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) = 0;
+
     public:
         IRenderable() : useShader(nullptr), material(nullptr)
         {}
 
         virtual void getRenderData(std::vector<RenderData> &renderDataList) = 0;
+
+        /**
+         * 调用此方法更新自身和相关的实例的状态
+         * */
+        virtual void updateGlobalTransform(std::vector<Transform> &additionalTransforms) = 0;
+
+        [[nodiscard]] virtual Transform getLocalTransform() const = 0;
 
         void bindMaterial(const std::shared_ptr<base::UUID> &uuid)
         {
@@ -77,13 +87,6 @@ namespace base
             return this->useShader;
         }
 
-        /**
-         * 调用此方法更新自身和相关的实例的状态
-         * */
-        virtual void updateGlobalTransform(std::vector<Transform> &additionalTransforms) = 0;
-
-        [[nodiscard]] virtual Transform getLocalTransform() const = 0;
-
         [[nodiscard]] const Transform &getGlobalTransform() const
         {
             return actualTransform;
@@ -106,8 +109,6 @@ namespace base
             transformsToMerge.insert(transformsToMerge.end(), additionalTransforms.begin(), additionalTransforms.end());
             actualTransform = Transform::merge(transformsToMerge);
         }
-
-        virtual void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) = 0;
     };
 
 }

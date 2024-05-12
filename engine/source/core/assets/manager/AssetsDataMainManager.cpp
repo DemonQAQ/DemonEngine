@@ -10,6 +10,7 @@
 #include "core/assets/manager/data/TextureManager.hpp"
 #include <core/assets/manager/data/RenderableObjectManager.hpp>
 #include <core/assets/manager/data/ScriptManager.hpp>
+#include <core/assets/manager/data/SkyBoxManager.hpp>
 
 
 namespace assets
@@ -26,6 +27,7 @@ namespace assets
         MANAGERS.insert({AssetType::MEDIA, std::make_shared<MediaManager>()});
         MANAGERS.insert({AssetType::RENDERABLE_OBJECT, std::make_shared<RenderableObjectManager>()});
         MANAGERS.insert({AssetType::SCRIPT, std::make_shared<ScriptManager>()});
+        MANAGERS.insert({AssetType::SKY_BOX, std::make_shared<SkyBoxManager>()});
     }
 
     void AssetsDataMainManager::finalizeManager()
@@ -53,6 +55,8 @@ namespace assets
                 return "RenderableObjectManager";
             case AssetType::SCRIPT:
                 return "ScriptManager";
+            case AssetType::SKY_BOX:
+                return "SkyBoxManager";
             default:
                 throw std::runtime_error("Unknown assetType");
         }

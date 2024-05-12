@@ -108,6 +108,7 @@ namespace base
     public:
         unsigned int id;       // 贴图的 OpenGL ID
         TextureType type;
+        int width, height, channels;
         std::string texturePath;
 
         void init()
@@ -117,10 +118,10 @@ namespace base
 
         Texture(const std::shared_ptr<base::UUID> &existingUuid, bool init,
                 std::shared_ptr<io::YamlConfiguration> &yml,
-                unsigned int id, TextureType type, const std::string &path)
+                unsigned int id, TextureType type, const std::string &path, int width, int height, int channels)
                 : Object(existingUuid),
                   IMetaAccessor(yml, init, existingUuid),
-                  id(id), type(type), texturePath(path)
+                  id(id), type(type), texturePath(path), width(width), height(height), channels(channels)
         {}
 
         [[nodiscard]] std::string getTypeName() const

@@ -32,13 +32,13 @@ std::shared_ptr<base::Model> assets::AssimpLoader::loadModel(const std::string &
     else uuidStr = metaYml->getString("uuid");
 
     existingUuid = base::UUIDManager::getUUID(uuidStr, false);
-    return loadModel(directory, modelName, existingUuid, init, metaYml);
+    return loadModel(directory, modelName, existingUuid, init, metaYml, isAssets);
 }
 
 std::shared_ptr<base::Model>
 assets::AssimpLoader::loadModel(const std::string &directory, const std::string &modelName,
                                 const std::shared_ptr<base::UUID> &existingUuid, bool init,
-                                std::shared_ptr<io::YamlConfiguration> &yml)
+                                std::shared_ptr<io::YamlConfiguration> &yml, bool isAssets)
 {
     Assimp::Importer importer;
     std::string modelFullPath = directory + "/" + modelName;
@@ -61,7 +61,7 @@ assets::AssimpLoader::loadModel(const std::string &directory, const std::string 
         for (unsigned int i = 0; i < scene->mNumMaterials; ++i)
         {
             aiMaterial *aiMat = scene->mMaterials[i];
-            auto material = loadMaterialFromAssimp(aiMat, metaYml, directory);
+            auto material = loadMaterialFromAssimp(aiMat, metaYml, directory, isAssets);
             if (material)
             {
 //                // 输出材质的基本信息
@@ -230,7 +230,7 @@ base::Transform assets::AssimpLoader::convertAiMatrixToTransform(const aiMatrix4
 
 std::shared_ptr<base::Material>
 assets::AssimpLoader::loadMaterialFromAssimp(const aiMaterial *aiMat, std::shared_ptr<io::YamlConfiguration> &metaYml,
-                                             const std::string &directory)
+                                             const std::string &directory, bool isAssets)
 {
     auto materialsManagerOpt = AssetsDataMainManager::getManager(AssetType::MATERIALS);
     if (!materialsManagerOpt.has_value()) return nullptr;
@@ -325,11 +325,11 @@ assets::AssimpLoader::loadMaterialFromAssimp(const aiMaterial *aiMat, std::share
 }
 
 std::shared_ptr<base::Texture>
-assets::AssimpLoader::loadTextureFromAssimp(const aiTextureType &aiType, const std::string &texturePath)
+assets::AssimpLoader::loadTextureFromAssimp(const aiTextureType &aiType, const std::string &texturePath, bool isAssets)
 {
     base::TextureType textureType = aiTextureTypeToTextureType(aiType);
     std::string metadataPath = texturePath + ".meta";
-    auto metaYml = ConfigLoader::loadYml(metadataPath, true, true);
+    auto metaYml = ConfigLoader::loadYml(metadataPath, true, true, isAssets);
     if (!metaYml)return nullptr;
 
     bool init = metaYml->isEmpty();

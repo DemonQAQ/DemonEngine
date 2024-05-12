@@ -103,12 +103,12 @@ namespace assets::scene
         return childrenList;
     }
 
-    std::string SceneGroup::Serialize() const
+    std::string SceneGroup::serialize() const
     {
         return std::string();
     }
 
-    void SceneGroup::Deserialize(const std::string &data)
+    void SceneGroup::deserialize(const std::string &data)
     {
 
     }

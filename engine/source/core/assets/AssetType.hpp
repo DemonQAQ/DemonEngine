@@ -20,6 +20,7 @@ namespace assets
         SHADER,
         CONFIG,
         SCRIPT,
+        SKY_BOX,
         NONE
     };
 

@@ -41,7 +41,7 @@ namespace assets::scene
     public:
         explicit Scene(const std::shared_ptr<base::UUID> &existingUuid,
                        bool init, std::shared_ptr<io::YamlConfiguration> &yml,
-                       std::string name = "New Scene");
+                       const std::shared_ptr<ISkyBox> &skybox_ = nullptr, std::string name = "New Scene");
 
         void update() override;
 
@@ -51,9 +51,9 @@ namespace assets::scene
 
         void setName(const std::string &name_) override;
 
-        [[nodiscard]] std::string Serialize() const override;
+        [[nodiscard]] std::string serialize() const override;
 
-        void Deserialize(const std::string &data) override;
+        void deserialize(const std::string &data) override;
 
         [[nodiscard]] std::string getName() const override;
 
@@ -74,9 +74,9 @@ namespace assets::scene
         bool
         removeChildFromNodeRecursive(const std::shared_ptr<SceneGroup> &node, const std::shared_ptr<base::UUID> &uuid);
 
-        [[nodiscard]] const std::shared_ptr<Skybox> &getSkybox() const;
+        [[nodiscard]] const std::shared_ptr<SkyboxEntity> &getSkybox() const;
 
-        void setSkybox(const std::shared_ptr<Skybox> &skybox_);
+        void setSkybox(const std::shared_ptr<SkyboxEntity> &skybox_);
 
         [[nodiscard]] const std::shared_ptr<SceneGroup> &getRoot() const;
 

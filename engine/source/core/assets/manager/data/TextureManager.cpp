@@ -61,15 +61,22 @@ bool TextureManager::loadData(const std::vector<std::any> &params, bool isAssets
         return false;
     }
 
-    // 加载纹理
+    int width, height, channels;
+    unsigned char *data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+    if (!data)
+    {
+        std::cerr << "Failed to load texture at path: " << path << std::endl;
+        return false;
+    }
     unsigned int textureID = loadTextureFromFile(path.c_str());
+    stbi_image_free(data);  // 释放图像数据
     if (textureID == 0)
     {
         std::cerr << "Texture failed to load at path: " << path << std::endl;
         return false;
     }
 
-    loadedTextures[existingUuid] = std::make_shared<base::Texture>(existingUuid, init, yml, textureID, type, path);
+    loadedTextures[existingUuid] = std::make_shared<base::Texture>(existingUuid, init, yml, textureID, type, path, width, height, channels);
     return true;
 }
 
@@ -179,7 +186,7 @@ void TextureManager::onStart()
 void TextureManager::onStop()
 {
     std::cerr << "TextureManager onStop start" << std::endl;
-    for (const auto& texture: loadedTextures)texture.second->saveMetadata();
+    for (const auto &texture: loadedTextures)texture.second->saveMetadata();
     std::cerr << "TextureManager onStop end" << std::endl;
 
 }

@@ -9,23 +9,36 @@
 #include "OpenglDrawCall.hpp"
 #include <future>
 #include <vector>
+#include <core/render/manager/RenderManager.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 using namespace render;
 
 ProgrammablePipeline::ProgrammablePipeline(std::shared_ptr<GraphApi> &graphApi_) : RenderPipeline(graphApi_)
 {
+    auto shaderManagerOpt = assets::AssetsDataMainManager::getManager(assets::AssetType::SHADER);
+    if (!shaderManagerOpt.has_value()) return;
 
+    auto shaderManager_ = std::dynamic_pointer_cast<assets::ShaderManager>(shaderManagerOpt.value());
+    if (!shaderManager_) shaderManager = shaderManager_;
 }
 
 
 void ProgrammablePipeline::submitEntity(std::shared_ptr<base::IRenderable> object, render::RenderType renderType)
 {
-    auto &renderQueue = (renderType == RenderType::OPAQUE) ? opaqueRenderableEntityList
-                                                           : transparentRenderableEntityList;
-
-    if (std::find(renderQueue.begin(), renderQueue.end(), object) == renderQueue.end())
+    std::shared_ptr<base::ISkyBox> skyBoxCandidate = std::dynamic_pointer_cast<base::ISkyBox>(object);
+    if (skyBoxCandidate)
     {
-        renderQueue.push_back(object);
+        skyBox = skyBoxCandidate;
+    }
+    else
+    {
+        auto &renderQueue = (renderType == render::RenderType::OPAQUE) ? opaqueRenderableEntityList
+                                                                       : transparentRenderableEntityList;
+        if (std::find(renderQueue.begin(), renderQueue.end(), object) == renderQueue.end())
+        {
+            renderQueue.push_back(object);
+        }
     }
 }
 
@@ -62,10 +75,9 @@ void ProgrammablePipeline::clear()
 void ProgrammablePipeline::render()
 {
     prepare();
+    drawSkyBox();
     executeDrawCalls(opaqueDrawCalls);
-    //todo 其他渲染任务
     executeDrawCalls(transparentDrawCalls);
-    //todo 后处理任务
     clear();
 }
 
@@ -73,7 +85,7 @@ void ProgrammablePipeline::render()
 void render::ProgrammablePipeline::executeDrawCalls(const std::vector<std::shared_ptr<DrawCall>> &drawCallList)
 {
     auto start_time = std::chrono::steady_clock::now();
-    std::cerr << "onRender.pipeline.render.executeDrawCalls start"<< std::endl;
+    std::cerr << "onRender.pipeline.render.executeDrawCalls start" << std::endl;
 
     int i = 0;
     for (const auto &drawCall: drawCallList)
@@ -86,7 +98,7 @@ void render::ProgrammablePipeline::executeDrawCalls(const std::vector<std::share
     auto end_time = std::chrono::steady_clock::now();
     std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
     std::cerr << "onRender.pipeline.render.executeDrawCalls Duration = " << frame_duration.count() << " ms" << std::endl;
-    std::cerr << "onRender.pipeline.render.executeDrawCalls end\n"<< std::endl;
+    std::cerr << "onRender.pipeline.render.executeDrawCalls end\n" << std::endl;
 }
 
 void ProgrammablePipeline::setupRenderState(const std::shared_ptr<DrawCall> &drawCall)
@@ -101,7 +113,7 @@ void ProgrammablePipeline::setupRenderState(const std::shared_ptr<DrawCall> &dra
 void ProgrammablePipeline::prepare()
 {
     auto start_time = std::chrono::steady_clock::now();
-    std::cerr << "onRender.pipeline.render.prepare start"<< std::endl;
+    std::cerr << "onRender.pipeline.render.prepare start" << std::endl;
 
     auto shaderManager = assets::AssetsDataMainManager::getManagerAs<assets::ShaderManager>(assets::AssetType::SHADER);
     auto materialsManager = assets::AssetsDataMainManager::getManagerAs<assets::MaterialsManager>(
@@ -141,13 +153,13 @@ void ProgrammablePipeline::prepare()
     auto end_time = std::chrono::steady_clock::now();
     std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
     std::cerr << "onRender.pipeline.render.prepare Duration = " << frame_duration.count() << " ms" << std::endl;
-    std::cerr << "onRender.pipeline.render.prepare end\n"<< std::endl;
+    std::cerr << "onRender.pipeline.render.prepare end\n" << std::endl;
 }
 
 void ProgrammablePipeline::sortAndExecuteDrawCalls()
 {
     auto start_time = std::chrono::steady_clock::now();
-    std::cerr << "onRender.pipeline.render.prepare.sortAndExecuteDrawCalls start"<< std::endl;
+    std::cerr << "onRender.pipeline.render.prepare.sortAndExecuteDrawCalls start" << std::endl;
 
     auto sortFunc = [](const std::shared_ptr<DrawCall> &a, const std::shared_ptr<DrawCall> &b) -> bool
     {
@@ -168,7 +180,7 @@ void ProgrammablePipeline::sortAndExecuteDrawCalls()
     auto end_time = std::chrono::steady_clock::now();
     std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
     std::cerr << "onRender.pipeline.render.prepare.sortAndExecuteDrawCalls Duration = " << frame_duration.count() << " ms" << std::endl;
-    std::cerr << "onRender.pipeline.render.prepare.sortAndExecuteDrawCalls end\n"<< std::endl;
+    std::cerr << "onRender.pipeline.render.prepare.sortAndExecuteDrawCalls end\n" << std::endl;
 }
 
 std::vector<std::shared_ptr<DrawCall>>
@@ -177,7 +189,7 @@ ProgrammablePipeline::createAndSubmitDrawCalls(const std::shared_ptr<base::IRend
                                                std::shared_ptr<assets::MaterialsManager> &materialsManager)
 {
     auto start_time = std::chrono::steady_clock::now();
-    std::cerr << "onRender.pipeline.render.prepare.createAndSubmitDrawCalls start"<< std::endl;
+    std::cerr << "onRender.pipeline.render.prepare.createAndSubmitDrawCalls start" << std::endl;
 
     std::vector<base::RenderData> renderDataList;
     renderable->getRenderData(renderDataList);
@@ -228,8 +240,90 @@ ProgrammablePipeline::createAndSubmitDrawCalls(const std::shared_ptr<base::IRend
     auto end_time = std::chrono::steady_clock::now();
     std::chrono::duration<double, std::milli> frame_duration = end_time - start_time;
     std::cerr << "onRender.pipeline.render.prepare.createAndSubmitDrawCalls Duration = " << frame_duration.count() << " ms" << std::endl;
-    std::cerr << "onRender.pipeline.render.prepare.createAndSubmitDrawCalls end\n"<< std::endl;
+    std::cerr << "onRender.pipeline.render.prepare.createAndSubmitDrawCalls end\n" << std::endl;
 
     return drawCalls;
+}
+
+void ProgrammablePipeline::drawSkyBox()
+{
+    if (!skyBox)
+    {
+        std::cerr << "Error: No skybox is set for rendering." << std::endl;
+        return;
+    }
+    if (!shaderManager)
+    {
+        std::cerr << "Error: No shaderManager to get shader." << std::endl;
+        return;
+    }
+    glDepthMask(GL_FALSE);
+
+    auto shaderOpt = shaderManager->getResourceByUuid(skyBox->getShader());
+    if (!shaderOpt)
+    {
+        std::cerr << "didn't get shader." << std::endl;
+        return;
+    }
+    auto shader = shaderOpt.value();
+
+    graphApi->useShader(shader);
+
+    GLint vpLocation = glGetUniformLocation(shader->ID, "vp");
+    if (vpLocation != -1)
+    {
+        glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(render::vpMatrix));
+    }
+
+    // Bind the skybox texture
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox->getTexture()->id);
+
+    // Generate and bind the VAO
+    GLuint VAO, VBO, EBO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    // Fetch render data
+    std::vector<RenderData> renderDataList;
+    skyBox->getRenderData(renderDataList);
+    const auto &renderData = renderDataList.front();  // Assuming the first one is what we need
+
+    // Generate VBO
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, renderData.vertices.size() * sizeof(Vertex), renderData.vertices.data(), GL_STATIC_DRAW);
+
+    // Set vertex attributes
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);  // Assuming the position attribute is at offset 0
+
+    // Generate EBO if indices are present
+    if (!renderData.indices.empty())
+    {
+        glGenBuffers(1, &EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, renderData.indices.size() * sizeof(unsigned int), renderData.indices.data(), GL_STATIC_DRAW);
+    }
+
+    // Draw the skybox
+    if (!renderData.indices.empty())
+    {
+        glDrawElements(GL_TRIANGLES, renderData.indices.size(), GL_UNSIGNED_INT, 0);
+    }
+    else
+    {
+        glDrawArrays(GL_TRIANGLES, 0, renderData.vertices.size());
+    }
+
+    // Cleanup
+    glBindVertexArray(0);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    if (!renderData.indices.empty())
+    {
+        glDeleteBuffers(1, &EBO);
+    }
+    glDepthMask(GL_TRUE);
 }
 

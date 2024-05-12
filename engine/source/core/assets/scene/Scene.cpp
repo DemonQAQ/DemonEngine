@@ -10,7 +10,7 @@
 namespace assets::scene
 {
     Scene::Scene(const std::shared_ptr<base::UUID> &existingUuid,
-                 bool init, std::shared_ptr<io::YamlConfiguration> &yml, std::string name)
+                 bool init, std::shared_ptr<io::YamlConfiguration> &yml, const std::shared_ptr<ISkyBox> &skybox_, std::string name)
             : base::Object(existingUuid),
               IMetaAccessor(yml, init, existingUuid),
               name(std::move(name))
@@ -21,7 +21,8 @@ namespace assets::scene
         mainCameraEntity = std::make_shared<CameraEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false),
                                                           false, yml, Camera(), "testCamera",
                                                           runtimeApp.getScreenWidth(), runtimeApp.getScreenHeight());
-        skybox = std::make_shared<SkyboxEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml);
+
+        skybox = std::make_shared<SkyboxEntity>(base::UUIDManager::getUUID(utils::uuidUtil::getUUID(), false), false, yml, skybox_);
 
         root->addChild(environmentLight);
         root->addChild(mainCameraEntity);
@@ -116,12 +117,12 @@ namespace assets::scene
         return nullptr;
     }
 
-    const std::shared_ptr<Skybox> &Scene::getSkybox() const
+    const std::shared_ptr<SkyboxEntity> &Scene::getSkybox() const
     {
         return skybox;
     }
 
-    void Scene::setSkybox(const std::shared_ptr<Skybox> &skybox_)
+    void Scene::setSkybox(const std::shared_ptr<SkyboxEntity> &skybox_)
     {
         Scene::skybox = skybox_;
     }
@@ -186,18 +187,22 @@ namespace assets::scene
         cameraEntityList.push_back(cameraEntity);
     }
 
-    std::string Scene::Serialize() const
+    std::string Scene::serialize() const
     {
         return std::string();
     }
 
-    void Scene::Deserialize(const std::string &data)
+    void Scene::deserialize(const std::string &data)
     {
 
     }
 
     void Scene::beforeRendering(const std::vector<std::any> &params)
     {
+        if(skybox)
+        {
+            skybox->beforeRendering({});
+        }
         if (root)
         {
             traverseAndUpdate(root, params);

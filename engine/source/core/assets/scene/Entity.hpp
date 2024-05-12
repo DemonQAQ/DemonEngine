@@ -35,6 +35,7 @@ namespace assets::scene
         explicit Entity(const std::shared_ptr<base::UUID> &existingUuid,
                         bool init, std::shared_ptr<io::YamlConfiguration> &yml,
                         std::string name = "Entity");
+        ~Entity() override;
 
         void addModel(const std::shared_ptr<Model> &model);
 
@@ -42,9 +43,9 @@ namespace assets::scene
 
         [[nodiscard]] std::string getName() const override;
 
-        [[nodiscard]] std::string Serialize() const override;
+        [[nodiscard]] std::string serialize() const override;
 
-        void Deserialize(const std::string &data) override;
+        void deserialize(const std::string &data) override;
 
         void beforeRendering(const std::vector<std::any> &params) override;
 

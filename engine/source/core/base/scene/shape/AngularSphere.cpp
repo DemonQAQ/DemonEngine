@@ -4,5 +4,5 @@
 
 #include "AngularSphere.hpp"
 
-bool base::ANGULAR_SPHERE::isInit = false;
-std::shared_ptr<base::Model> base::ANGULAR_SPHERE::MODEL_TEMPLATE = nullptr;
+bool base::AngularSphere::isInit = false;
+std::shared_ptr<base::Model> base::AngularSphere::MODEL_TEMPLATE = nullptr;
