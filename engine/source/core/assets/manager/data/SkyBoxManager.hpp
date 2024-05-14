@@ -15,7 +15,7 @@
 
 namespace assets
 {
-    class SkyBoxManager : implements IDataManager, implements base::Initializer
+    class SkyBoxManager : implements IDataManager
     {
     private:
         static std::unordered_map<std::shared_ptr<base::UUID>, std::shared_ptr<base::ISkyBox>> loadedSkyBox;
@@ -66,9 +66,6 @@ namespace assets
 
         std::shared_ptr<base::Shader> getSkyBoxTypeNormalShader(base::SkyBoxType type);
 
-        bool init(const std::vector<std::any> &params) override;
-
-        void finalize() override;
     private:
         std::shared_ptr<base::StaticSkybox> loadStaticSkyBox(const std::shared_ptr<base::UUID> &existingUuid, bool init,
                                                              const std::string &name, std::shared_ptr<io::YamlConfiguration> &yml,

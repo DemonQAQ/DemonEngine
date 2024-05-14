@@ -25,10 +25,16 @@ namespace assets
             initializeManager();
         }
 
+        static void afterInitialize();
+
+        static void onStart();
+
         static void finalize()
         {
             finalizeManager();
         }
+
+        static void onStop();
 
         static std::optional<std::shared_ptr<IDataManager>> getManager(AssetType assetType);
 

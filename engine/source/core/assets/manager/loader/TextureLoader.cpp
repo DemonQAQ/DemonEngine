@@ -13,7 +13,7 @@
 
 namespace assets
 {
-    std::shared_ptr<base::Texture> TextureLoader::loadTexture(const std::string &path, bool isAssets)
+    std::shared_ptr<base::Texture> TextureLoader::loadTexture(const std::string &path, bool isAssets, bool isCube)
     {
         base::TextureType textureType = extractTypeNameFromPath(path);
         std::string dirPath = FileSystem::combinePaths(isAssets ? ASSETS_ROOT_PATH : RESOURCE_PACK_ROOT_PATH, path);
@@ -37,7 +37,7 @@ namespace assets
 
         bool isLoad = texturesManager->isDataLoaded({existingUuid});
 
-        if (isLoad || texturesManager->loadData({existingUuid, init, metaYml, textureType, dirPath}))
+        if (isLoad || texturesManager->loadData({existingUuid, init, metaYml, textureType, dirPath, isCube}))
         {
             auto textureOpt = texturesManager->getResourceByUuid(existingUuid);
             if (!textureOpt.has_value()) return nullptr;

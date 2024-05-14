@@ -19,7 +19,7 @@ int main()
 {
     runtimeApp.initialize();
 
-    auto staticSkyBox = assets::SkyBoxLoader::loadStaticSkybox("normal skyBox", "/skybox/staticSkyBox", "/skybox/staticSkyBox/skybox.png",
+    auto staticSkyBox = assets::SkyBoxLoader::loadStaticSkybox("normal skyBox", "/skybox/staticSkyBox", "/skybox/staticSkyBox/skybox821.png",
                                                                true);
 
     auto metaYml = assets::ConfigLoader::loadYml("/package0/scene/test.scene.meta", true);

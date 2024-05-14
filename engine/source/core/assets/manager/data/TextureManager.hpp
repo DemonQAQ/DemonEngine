@@ -31,10 +31,11 @@ namespace assets
          * @params[2] std::shared_ptr<io::YamlConfiguration> &yml       实例对应的meta文件
          * @params[3] TextureType type                                  贴图类型
          * @params[4] const std::string &path                           贴图路径
+         * @params[5] bool isCube                                       是否为立方体贴图
          * */
         bool loadData(const std::vector<std::any> &params, bool isAssets = false) override;
 
-        std::optional<std::shared_ptr<base::Texture>> getResourceByUuid(const std::shared_ptr<base::UUID>& uuid_ptr);
+        std::optional<std::shared_ptr<base::Texture>> getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr);
 
         void unloadData(const std::vector<std::any> &params, bool isAssets = false) override;
 
@@ -42,15 +43,20 @@ namespace assets
          *
          * @params[0] const std::shared_ptr<base::UUID> &existingUuid   材质的uuid
          * */
-        [[nodiscard]] bool isDataLoaded(const std::vector<std::any>& params) const override;
+        [[nodiscard]] bool isDataLoaded(const std::vector<std::any> &params) const override;
 
-        void updateData(const std::vector<std::any>& params) override;
+        void updateData(const std::vector<std::any> &params) override;
 
         void onStart() override;
 
         void onStop() override;
+
     private:
-        static unsigned int loadTextureFromFile(const char *filePath);
+
+        static std::tuple<unsigned int, int, int, int> loadTextureFromFile(const char *filePath);
+
+        static std::tuple<unsigned int, int, int, int>
+        loadCubeTextureFromFile(const char *folderPath, const char *filePath, const char *fileTypeName);
     };
 }
 

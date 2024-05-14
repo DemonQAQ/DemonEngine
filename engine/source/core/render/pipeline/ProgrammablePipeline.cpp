@@ -16,11 +16,9 @@ using namespace render;
 
 ProgrammablePipeline::ProgrammablePipeline(std::shared_ptr<GraphApi> &graphApi_) : RenderPipeline(graphApi_)
 {
-    auto shaderManagerOpt = assets::AssetsDataMainManager::getManager(assets::AssetType::SHADER);
-    if (!shaderManagerOpt.has_value()) return;
-
-    auto shaderManager_ = std::dynamic_pointer_cast<assets::ShaderManager>(shaderManagerOpt.value());
-    if (!shaderManager_) shaderManager = shaderManager_;
+    shaderManager = assets::AssetsDataMainManager::getManagerAs<assets::ShaderManager>(assets::AssetType::SHADER);
+    materialsManager = assets::AssetsDataMainManager::getManagerAs<assets::MaterialsManager>(
+            assets::AssetType::MATERIALS);
 }
 
 
@@ -115,17 +113,11 @@ void ProgrammablePipeline::prepare()
     auto start_time = std::chrono::steady_clock::now();
     std::cerr << "onRender.pipeline.render.prepare start" << std::endl;
 
-    auto shaderManager = assets::AssetsDataMainManager::getManagerAs<assets::ShaderManager>(assets::AssetType::SHADER);
-    auto materialsManager = assets::AssetsDataMainManager::getManagerAs<assets::MaterialsManager>(
-            assets::AssetType::MATERIALS);
-
     std::vector<std::future<std::vector<std::shared_ptr<DrawCall>>>> futures;
 
     for (auto &renderable: opaqueRenderableEntityList)
     {
-        futures.push_back(std::async(std::launch::async,
-                                     &ProgrammablePipeline::createAndSubmitDrawCalls, this,
-                                     renderable, std::ref(shaderManager), std::ref(materialsManager)));
+        futures.push_back(std::async(std::launch::async, &ProgrammablePipeline::createAndSubmitDrawCalls, this, renderable));
     }
 
     for (auto &future: futures)
@@ -137,9 +129,7 @@ void ProgrammablePipeline::prepare()
     futures.clear();
     for (auto &renderable: transparentRenderableEntityList)
     {
-        futures.push_back(std::async(std::launch::async,
-                                     &ProgrammablePipeline::createAndSubmitDrawCalls, this,
-                                     renderable, std::ref(shaderManager), std::ref(materialsManager)));
+        futures.push_back(std::async(std::launch::async, &ProgrammablePipeline::createAndSubmitDrawCalls, this, renderable));
     }
 
     for (auto &future: futures)
@@ -184,9 +174,7 @@ void ProgrammablePipeline::sortAndExecuteDrawCalls()
 }
 
 std::vector<std::shared_ptr<DrawCall>>
-ProgrammablePipeline::createAndSubmitDrawCalls(const std::shared_ptr<base::IRenderable> &renderable,
-                                               std::shared_ptr<assets::ShaderManager> &shaderManager,
-                                               std::shared_ptr<assets::MaterialsManager> &materialsManager)
+ProgrammablePipeline::createAndSubmitDrawCalls(const std::shared_ptr<base::IRenderable> &renderable)
 {
     auto start_time = std::chrono::steady_clock::now();
     std::cerr << "onRender.pipeline.render.prepare.createAndSubmitDrawCalls start" << std::endl;
@@ -252,12 +240,11 @@ void ProgrammablePipeline::drawSkyBox()
         std::cerr << "Error: No skybox is set for rendering." << std::endl;
         return;
     }
-    if (!shaderManager)
-    {
-        std::cerr << "Error: No shaderManager to get shader." << std::endl;
-        return;
-    }
+
+    graphApi->enableBlendMode(false);
+    graphApi->setDepthFunction(DepthFunction::LEQUAL);
     glDepthMask(GL_FALSE);
+    graphApi->enableCulling(false);
 
     auto shaderOpt = shaderManager->getResourceByUuid(skyBox->getShader());
     if (!shaderOpt)
@@ -269,15 +256,32 @@ void ProgrammablePipeline::drawSkyBox()
 
     graphApi->useShader(shader);
 
-    GLint vpLocation = glGetUniformLocation(shader->ID, "vp");
-    if (vpLocation != -1)
+    GLint viewLocation = glGetUniformLocation(shader->ID, "view");
+    if (viewLocation != -1)
     {
-        glUniformMatrix4fv(vpLocation, 1, GL_FALSE, glm::value_ptr(render::vpMatrix));
+        glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(render::viewMatrix));
+    }
+    GLint projLocation = glGetUniformLocation(shader->ID, "proj");
+    if (projLocation != -1)
+    {
+        glUniformMatrix4fv(projLocation, 1, GL_FALSE, glm::value_ptr(render::projectionMatrix));
     }
 
-    // Bind the skybox texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox->getTexture()->id);
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        std::cerr << "OpenGL error: " << err << std::endl;
+    }
+
+    GLint skyboxSamplerLocation = glGetUniformLocation(shader->ID, "skybox");
+    if (skyboxSamplerLocation != -1)
+    {
+        glUniform1i(skyboxSamplerLocation, 0);
+    }
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        std::cerr << "OpenGL error: " << err << std::endl;
+    }
 
     // Generate and bind the VAO
     GLuint VAO, VBO, EBO;
@@ -296,7 +300,7 @@ void ProgrammablePipeline::drawSkyBox()
 
     // Set vertex attributes
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);  // Assuming the position attribute is at offset 0
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) nullptr);  // Assuming the position attribute is at offset 0
 
     // Generate EBO if indices are present
     if (!renderData.indices.empty())
@@ -324,6 +328,10 @@ void ProgrammablePipeline::drawSkyBox()
     {
         glDeleteBuffers(1, &EBO);
     }
+
+    graphApi->enableBlendMode(true);
+    graphApi->enableCulling(true);
+    graphApi->setDepthFunction(DepthFunction::ALWAYS);
     glDepthMask(GL_TRUE);
 }
 

@@ -32,7 +32,7 @@ namespace assets
 
     void AssetsDataMainManager::finalizeManager()
     {
-        for (auto manager: MANAGERS)manager.second->onStop();
+        onStop();
     }
 
     std::string AssetsDataMainManager::getManagerClassName(AssetType assetType)
@@ -67,6 +67,21 @@ namespace assets
         auto it = MANAGERS.find(assetType);
         if (it != MANAGERS.end()) return it->second;
         else return std::nullopt;
+    }
+
+    void AssetsDataMainManager::onStart()
+    {
+
+    }
+
+    void AssetsDataMainManager::onStop()
+    {
+        for (const auto &manager: MANAGERS)manager.second->onStop();
+    }
+
+    void AssetsDataMainManager::afterInitialize()
+    {
+        for (const auto &manager: MANAGERS)manager.second->onStart();
     }
 
 }

@@ -70,6 +70,8 @@ bool base::OpenGLApplication::stop()
 
 int base::OpenGLApplication::initialize()
 {
+    scriptInitializer.init({});
+    assets::AssetsDataMainManager::initialize();
     // 创建窗口
     mainWindow = windowFactory.createWindow(width, height, "Demon Engine");
 
@@ -88,10 +90,7 @@ int base::OpenGLApplication::initialize()
     // 设置用户指针，以便在回调函数中访问应用程序状态
     glfwSetWindowUserPointer(mainWindow, this);
 
-    scriptInitializer.init({});
-    //todo 资源类的实例初始化得在opengelInit之前
-    assets::AssetsDataMainManager::initialize();
-
+    assets::AssetsDataMainManager::afterInitialize();
     onInitialize();
     return 0;
 }
@@ -114,6 +113,7 @@ int base::OpenGLApplication::loadAssets()
 
 void base::OpenGLApplication::unloadAssets()
 {
+    assets::AssetsDataMainManager::onStop();
     serialScriptPipLine = nullptr;
     asyncScriptPipLine = nullptr;
     assets::AssetsDataMainManager::finalize();
@@ -149,6 +149,7 @@ void base::OpenGLApplication::onStop()
 
 void base::OpenGLApplication::onStart()
 {
+    assets::AssetsDataMainManager::onStart();
     lastFrameTime = glfwGetTime();
 }
 

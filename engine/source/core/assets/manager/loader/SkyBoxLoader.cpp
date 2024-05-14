@@ -28,7 +28,7 @@ assets::SkyBoxLoader::loadStaticSkybox(const std::string &name, const std::strin
     auto skyBoxManager = std::dynamic_pointer_cast<SkyBoxManager>(skyBoxManagerOpt.value());
     if (!skyBoxManager) return nullptr;
 
-    auto skyBoxTexture = assets::TextureLoader::loadTexture(texturePath, isAssets);
+    auto skyBoxTexture = assets::TextureLoader::loadTexture(texturePath, isAssets, true);
     std::shared_ptr<base::Shader> normalShader = nullptr;
     if (!shader)
         normalShader = assets::ShaderLoader::loadShader("staticSkyBoxShader", "/shader/skybox",

@@ -10,13 +10,12 @@ std::unordered_map<base::SkyBoxType, std::shared_ptr<base::Shader>> assets::SkyB
 
 assets::SkyBoxManager::SkyBoxManager()
 {
-    init({});
+
 }
 
 assets::SkyBoxManager::~SkyBoxManager()
 {
-    finalize();
-    loadedSkyBox.clear();
+
 }
 
 /**
@@ -145,31 +144,21 @@ void assets::SkyBoxManager::updateData(const std::vector<std::any> &params)
 
 void assets::SkyBoxManager::onStart()
 {
-
+    auto staticSkyBoxNormalShader = assets::ShaderLoader::loadShader("staticSkyBoxNormalShader", "shader/skybox",
+                                                                     "shader/skybox/staticSkyBoxNormalShader.vsh",
+                                                                     "shader/skybox/staticSkyBoxNormalShader.fsh", true);
+    normalShader[base::SkyBoxType::STATIC] = staticSkyBoxNormalShader;
 }
 
 void assets::SkyBoxManager::onStop()
 {
-
+    normalShader.clear();
+    loadedSkyBox.clear();
 }
 
 std::shared_ptr<base::Shader> assets::SkyBoxManager::getSkyBoxTypeNormalShader(base::SkyBoxType type)
 {
     return normalShader[base::SkyBoxType::STATIC];
-}
-
-bool assets::SkyBoxManager::init(const std::vector<std::any> &params)
-{
-    auto staticSkyBoxNormalShader = assets::ShaderLoader::loadShader("staticSkyBoxNormalShader", "shader/skybox",
-                                                                     "shader/skybox/staticSkyBoxNormalShader.vsh",
-                                                                     "shader/skybox/staticSkyBoxNormalShader.fsh", true);
-    normalShader[base::SkyBoxType::STATIC] = staticSkyBoxNormalShader;
-    return true;
-}
-
-void assets::SkyBoxManager::finalize()
-{
-    normalShader.clear();
 }
 
 std::optional<std::shared_ptr<base::ISkyBox>> assets::SkyBoxManager::getResourceByUuid(const std::shared_ptr<base::UUID> &uuid_ptr)

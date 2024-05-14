@@ -17,6 +17,7 @@ namespace render
     {
     private:
         std::shared_ptr<assets::ShaderManager> shaderManager;
+        std::shared_ptr<assets::MaterialsManager> materialsManager;
         std::shared_ptr<base::ISkyBox> skyBox;
         //渲染前会将这两个list中的内容打包至drawcall的list中，打包时没有shader的实体使用管线默认的shader
         std::vector<std::shared_ptr<base::IRenderable>> opaqueRenderableEntityList;
@@ -52,9 +53,7 @@ namespace render
 
         void sortAndExecuteDrawCalls();
 
-        std::vector<std::shared_ptr<DrawCall>> createAndSubmitDrawCalls(const std::shared_ptr<base::IRenderable>& renderable,
-                                                                                              std::shared_ptr<assets::ShaderManager> &shaderManager,
-                                                                                              std::shared_ptr<assets::MaterialsManager> &materialsManager);
+        std::vector<std::shared_ptr<DrawCall>> createAndSubmitDrawCalls(const std::shared_ptr<base::IRenderable>& renderable);
     };
 }
 

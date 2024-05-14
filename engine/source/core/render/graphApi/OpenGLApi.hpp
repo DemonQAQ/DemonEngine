@@ -50,16 +50,19 @@ namespace render
         void bindTexture(std::shared_ptr<base::Texture> texture) override;
 
         void bindTextureWithParam(const std::shared_ptr<base::Texture> &texture, GLenum textureUnit = GL_TEXTURE0,
-                                    const std::map<GLenum, GLint>& parameters = {});
+                                  const std::map<GLenum, GLint> &parameters = {});
 
-        void unbindTexture(const std::vector<std::any>& params) override;
+        void unbindTexture(const std::vector<std::any> &params) override;
 
         void setBlendMode(BlendMode mode) override;
 
         void setViewport(int x, int y, int width, int height) override;
 
         void setClearColor(float r, float g, float b, float a) override;
+
         void clear() override;
+
+        void enableBlendMode(bool enable) override;
 
         void enableDepthTest(bool enable) override;
 

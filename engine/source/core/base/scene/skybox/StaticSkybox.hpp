@@ -15,6 +15,7 @@ namespace base
     private:
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
+        std::shared_ptr<Cube> cube;
         std::shared_ptr<Texture> texture;
     public:
         StaticSkybox(const std::shared_ptr<base::UUID> &existingUuid, bool init,
@@ -64,11 +65,13 @@ namespace base
         {
             return {};
         }
+
     protected:
         void updateObservedGlobalTransform(std::vector<Transform> &additionalTransforms) override
         {
 
         }
+
     private:
         void initializeVertices()
         {
@@ -133,43 +136,33 @@ namespace base
                     {0.0f,  -1.0f, 0.0f}  // Bottom
             };
 
-            float aspectRatio = static_cast<float>(texture->width) / (float) (texture->height / 2.0f);
-            float segmentWidth = 1.0f / 6.0f;  // 1 divided by number of segments in one row
-            float adjustedSegmentWidth = segmentWidth * aspectRatio;
-
-            // Adjust UV mapping to apply aspect ratio
             std::vector<glm::vec2> uvs = {
-                    // Front face
-                    {0.0f * adjustedSegmentWidth, 0.0f},
-                    {1.0f * adjustedSegmentWidth, 0.0f},
-                    {1.0f * adjustedSegmentWidth, 1.0f},
-                    {0.0f * adjustedSegmentWidth, 1.0f},
-                    // Back face
-                    {1.0f * adjustedSegmentWidth, 0.0f},
-                    {2.0f * adjustedSegmentWidth, 0.0f},
-                    {2.0f * adjustedSegmentWidth, 1.0f},
-                    {1.0f * adjustedSegmentWidth, 1.0f},
-                    // Left face
-                    {2.0f * adjustedSegmentWidth, 0.0f},
-                    {3.0f * adjustedSegmentWidth, 0.0f},
-                    {3.0f * adjustedSegmentWidth, 1.0f},
-                    {2.0f * adjustedSegmentWidth, 1.0f},
-                    // Right face
-                    {3.0f * adjustedSegmentWidth, 0.0f},
-                    {4.0f * adjustedSegmentWidth, 0.0f},
-                    {4.0f * adjustedSegmentWidth, 1.0f},
-                    {3.0f * adjustedSegmentWidth, 1.0f},
-                    // Top face
-                    {4.0f * adjustedSegmentWidth, 0.0f},
-                    {5.0f * adjustedSegmentWidth, 0.0f},
-                    {5.0f * adjustedSegmentWidth, 1.0f},
-                    {4.0f * adjustedSegmentWidth, 1.0f},
-                    // Bottom face
-                    {5.0f * adjustedSegmentWidth, 0.0f},
-                    {6.0f * adjustedSegmentWidth, 0.0f},
-                    {6.0f * adjustedSegmentWidth, 1.0f},
-                    {5.0f * adjustedSegmentWidth, 1.0f}
+                    {0.0f, 0.0f},
+                    {1.0f, 0.0f},
+                    {1.0f, 1.0f},
+                    {0.0f, 1.0f}, // Front
+                    {1.0f, 0.0f},
+                    {0.0f, 0.0f},
+                    {0.0f, 1.0f},
+                    {1.0f, 1.0f}, // Back
+                    {0.0f, 0.0f},
+                    {1.0f, 0.0f},
+                    {1.0f, 1.0f},
+                    {0.0f, 1.0f}, // Left
+                    {1.0f, 0.0f},
+                    {0.0f, 0.0f},
+                    {0.0f, 1.0f},
+                    {1.0f, 1.0f}, // Right
+                    {0.0f, 0.0f},
+                    {1.0f, 0.0f},
+                    {1.0f, 1.0f},
+                    {0.0f, 1.0f}, // Top
+                    {1.0f, 0.0f},
+                    {0.0f, 0.0f},
+                    {0.0f, 1.0f},
+                    {1.0f, 1.0f}  // Bottom
             };
+
 
             // Construct vertex data
             for (size_t i = 0; i < positions.size(); ++i)

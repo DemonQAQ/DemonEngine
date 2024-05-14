@@ -14,7 +14,7 @@ namespace assets
     class TextureLoader : implements IFileLoader
     {
     public:
-        static std::shared_ptr<base::Texture> loadTexture(const std::string &path, bool isAssets = false);
+        static std::shared_ptr<base::Texture> loadTexture(const std::string &path, bool isAssets = false, bool isCube = false);
 
         static base::TextureType extractTypeNameFromPath(const std::string &path);
     };

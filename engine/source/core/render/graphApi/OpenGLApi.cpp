@@ -613,5 +613,12 @@ void OpenGLApi::setCullFace(CullFace face)
     glCullFace(glFace);
 }
 
+void OpenGLApi::enableBlendMode(bool enable)
+{
+    if (enable)glEnable(GL_BLEND);
+    else
+        glDisable(GL_BLEND);
+}
+
 
 

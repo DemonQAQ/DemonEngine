@@ -10,6 +10,7 @@
 #include <vector>
 #include <iostream>
 #include <any>
+#include <core/base/interface/Initializer.hpp>
 #include "core/base/common/UUID.hpp"
 
 namespace assets

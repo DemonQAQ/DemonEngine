@@ -7,20 +7,52 @@
 
 #include <string>
 #include <cstdlib>
-static char const * logRoot = LOG_ROOT_PATH;
-static char const * assetsRootPath = ASSETS_ROOT_PATH;
-static char const * resourcePackRootPath = RESOURCE_PACK_ROOT_PATH;
+#include <filesystem>
+
+static char const *logRoot = LOG_ROOT_PATH;
+static char const *assetsRootPath = ASSETS_ROOT_PATH;
+static char const *resourcePackRootPath = RESOURCE_PACK_ROOT_PATH;
 
 class FileSystem
 {
 private:
-    typedef std::string (*Builder) (const std::string& path);
+    typedef std::string (*Builder)(const std::string &path);
 
 public:
-    static std::string getPath(const std::string& path)
+    static std::string getPath(const std::string &path)
     {
-        static std::string(*pathBuilder)(std::string const &) = getPathBuilder();
+        static std::string (*pathBuilder)(std::string const &) = getPathBuilder();
         return (*pathBuilder)(path);
+    }
+
+    static std::string getFilenameWithoutExtension(const std::string &path)
+    {
+        std::filesystem::path filePath(path);
+        return filePath.stem().string();
+    }
+
+    static std::string getCompleteFilename(const std::string &path)
+    {
+        std::filesystem::path filePath(path);
+        return filePath.filename().string();
+    }
+
+    static std::string getFullExtension(const std::string &filename)
+    {
+        std::filesystem::path filePath(filename);
+        std::string extension;
+        while (filePath.has_extension())
+        {
+            extension = filePath.extension().string() + extension;
+            filePath = filePath.stem();
+        }
+        return extension;
+    }
+
+    static std::string getLastExtension(const std::string &filename)
+    {
+        std::filesystem::path filePath(filename);
+        return filePath.extension().string();
     }
 
     static std::string extractDirectory(const std::string filePath)
@@ -28,19 +60,19 @@ public:
         return filePath.substr(0, filePath.find_last_of('/'));
     }
 
-    static std::string getAssetsFullPath(const std::string& path)
+    static std::string getAssetsFullPath(const std::string &path)
     {
         std::string fullPath = std::string(assetsRootPath) + path;
         return fullPath;
     }
 
-    static std::string getResourcePackFullPath(const std::string& path)
+    static std::string getResourcePackFullPath(const std::string &path)
     {
         std::string fullPath = std::string(resourcePackRootPath) + path;
         return fullPath;
     }
 
-    static std::string combinePaths(const std::string& path1, const std::string& path2)
+    static std::string combinePaths(const std::string &path1, const std::string &path2)
     {
         std::string combinedPath = path1;
         // 确保第一个路径以斜杠结尾
@@ -61,10 +93,10 @@ public:
     }
 
 private:
-    static std::string const & getRoot()
+    static std::string const &getRoot()
     {
-        static char const * envRoot = getenv("LOG_ROOT_PATH");
-        static char const * givenRoot = (envRoot != nullptr ? envRoot : logRoot);
+        static char const *envRoot = getenv("LOG_ROOT_PATH");
+        static char const *givenRoot = (envRoot != nullptr ? envRoot : logRoot);
         static std::string root = (givenRoot != nullptr ? givenRoot : "");
         return root;
     }
@@ -78,12 +110,12 @@ private:
             return &FileSystem::getPathRelativeBinary;
     }
 
-    static std::string getPathRelativeRoot(const std::string& path)
+    static std::string getPathRelativeRoot(const std::string &path)
     {
         return getRoot() + std::string("/") + path;
     }
 
-    static std::string getPathRelativeBinary(const std::string& path)
+    static std::string getPathRelativeBinary(const std::string &path)
     {
         return "../../../" + path;
     }
