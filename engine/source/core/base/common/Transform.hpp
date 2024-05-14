@@ -12,6 +12,7 @@
 #include "glm/detail/type_quat.hpp"
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 namespace base
 {
@@ -27,6 +28,13 @@ namespace base
                   const glm::vec3 &scl = glm::vec3(1.0f))
                 : position(pos), rotation(rot), scale(scl)
         {}
+
+        Transform(const glm::mat4 &matrix)
+        {
+            glm::vec3 skew;
+            glm::vec4 perspective;
+            glm::decompose(matrix, scale, rotation, position, skew, perspective);
+        }
 
         friend bool operator==(const Transform &lhs, const Transform &rhs)
         {

@@ -22,7 +22,8 @@
 #include "core/base/interface/ITransformableUpdate.hpp"
 #include "core/base/common/Object.hpp"
 #include "core/base/interface/INameable.hpp"
-#include "Bone.hpp"
+#include "AnimationBone.hpp"
+#include "ModelBone.hpp"
 
 namespace base
 {
@@ -126,6 +127,7 @@ namespace base
 
         [[nodiscard]] std::string getName() const override;
 
+        //todo 更新时考虑动画数据
         void beforeRendering(const std::vector<std::any> &params) override;
 
         void afterRendering(const std::vector<std::any> &params) override;
